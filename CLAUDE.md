@@ -1,115 +1,56 @@
-# MazyOS — Sistema operacional do negócio
+@AGENTS.md
 
-Sua empresa roda em cima desse arquivo. Aqui ficam as regras de operação
-do MazyOS — como o Claude lê o contexto, aprende com correções, mantém
-tudo atualizado e cria skills novas conforme a operação evolui.
+# PULSO — MazyOS
 
-Esse arquivo é editável. Quando o `/instalar` rodar, ele complementa o
-final dessa página com as regras específicas do seu negócio.
+> App pessoal, mobile-first (PWA), que responde uma pergunta:
+> **"O que merece minha atenção agora?"** — CAOS → CLAREZA → PRÓXIMA AÇÃO.
+> Roda em cima do MazyOS (memória, identidade, skills) junto com o código do app.
 
----
+## O que é esse workspace
 
-## Contexto do negócio
+Desenvolvimento do PULSO, produto de uso pessoal do Carlos (não é SaaS). Claude atua
+como dev principal, pensando também em UX e produto.
 
-No início de toda conversa, ler os seguintes arquivos (quando existirem
-e estiverem preenchidos):
+**Estrutura de pastas:**
+- `_memoria/` — contexto do projeto, tom da interface, fase atual e decisões aprovadas
+- `_memoria/contexto-mestre.md` — documento mestre do produto (ler antes de qualquer funcionalidade)
+- `identidade/design-guide.md` — tokens de cor, tipografia, raios, movimento
+- `src/app/(app)/` — rotas do app: agora, inbox, agenda, mais, projetos, tarefas/[id]
+- `src/app/login/` — autenticação (OTP por e-mail, Fase 3)
+- `src/components/ui/` — primitivos shadcn (base-nova / Base UI). Editar só tema/tokens
+- `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, feedback, pwa
+- `src/lib/priorities/` — motor de prioridade e seleção de sessão (TS puro, com testes)
+- `src/lib/{tasks,projects}/` — queries, server actions e schemas Zod
+- `src/lib/supabase/` — clients (browser/server) e proxy de auth
+- `src/lib/dates/` — datas no fuso do usuário (America/Fortaleza)
+- `supabase/migrations/` — schema versionado
+- `scripts/gerar-icones.mjs` — gera os ícones do PWA (`npm run icons`)
+- `saidas/`, `marketing/`, `dados/` — pastas padrão do MazyOS
 
-1. `_memoria/empresa.md` — quem é o usuário, o que faz, como funciona o negócio
-2. `_memoria/preferencias.md` — tom de voz, estilo de escrita, o que evitar
-3. `_memoria/estrategia.md` — foco atual, prioridades, prazos
+## Regras do projeto
 
-Usar essas informações como base pra qualquer resposta ou decisão. Ao
-sugerir prioridades, formatos ou abordagens, considerar o foco atual
-descrito em `estrategia.md`.
+- Regra fundamental: antes de adicionar algo, perguntar "Isso ajuda o usuário a saber o que merece sua atenção agora?"
+- Construir fase por fase (ver `_memoria/estrategia.md`); ao fim de cada fase, apresentar e **aguardar aprovação**.
+- Decisão técnica/de produto importante: identificar, explicar brevemente, recomendar, aguardar aprovação se mudar o produto.
+- Mobile é a experiência principal: toque, uma mão, safe areas, alvos ≥ 44px, nada dependente de hover.
+- Lógica de prioridade nunca dentro de componentes — sempre em `src/lib/priorities`.
+- Prioridade é calculada em runtime; não existe coluna `priority` no banco.
+- Toda tabela tem `user_id` + RLS.
+- Linguagem da interface sem culpa (ver `_memoria/preferencias.md`).
+- Não adicionar dependência para tarefa pequena. Não adicionar IA/voz no MVP.
+- Next.js 16: ler `node_modules/next/dist/docs/` antes de usar APIs que possam ter mudado.
 
-Pra qualquer tarefa visual (carrossel, post, landing page), consultar
-`identidade/design-guide.md` como referência de estilo.
+## Comandos
 
-Não é necessário listar o que foi lido nem confirmar a leitura. Apenas
-usar o contexto naturalmente.
-
----
-
-## Fluxo de trabalho
-
-Antes de executar qualquer tarefa, verificar se existe skill relevante
-em `.claude/skills/`. Se encontrar, seguir as instruções da skill. Se
-não encontrar, executar a tarefa normalmente.
-
-Ao concluir uma tarefa que não tinha skill mas parece repetível (o
-usuário provavelmente vai pedir de novo no futuro), perguntar:
-
-> "Isso pode virar uma skill pra próxima vez. Quer que eu crie?"
-
-Não perguntar pra tarefas pontuais ou perguntas simples. Só quando o
-padrão de repetição for claro.
-
----
-
-## Aprender com correções
-
-Quando o usuário corrigir algo, melhorar uma resposta ou dar uma
-instrução que parece permanente (frases como "na verdade é assim", "não
-faça mais isso", "prefiro assim", "sempre que...", "evita...", "da
-próxima vez..."), perguntar:
-
-> "Quer que eu salve isso pra não precisar repetir?"
-
-Se sim, identificar onde faz mais sentido salvar:
-
-- **Sobre o negócio** (clientes, serviços, mercado) → `_memoria/empresa.md`
-- **Sobre preferências e estilo** (tom de voz, formato, o que evitar) → `_memoria/preferencias.md`
-- **Sobre prioridades e foco** (projetos, metas, prazos) → `_memoria/estrategia.md`
-- **Regra de comportamento nessa pasta** → próprio `CLAUDE.md`
-
-Salvar com uma linha nova clara, sem reformatar o arquivo inteiro.
-Confirmar mostrando a linha adicionada.
-
-Não perguntar se a correção for óbvia de contexto imediato (ex: "na
-verdade o arquivo se chama X"). Só perguntar quando a informação tiver
-valor duradouro.
+- `npm run dev` · `npm run build` · `npm run lint` · `npm run typecheck` · `npm test`
 
 ---
 
-## Manter contexto atualizado
+## Regras do MazyOS
 
-Ao terminar uma tarefa que mudou algo relevante (cliente novo, skill
-nova, mudança de foco, processo novo, ferramenta instalada, estrutura
-alterada), perguntar:
-
-> "Isso mudou algo no teu contexto. Quer que eu atualize a memória?"
-
-Se sim, identificar o que atualizar:
-
-- **Cliente, serviço, ferramenta, equipe** → `_memoria/empresa.md`
-- **Mudança de prioridade ou foco** → `_memoria/estrategia.md`
-- **Tom ou estilo** → `_memoria/preferencias.md`
-- **Pasta, regra de organização, skill criada** → `CLAUDE.md`
-- **Visual (cores, fontes, logo)** → `identidade/design-guide.md`
-
-Mostrar o que vai mudar antes de salvar. Não reformatar o arquivo
-inteiro, só adicionar ou editar a linha relevante.
-
-**Quando NÃO perguntar:**
-- Tarefas pontuais sem impacto no contexto (escrever um email avulso, criar um post)
-- Perguntas simples ou conversas sem ação
-- Mudanças já salvas pelo bloco "Aprender com correções"
-
-**Dica:** rode `/atualizar` pra uma varredura completa quando houver dúvida.
-
----
-
-## Criação de skills
-
-Quando o usuário pedir skill nova:
-
-1. Verificar se existe template relevante em `templates/skills/`. Se
-   existir, usar como base e adaptar pro contexto
-2. Perguntar se é específica desse projeto ou útil em qualquer:
-   - Específica → `.claude/skills/nome-da-skill/SKILL.md` (local)
-   - Universal → `~/.claude/skills/nome-da-skill/SKILL.md` (global)
-3. Ler `_memoria/empresa.md` e `_memoria/preferencias.md` pra calibrar
-   o conteúdo da skill ao contexto do negócio
-4. Se a skill precisar de arquivos de apoio (templates, exemplos),
-   criar dentro da pasta da skill
-5. Seguir o fluxo da skill-creator nativa do Claude Code
+- No início de toda conversa, ler `_memoria/empresa.md`, `_memoria/preferencias.md` e `_memoria/estrategia.md` quando preenchidos. Não é preciso confirmar a leitura.
+- Antes de executar uma tarefa, verificar se existe skill relevante em `.claude/skills/`.
+- Quando o usuário corrigir algo ou der instrução duradoura, perguntar se quer salvar
+  (projeto → `empresa.md`; estilo → `preferencias.md`; foco/fase → `estrategia.md`; regra → este arquivo).
+- Ao terminar algo que mude o contexto (fase concluída, decisão nova, estrutura alterada), perguntar se atualiza a memória. `/atualizar` faz a varredura completa.
+- Salvar no Git/GitHub: `/salvar`.

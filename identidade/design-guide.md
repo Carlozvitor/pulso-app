@@ -1,59 +1,51 @@
-# Identidade visual
+# Identidade visual — PULSO
 
-> Como a marca aparece em tudo que o MazyOS gera.
-> As skills de conteúdo, carrossel e post leem esse arquivo antes de criar qualquer visual.
-> Edite quando a marca evoluir.
+> Dark + tecnológico + sofisticado + minimalista. Foco, clareza, tranquilidade, controle.
 
 ---
 
 ## Cores
 
-- **Fundo principal:**
-
-- **Cor de destaque / CTA:**
-
-- **Texto principal:**
-
-- **Fundo alternativo / cards:**
-
-- **Cor proibida:**
+- **Fundo principal:** `#0A0A0B`
+- **Superfície / cards:** `#111214` · **Elevado (sheets, popovers):** `#18191C`
+- **Borda:** `#25262A`
+- **Texto principal:** `#F4F4F5` · **Secundário:** `#A1A1AA` · **Discreto (texto):** `#8A8A93` · **Muted (só não-texto):** `#71717A`
+- **Accent / CTA:** `#4C5BFF` (texto branco sobre ele ≈ 4.9:1) · **Accent suave (ativo, progresso, links):** `#8B95FF`
+- **Sucesso:** verde dessaturado, só no feedback de conclusão
+- **Cor proibida:** vermelho de "atraso"; neon; interface toda azul
 
 ---
 
 ## Tipografia
 
-- **Títulos e destaques:**
-
-- **Corpo, subtítulos e botões:**
-
-- **Peso do título:**
+- **Família:** Geist Sans (Geist Mono para números/durações quando fizer sentido)
+- **Escala:** 13 / 15 / 17 / 20 / 28 px · inputs ≥ 16px (evita zoom no iOS)
+- **Peso do título:** 600
 
 ---
 
 ## Estilo geral
 
+Elevação por cor, não por sombra. Accent usado com moderação (botão principal, `+`, item ativo, progresso, foco). Poucos cards, poucas bordas.
+
 ---
 
 ## Elementos-chave
 
-- Bordas:
-- Border-radius dos cards:
-- Botões:
-- Sombras:
+- Bordas: 1px `#25262A`, só quando separam algo de verdade
+- Border-radius: 10 (controles) / 14 (cards) / 20 (bottom sheets)
+- Botões: altura mínima 44px, área de toque ≥ 44×44
+- Sombras: praticamente nenhuma
+- Movimento: 150–250ms ease-out, respeitando `prefers-reduced-motion`
 
 ---
 
 ## O que NUNCA fazer
 
+Neon excessivo, gradientes em excesso, glassmorphism, sombras pesadas, animações decorativas, hover como interação necessária.
+
 ---
 
 ## Logo
 
-- **Arquivo:** *(ex: identidade/logo.png ou identidade/logo.svg)*
-- **Versão pra fundo escuro:** *(se tiver — ex: identidade/logo-branco.png)*
-- **Onde usar:** slide final do carrossel (CTA), header de propostas, slides de apresentação
-- **Tamanho sugerido:** largura entre 120-200px nos HTMLs
-
----
-
-## Observações adicionais
+- **Arquivo:** ainda não existe (ícone PWA provisório em `public/icons/`)

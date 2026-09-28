@@ -3,7 +3,7 @@
 import { refresh } from "next/cache";
 import { requireUser } from "@/lib/supabase/server";
 import type { TaskStatus } from "@/types/task";
-import { captureSchema, setStatusSchema, updateTaskSchema } from "./schemas";
+import { captureSchema, patchToRow, setStatusSchema, taskIdSchema, taskPatchSchema, type TaskPatch } from "./schemas";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -22,13 +22,15 @@ export async function captureTask(title: string): Promise<ActionResult> {
   return { ok: true };
 }
 
-export async function updateTask(input: { id: string; title: string; description: string }): Promise<ActionResult> {
-  const parsed = updateTaskSchema.safeParse(input);
+/** Altera só os campos enviados (título, descrição, importância, prazo…). */
+export async function updateTask(id: string, patch: TaskPatch): Promise<ActionResult> {
+  const parsedId = taskIdSchema.safeParse(id);
+  const parsed = taskPatchSchema.safeParse(patch);
+  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
 
   const { supabase } = await requireUser();
-  const { id, ...fields } = parsed.data;
-  const { error } = await supabase.from("tasks").update(fields).eq("id", id);
+  const { error } = await supabase.from("tasks").update(patchToRow(parsed.data)).eq("id", parsedId.data);
   if (error) return { ok: false, error: GENERIC_ERROR };
 
   refresh();

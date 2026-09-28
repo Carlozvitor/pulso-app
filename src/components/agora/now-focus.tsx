@@ -1,13 +1,11 @@
 import type { AgoraView } from "@/types/task";
-import { formatDuration } from "@/lib/tasks/format";
+import { taskMeta } from "@/components/tasks/task-meta";
 import { NowFocusAction } from "./now-focus-action";
 import { SectionLabel } from "./section-label";
 
 /** A próxima ação. O único bloco com destaque na tela. */
-export function NowFocus({ task }: { task: NonNullable<AgoraView["now"]> }) {
-  const meta = [task.context, task.estimatedMinutes != null ? formatDuration(task.estimatedMinutes) : null]
-    .filter(Boolean)
-    .join(" · ");
+export function NowFocus({ task, today }: { task: NonNullable<AgoraView["now"]>; today: string }) {
+  const meta = taskMeta(task, today);
 
   return (
     <section aria-labelledby="agora-label" className="rounded-lg bg-surface p-5">

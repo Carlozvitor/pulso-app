@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import type { Task } from "@/types/task";
 import { setTaskStatus } from "@/lib/tasks/actions";
 import { CompleteButton } from "@/components/tasks/complete-button";
+import { taskMeta } from "@/components/tasks/task-meta";
 
-export function InboxList({ tasks }: { tasks: Task[] }) {
+export function InboxList({ tasks, today }: { tasks: Task[]; today: string }) {
   const [, startTransition] = useTransition();
   const [visible, removeOptimistic] = useOptimistic(tasks, (current, id: string) =>
     current.filter((t) => t.id !== id),
@@ -39,7 +40,12 @@ export function InboxList({ tasks }: { tasks: Task[] }) {
             href={`/tarefas/${task.id}`}
             className="-mr-4 flex min-h-14 min-w-0 flex-1 items-center py-3 pr-4 transition-colors duration-(--duration-fast) active:bg-surface"
           >
-            <span className="truncate text-body">{task.title}</span>
+            <span className="min-w-0">
+              <span className="block truncate text-body">{task.title}</span>
+              {(task.dueDate || task.estimatedMinutes) && (
+                <span className="tabular block truncate text-caption text-foreground-subtle">{taskMeta(task, today)}</span>
+              )}
+            </span>
           </Link>
         </li>
       ))}

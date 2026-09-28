@@ -32,10 +32,13 @@ export type TaskSummary = {
   /** Nome do projeto ou da área, quando houver. */
   context: string | null;
   estimatedMinutes: number | null;
+  dueDate: string | null;
 };
 
 /** O que a tela Agora mostra — já priorizado e limitado. */
 export type AgoraView = {
+  /** Hoje (YYYY-MM-DD) no fuso do usuário — base para os rótulos de prazo. */
+  today: string;
   pendingCount: number;
   /** A próxima ação — com status para saber se é "Começar" ou "Concluir". */
   now: (TaskSummary & { status: TaskStatus }) | null;

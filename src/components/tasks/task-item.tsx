@@ -2,15 +2,18 @@ import Link from "next/link";
 import type { TaskSummary } from "@/types/task";
 import { cn } from "@/lib/utils";
 import { DurationBadge } from "./duration-badge";
+import { taskMeta } from "./task-meta";
 
 type TaskItemProps = {
   task: TaskSummary;
+  today: string;
   /** Itens de "mais tarde" ficam um tom abaixo. */
   quiet?: boolean;
 };
 
 /** Linha de tarefa: toque abre o detalhe. Sem card — só hierarquia de texto. */
-export function TaskItem({ task, quiet }: TaskItemProps) {
+export function TaskItem({ task, today, quiet }: TaskItemProps) {
+  const meta = taskMeta({ context: task.context, dueDate: task.dueDate }, today);
   return (
     <Link
       href={`/tarefas/${task.id}`}
@@ -20,7 +23,7 @@ export function TaskItem({ task, quiet }: TaskItemProps) {
         <p className={cn("truncate text-body", quiet ? "text-foreground-secondary" : "text-foreground")}>
           {task.title}
         </p>
-        {task.context && <p className="truncate text-caption text-foreground-subtle">{task.context}</p>}
+        {meta && <p className="truncate text-caption text-foreground-subtle">{meta}</p>}
       </div>
       <DurationBadge minutes={task.estimatedMinutes} className="shrink-0" />
     </Link>

@@ -4,6 +4,7 @@ import { InboxList } from "@/components/inbox/inbox-list";
 import { PageHeader } from "@/components/navigation/page-header";
 import { inboxLabel } from "@/lib/tasks/format";
 import { listInbox } from "@/lib/tasks/queries";
+import { todayIn } from "@/lib/dates";
 
 export const metadata = { title: "Inbox" };
 
@@ -14,7 +15,7 @@ export default async function InboxPage() {
     <>
       <PageHeader title="Inbox" description={inboxLabel(tasks.length)} />
       {tasks.length > 0 ? (
-        <InboxList tasks={tasks} />
+        <InboxList tasks={tasks} today={todayIn()} />
       ) : (
         <EmptyState
           icon={Inbox}

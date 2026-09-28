@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import type { Task, TaskStatus } from "@/types/task";
 import { Button } from "@/components/ui/button";
 import { setTaskStatus, updateTask } from "@/lib/tasks/actions";
+import type { TaskPatch } from "@/lib/tasks/schemas";
+import { TaskAttributes } from "./task-attributes";
 
 const STATUS_LABEL: Record<TaskStatus, string> = {
   INBOX: "Inbox",
@@ -52,22 +54,47 @@ const ACTIONS: Record<TaskStatus, { primary: StatusAction; secondary: StatusActi
 const fieldBase =
   "w-full resize-none bg-transparent text-foreground placeholder:text-foreground-subtle focus-visible:outline-none [field-sizing:content]";
 
-export function TaskEditor({ task }: { task: Task }) {
+type SaveState = "idle" | "saving" | "saved";
+
+export function TaskEditor({ task, today }: { task: Task; today: string }) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description ?? "");
-  const [saving, startSaving] = useTransition();
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const pendingSaves = useRef(0);
   const [changing, startChanging] = useTransition();
 
-  const dirty = title.trim() !== task.title || (description.trim() || null) !== task.description;
+  // Último valor confirmado pelo servidor — evita salvar sem mudança e permite voltar em erro.
+  const savedTitle = useRef(task.title);
+  const savedDescription = useRef(task.description ?? "");
+
   const { primary, secondary } = ACTIONS[task.status];
 
-  function save(event: React.FormEvent) {
-    event.preventDefault();
-    startSaving(async () => {
-      const result = await updateTask({ id: task.id, title, description });
-      if (result.ok) toast("Salvo.");
-      else toast.error(result.error);
-    });
+  /** Salvamento automático: um campo por vez. Só erro vira toast. */
+  async function save(patch: TaskPatch): Promise<boolean> {
+    pendingSaves.current += 1;
+    setSaveState("saving");
+    const result = await updateTask(task.id, patch);
+    pendingSaves.current -= 1;
+    if (!result.ok) {
+      toast.error(result.error);
+      setSaveState("idle");
+      return false;
+    }
+    if (pendingSaves.current === 0) setSaveState("saved");
+    return true;
+  }
+
+  async function saveTitle() {
+    const next = title.trim();
+    if (!next) return setTitle(savedTitle.current); // título vazio: volta ao anterior
+    if (next === savedTitle.current) return;
+    if (await save({ title: next })) savedTitle.current = next;
+    else setTitle(savedTitle.current);
+  }
+
+  async function saveDescription() {
+    if (description.trim() === savedDescription.current.trim()) return;
+    if (await save({ description })) savedDescription.current = description;
   }
 
   function changeStatus(action: StatusAction) {
@@ -86,11 +113,16 @@ export function TaskEditor({ task }: { task: Task }) {
 
   return (
     <div className="flex flex-col">
-      <p className="text-caption font-semibold tracking-[0.08em] text-foreground-subtle uppercase">
-        {STATUS_LABEL[task.status]}
-      </p>
+      <div className="flex items-baseline justify-between">
+        <p className="text-caption font-semibold tracking-[0.08em] text-foreground-subtle uppercase">
+          {STATUS_LABEL[task.status]}
+        </p>
+        <p aria-live="polite" className="text-caption text-foreground-subtle">
+          {saveState === "saving" ? "Salvando…" : saveState === "saved" ? "Salvo" : ""}
+        </p>
+      </div>
 
-      <form onSubmit={save} className="mt-2 flex flex-col">
+      <div className="mt-2 flex flex-col">
         <label htmlFor="task-title" className="sr-only">
           Título
         </label>
@@ -99,7 +131,15 @@ export function TaskEditor({ task }: { task: Task }) {
           rows={1}
           maxLength={500}
           value={title}
+          enterKeyHint="done"
           onChange={(e) => setTitle(e.target.value.replace(/\n/g, " "))}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              e.currentTarget.blur();
+            }
+          }}
+          onBlur={saveTitle}
           className={`${fieldBase} min-h-[2.125rem] text-display font-semibold tracking-tight`}
         />
 
@@ -112,16 +152,15 @@ export function TaskEditor({ task }: { task: Task }) {
           maxLength={5000}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          onBlur={saveDescription}
           placeholder="Adicionar detalhes"
           className={`${fieldBase} mt-4 min-h-24 text-body`}
         />
+      </div>
 
-        {dirty && (
-          <Button type="submit" variant="secondary" size="touch" disabled={saving || !title.trim()} className="mt-4 w-full">
-            {saving ? "Salvando…" : "Salvar alterações"}
-          </Button>
-        )}
-      </form>
+      <div className="mt-6 border-t border-border pt-6">
+        <TaskAttributes task={task} today={today} save={save} />
+      </div>
 
       <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6">
         <Button size="touch" disabled={changing} onClick={() => changeStatus(primary)} className="w-full">

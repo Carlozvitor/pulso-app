@@ -23,9 +23,9 @@ export default async function AgoraPage() {
 
       {view.now ? (
         <>
-          <NowFocus task={view.now} />
-          <TaskSection id="depois-label" label="Depois" tasks={view.next} />
-          <TaskSection id="mais-tarde-label" label="Mais tarde" tasks={view.later} quiet />
+          <NowFocus task={view.now} today={view.today} />
+          <TaskSection id="depois-label" label="Depois" tasks={view.next} today={view.today} />
+          <TaskSection id="mais-tarde-label" label="Mais tarde" tasks={view.later} today={view.today} quiet />
         </>
       ) : (
         <EmptyState

@@ -4,7 +4,7 @@
 
 ## Fase
 
-Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Agora usa ordem provisória (src/lib/priorities/agora.ts) até a Fase 5. React Hook Form fica para a Fase 4 (formulário de atributos).
+Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Agora usa ordem provisória (src/lib/priorities/agora.ts) até a Fase 5. Fase 4 (atributos: prazo, duração, energia, importância, urgência) concluída em 2026-09-28 com salvamento automático — React Hook Form descartado por não ser necessário.
 
 ## Prioridade principal
 
@@ -22,6 +22,10 @@ MVP mobile-first seguindo as fases, uma de cada vez, com aprovação do Carlos e
 - Área vem do projeto quando a tarefa tem projeto; projetos ganham `due_date`; `session_tasks` para sessões.
 - Agenda no MVP = só tarefas com prazo (sem compromissos).
 - Accent `#4C5BFF`; texto discreto `#8A8A93` (o `#71717A` falha em contraste para texto).
+
+- Tarefa salva sozinha: chips salvam no toque, título/descrição ao sair do campo (sem botão Salvar).
+- Importância/urgência na UI com 3 níveis (Baixa/Média/Alta = 1/3/5 no banco).
+- "Esta semana" = até domingo. Prazo vencido aparece como "Era pra …", nunca "atrasado".
 
 ## O que pode esperar
 

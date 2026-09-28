@@ -32,13 +32,20 @@ export function compareProvisional(a: Task, b: Task): number {
 }
 
 function toSummary(task: Task): TaskSummary {
-  return { id: task.id, title: task.title, context: null, estimatedMinutes: task.estimatedMinutes };
+  return {
+    id: task.id,
+    title: task.title,
+    context: null,
+    estimatedMinutes: task.estimatedMinutes,
+    dueDate: task.dueDate,
+  };
 }
 
 export function buildAgoraView(tasks: Task[], today: string): AgoraView {
   const ranked = tasks.filter((t) => isAgoraCandidate(t, today)).sort(compareProvisional);
   const [now, ...rest] = ranked;
   return {
+    today,
     pendingCount: tasks.filter((t) => OPEN_STATUSES.has(t.status)).length,
     now: now ? { ...toSummary(now), status: now.status } : null,
     next: rest.slice(0, AGORA_LIMITS.next).map(toSummary),

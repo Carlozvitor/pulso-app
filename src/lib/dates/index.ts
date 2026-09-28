@@ -30,3 +30,38 @@ export function addDays(isoDate: string, days: number): string {
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
+
+/** Dia da semana (0 = domingo) de uma data YYYY-MM-DD. */
+function weekday(isoDate: string): number {
+  return new Date(`${isoDate}T00:00:00Z`).getUTCDay();
+}
+
+/** "Esta semana" termina no domingo. Se hoje já é domingo, é hoje. */
+export function endOfWeek(today: string): string {
+  const day = weekday(today);
+  return addDays(today, day === 0 ? 0 : 7 - day);
+}
+
+/** Diferença em dias entre duas datas YYYY-MM-DD (b − a). */
+export function daysBetween(a: string, b: string): number {
+  return Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000);
+}
+
+const WEEKDAYS = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+const MONTHS = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+/**
+ * Rótulo curto e neutro para prazo — nunca "atrasado".
+ * Hoje · Amanhã · sexta · 3 out · Era pra ontem · Era pra 3 out
+ */
+export function dueLabel(dueDate: string, today: string): string {
+  const diff = daysBetween(today, dueDate);
+  const [, m, d] = dueDate.split("-").map(Number);
+  const short = `${d} ${MONTHS[m - 1]}`;
+  if (diff === 0) return "Hoje";
+  if (diff === 1) return "Amanhã";
+  if (diff === -1) return "Era pra ontem";
+  if (diff < -1) return `Era pra ${short}`;
+  if (diff < 7) return WEEKDAYS[weekday(dueDate)];
+  return short;
+}

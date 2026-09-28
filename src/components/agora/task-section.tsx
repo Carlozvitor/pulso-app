@@ -6,10 +6,11 @@ type TaskSectionProps = {
   id: string;
   label: string;
   tasks: TaskSummary[];
+  today: string;
   quiet?: boolean;
 };
 
-export function TaskSection({ id, label, tasks, quiet }: TaskSectionProps) {
+export function TaskSection({ id, label, tasks, today, quiet }: TaskSectionProps) {
   if (tasks.length === 0) return null;
   return (
     <section aria-labelledby={id} className="mt-8">
@@ -17,7 +18,7 @@ export function TaskSection({ id, label, tasks, quiet }: TaskSectionProps) {
       <ul className="mt-2 divide-y divide-border">
         {tasks.map((task) => (
           <li key={task.id}>
-            <TaskItem task={task} quiet={quiet} />
+            <TaskItem task={task} today={today} quiet={quiet} />
           </li>
         ))}
       </ul>

@@ -7,15 +7,40 @@ export const captureSchema = z.object({
   title: z.string().trim().min(1, "Escreva algo para capturar.").max(500),
 });
 
-export const updateTaskSchema = z.object({
-  id: taskIdSchema,
-  title: z.string().trim().min(1, "A tarefa precisa de um título.").max(500),
-  description: z
-    .string()
-    .trim()
-    .max(5000)
-    .transform((v) => (v === "" ? null : v)),
-});
+const scaleField = z.number().int().min(0).max(5).nullable();
+
+/** Patch parcial: só os campos enviados são alterados (salvamento automático). */
+export const taskPatchSchema = z
+  .object({
+    title: z.string().trim().min(1, "A tarefa precisa de um título.").max(500),
+    description: z
+      .string()
+      .trim()
+      .max(5000)
+      .transform((v) => (v === "" ? null : v)),
+    importance: scaleField,
+    urgency: scaleField,
+    energy: z.enum(ENERGY_LEVELS).nullable(),
+    estimatedMinutes: z.number().int().min(1).max(1440).nullable(),
+    dueDate: z.iso.date().nullable(),
+  })
+  .partial()
+  .refine((patch) => Object.keys(patch).length > 0, "Nada para salvar.");
+
+export type TaskPatch = z.input<typeof taskPatchSchema>;
+
+/** camelCase do app → colunas do banco. */
+export function patchToRow(patch: z.output<typeof taskPatchSchema>) {
+  const row: Record<string, unknown> = {};
+  if (patch.title !== undefined) row.title = patch.title;
+  if (patch.description !== undefined) row.description = patch.description;
+  if (patch.importance !== undefined) row.importance = patch.importance;
+  if (patch.urgency !== undefined) row.urgency = patch.urgency;
+  if (patch.energy !== undefined) row.energy = patch.energy;
+  if (patch.estimatedMinutes !== undefined) row.estimated_minutes = patch.estimatedMinutes;
+  if (patch.dueDate !== undefined) row.due_date = patch.dueDate;
+  return row;
+}
 
 export const setStatusSchema = z.object({
   id: taskIdSchema,

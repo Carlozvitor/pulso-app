@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { BackButton } from "@/components/navigation/back-button";
 import { TaskEditor } from "@/components/tasks/task-editor";
 import { getTask } from "@/lib/tasks/queries";
+import { todayIn } from "@/lib/dates";
 
 export const metadata = { title: "Tarefa" };
 
@@ -15,8 +16,8 @@ export default async function TarefaPage({ params }: PageProps<"/tarefas/[id]">)
       <div className="pt-2 pb-4">
         <BackButton />
       </div>
-      {/* key: reinicia o formulário quando a tarefa muda no servidor */}
-      <TaskEditor key={task.updatedAt} task={task} />
+      {/* Sem key por updatedAt: o salvamento automático não pode remontar o formulário no meio da edição. */}
+      <TaskEditor task={task} today={todayIn()} />
     </>
   );
 }

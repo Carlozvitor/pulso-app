@@ -23,6 +23,10 @@ export const taskPatchSchema = z
     energy: z.enum(ENERGY_LEVELS).nullable(),
     estimatedMinutes: z.number().int().min(1).max(1440).nullable(),
     dueDate: z.iso.date().nullable(),
+    /** A área passa a vir do projeto (trigger no banco). */
+    projectId: taskIdSchema.nullable(),
+    /** Só vale para tarefa sem projeto. */
+    areaId: taskIdSchema.nullable(),
   })
   .partial()
   .refine((patch) => Object.keys(patch).length > 0, "Nada para salvar.");
@@ -39,6 +43,8 @@ export function patchToRow(patch: z.output<typeof taskPatchSchema>) {
   if (patch.energy !== undefined) row.energy = patch.energy;
   if (patch.estimatedMinutes !== undefined) row.estimated_minutes = patch.estimatedMinutes;
   if (patch.dueDate !== undefined) row.due_date = patch.dueDate;
+  if (patch.projectId !== undefined) row.project_id = patch.projectId;
+  if (patch.areaId !== undefined) row.area_id = patch.areaId;
   return row;
 }
 

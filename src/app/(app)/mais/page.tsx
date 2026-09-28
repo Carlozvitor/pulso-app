@@ -1,11 +1,14 @@
 import Link from "next/link";
-import { ChevronRight, FolderOpen, LogOut } from "lucide-react";
+import { ChevronRight, FolderOpen, Layers, LogOut } from "lucide-react";
 import { PageHeader } from "@/components/navigation/page-header";
 import { signOut } from "@/lib/auth/actions";
 
 export const metadata = { title: "Mais" };
 
-const LINKS = [{ href: "/projetos", label: "Projetos", icon: FolderOpen }];
+const LINKS = [
+  { href: "/projetos", label: "Projetos", icon: FolderOpen },
+  { href: "/areas", label: "Áreas", icon: Layers },
+] as const;
 
 export default function MaisPage() {
   return (

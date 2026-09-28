@@ -25,6 +25,9 @@ export type Task = {
   completedAt: string | null;
 };
 
+/** Tarefa com o nome do projeto (ou da área) já resolvido, para listas. */
+export type TaskWithContext = Task & { context: string | null };
+
 /** O mínimo que uma linha de tarefa precisa para ser exibida. */
 export type TaskSummary = {
   id: string;

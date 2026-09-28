@@ -4,7 +4,7 @@
 
 ## Fase
 
-Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Fase 4 (atributos: prazo, duração, energia, importância, urgência) concluída em 2026-09-28 com salvamento automático — React Hook Form descartado por não ser necessário. Fase 5 (motor de prioridade, src/lib/priorities/score.ts) concluída em 2026-09-28; aguardando aprovação para a Fase 6 (projetos e áreas).
+Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Fase 4 (atributos: prazo, duração, energia, importância, urgência) concluída em 2026-09-28 com salvamento automático — React Hook Form descartado por não ser necessário. Fase 5 (motor de prioridade, src/lib/priorities/score.ts) concluída em 2026-09-28. Fase 6 (projetos e áreas: /projetos, /projetos/[id], /areas, projeto/área na tarefa, nome do projeto nas listas) concluída e testada pelo Carlos em 2026-09-28, sem mudança no banco; cadastro inicial feito via dados/cadastro-inicial.sql (5 áreas; AURA CAFÉ, PORTFÓLIO e PULSO em Pessoal; CRUMB CLUB sem área). Próxima: Fase 7 (Tenho X minutos), aguardando aprovação. Teste no celular: npm run dev e abrir http://192.168.1.5:3000 (IP liberado em allowedDevOrigins).
 
 ## Prioridade principal
 
@@ -27,6 +27,7 @@ MVP mobile-first seguindo as fases, uma de cada vez, com aprovação do Carlos e
 - Importância/urgência na UI com 3 níveis (Baixa/Média/Alta = 1/3/5 no banco).
 - "Esta semana" = até domingo. Prazo vencido aparece como "Era pra …", nunca "atrasado".
 - Prioridade (Fase 5): nota = 3×importância + 3×urgência efetiva + bônus. Importância sem valor = Média (3). Urgência efetiva = maior entre a marcada e a do prazo (vencido/hoje 5, amanhã 4, esta semana 3, até 14 dias 2, depois 1, sem prazo 0). Bônus: +2 se ≤15 min; +1 por semana parada (updatedAt), máx. +3. Desempate: prazo mais cedo → mais antiga. Em andamento fica fixo no topo. Energia fora da Agora (usada na Fase 7). Nota nunca aparece na tela.
+- Projetos (Fase 6): concluir/arquivar projeto arquiva junto as tarefas abertas (com aviso); reabrir não restaura tarefas. Tarefa criada dentro do projeto entra como TODO. Prazo do projeto não entra na nota (rever na Fase 9). Progresso = concluídas ÷ total sem arquivadas. Projetos não são apagados; áreas sim (projetos/tarefas ficam sem área). Ícone/cor de área fora da UI.
 
 ## O que pode esperar
 

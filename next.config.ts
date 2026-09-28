@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Só no `next dev`: deixa testar pelo celular na rede local (IP do PC na rede de casa).
+  allowedDevOrigins: ["192.168.1.5"],
   async headers() {
     return [
       {

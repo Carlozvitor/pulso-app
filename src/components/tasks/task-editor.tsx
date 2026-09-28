@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { setTaskStatus, updateTask } from "@/lib/tasks/actions";
 import type { TaskPatch } from "@/lib/tasks/schemas";
 import { TaskAttributes } from "./task-attributes";
+import type { AssignOptions } from "./task-assign";
 
 const STATUS_LABEL: Record<TaskStatus, string> = {
   INBOX: "Inbox",
@@ -56,7 +57,7 @@ const fieldBase =
 
 type SaveState = "idle" | "saving" | "saved";
 
-export function TaskEditor({ task, today }: { task: Task; today: string }) {
+export function TaskEditor({ task, today, options }: { task: Task; today: string; options: AssignOptions }) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description ?? "");
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -159,7 +160,7 @@ export function TaskEditor({ task, today }: { task: Task; today: string }) {
       </div>
 
       <div className="mt-6 border-t border-border pt-6">
-        <TaskAttributes task={task} today={today} save={save} />
+        <TaskAttributes task={task} today={today} options={options} save={save} />
       </div>
 
       <div className="mt-8 flex flex-col gap-3 border-t border-border pt-6">

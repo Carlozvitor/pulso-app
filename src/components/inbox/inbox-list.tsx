@@ -3,18 +3,18 @@
 import Link from "next/link";
 import { useOptimistic, useTransition } from "react";
 import { toast } from "sonner";
-import type { Task } from "@/types/task";
+import type { TaskWithContext } from "@/types/task";
 import { setTaskStatus } from "@/lib/tasks/actions";
 import { CompleteButton } from "@/components/tasks/complete-button";
 import { taskMeta } from "@/components/tasks/task-meta";
 
-export function InboxList({ tasks, today }: { tasks: Task[]; today: string }) {
+export function InboxList({ tasks, today }: { tasks: TaskWithContext[]; today: string }) {
   const [, startTransition] = useTransition();
   const [visible, removeOptimistic] = useOptimistic(tasks, (current, id: string) =>
     current.filter((t) => t.id !== id),
   );
 
-  function complete(task: Task) {
+  function complete(task: TaskWithContext) {
     startTransition(async () => {
       removeOptimistic(task.id);
       const result = await setTaskStatus(task.id, "DONE");
@@ -42,7 +42,7 @@ export function InboxList({ tasks, today }: { tasks: Task[]; today: string }) {
           >
             <span className="min-w-0">
               <span className="block truncate text-body">{task.title}</span>
-              {(task.dueDate || task.estimatedMinutes) && (
+              {(task.context || task.dueDate || task.estimatedMinutes) && (
                 <span className="tabular block truncate text-caption text-foreground-subtle">{taskMeta(task, today)}</span>
               )}
             </span>

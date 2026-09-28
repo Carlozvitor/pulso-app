@@ -17,24 +17,29 @@ export function isAgoraCandidate(task: Task, today: string): boolean {
   return false;
 }
 
-function toSummary(task: Task): TaskSummary {
+/** Resolve o rótulo "projeto ou área" de cada tarefa (vem de lib/projects). */
+export type ContextOf = (task: Task) => string | null;
+
+function toSummary(task: Task, contextOf: ContextOf): TaskSummary {
   return {
     id: task.id,
     title: task.title,
-    context: null,
+    context: contextOf(task),
     estimatedMinutes: task.estimatedMinutes,
     dueDate: task.dueDate,
   };
 }
 
-export function buildAgoraView(tasks: Task[], today: string): AgoraView {
+export function buildAgoraView(tasks: Task[], today: string, contextOf: ContextOf = () => null): AgoraView {
   const ranked = tasks.filter((t) => isAgoraCandidate(t, today)).sort(comparePriority(today));
   const [now, ...rest] = ranked;
   return {
     today,
     pendingCount: tasks.filter((t) => OPEN_STATUSES.has(t.status)).length,
-    now: now ? { ...toSummary(now), status: now.status } : null,
-    next: rest.slice(0, AGORA_LIMITS.next).map(toSummary),
-    later: rest.slice(AGORA_LIMITS.next, AGORA_LIMITS.next + AGORA_LIMITS.later).map(toSummary),
+    now: now ? { ...toSummary(now, contextOf), status: now.status } : null,
+    next: rest.slice(0, AGORA_LIMITS.next).map((t) => toSummary(t, contextOf)),
+    later: rest
+      .slice(AGORA_LIMITS.next, AGORA_LIMITS.next + AGORA_LIMITS.later)
+      .map((t) => toSummary(t, contextOf)),
   };
 }

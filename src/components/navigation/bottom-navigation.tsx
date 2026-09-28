@@ -24,7 +24,7 @@ const LEFT: NavItem[] = [
 
 const RIGHT: NavItem[] = [
   { href: "/agenda", label: "Agenda", icon: CalendarDays },
-  { href: "/mais", label: "Mais", icon: Ellipsis, match: ["/projetos"] },
+  { href: "/mais", label: "Mais", icon: Ellipsis, match: ["/projetos", "/areas"] },
 ];
 
 function isActive(pathname: string, item: NavItem) {

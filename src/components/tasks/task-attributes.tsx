@@ -3,7 +3,6 @@
 import { useState } from "react";
 import type { Energy, Task } from "@/types/task";
 import type { TaskPatch } from "@/lib/tasks/schemas";
-import { addDays, dueLabel, endOfWeek } from "@/lib/dates";
 import { formatDuration } from "@/lib/tasks/format";
 import {
   DURATION_PRESETS,
@@ -14,11 +13,14 @@ import {
   type Level,
 } from "@/lib/tasks/levels";
 import { AttributeRow } from "./attribute-row";
+import { DueField } from "./due-field";
+import { TaskAssign, type AssignOptions } from "./task-assign";
 import { ChipGroup, chipClass } from "./chip-group";
 
 type TaskAttributesProps = {
   task: Task;
   today: string;
+  options: AssignOptions;
   /** Salva um campo; resolve `false` se falhou (o valor local volta). */
   save: (patch: TaskPatch) => Promise<boolean>;
 };
@@ -28,7 +30,7 @@ const levelOptions = LEVELS.map((value) => ({ value, label: LEVEL_LABEL[value] }
 const energyOptions = (["LOW", "MEDIUM", "HIGH"] as Energy[]).map((value) => ({ value, label: ENERGY_LABEL[value] }));
 const durationOptions = DURATION_PRESETS.map((value) => ({ value, label: formatDuration(value) }));
 
-export function TaskAttributes({ task, today, save }: TaskAttributesProps) {
+export function TaskAttributes({ task, today, options, save }: TaskAttributesProps) {
   const [due, setDue] = useState(task.dueDate);
   const [minutes, setMinutes] = useState(task.estimatedMinutes);
   const [energy, setEnergy] = useState(task.energy);
@@ -53,6 +55,7 @@ export function TaskAttributes({ task, today, save }: TaskAttributesProps) {
 
   return (
     <section aria-label="Detalhes" className="flex flex-col gap-7">
+      <TaskAssign task={task} options={options} save={save} />
       <DueField today={today} value={due} onChange={changeDue} />
       <DurationField value={minutes} onChange={changeMinutes} />
 
@@ -83,41 +86,6 @@ export function TaskAttributes({ task, today, save }: TaskAttributesProps) {
         <ChipGroup labelId="urgency-label" options={levelOptions} value={urgency} onChange={changeUrgency} />
       </AttributeRow>
     </section>
-  );
-}
-
-function DueField({
-  today,
-  value,
-  onChange,
-}: {
-  today: string;
-  value: string | null;
-  onChange: (v: string | null) => void;
-}) {
-  const quick = [
-    { value: today, label: "Hoje" },
-    { value: addDays(today, 1), label: "Amanhã" },
-    { value: endOfWeek(today), label: "Esta semana" },
-  ].filter((o, i, all) => all.findIndex((x) => x.value === o.value) === i); // domingo: "esta semana" = hoje
-  const custom = value !== null && !quick.some((o) => o.value === value);
-
-  return (
-    <AttributeRow id="due-label" label="Prazo" onClear={value ? () => onChange(null) : undefined}>
-      <ChipGroup labelId="due-label" options={quick} value={custom ? null : value} onChange={onChange}>
-        {/* Input de data nativo por cima do chip: abre o seletor do sistema no toque. */}
-        <label className={`${chipClass(custom)} relative`}>
-          {custom ? dueLabel(value, today) : "Outra data"}
-          <input
-            type="date"
-            value={value ?? ""}
-            onChange={(e) => onChange(e.target.value || null)}
-            aria-label="Escolher data do prazo"
-            className="absolute inset-0 cursor-pointer opacity-0"
-          />
-        </label>
-      </ChipGroup>
-    </AttributeRow>
   );
 }
 

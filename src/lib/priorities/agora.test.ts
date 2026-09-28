@@ -63,6 +63,11 @@ describe("buildAgoraView", () => {
     expect(view.pendingCount).toBe(10);
   });
 
+  it("rotula cada tarefa com o contexto resolvido fora daqui", () => {
+    const view = buildAgoraView([task({ projectId: "p1" }), task({})], TODAY, (t) => (t.projectId ? "CRUMB" : null));
+    expect([view.now?.context, ...view.next.map((t) => t.context)]).toEqual(["CRUMB", null]);
+  });
+
   it("vazio quando não há candidatas", () => {
     const view = buildAgoraView([task({ status: "INBOX" })], TODAY);
     expect(view.now).toBeNull();

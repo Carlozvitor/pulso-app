@@ -12,6 +12,14 @@ describe("taskPatchSchema", () => {
     expect(patchToRow(parsed)).toEqual({ due_date: null, description: null });
   });
 
+  it("projeto e área viram colunas; null tira do projeto", () => {
+    const id = "0b8f3c3e-6a2d-4f7e-9b1a-2c4d5e6f7a8b";
+    expect(patchToRow(taskPatchSchema.parse({ projectId: id }))).toEqual({ project_id: id });
+    expect(patchToRow(taskPatchSchema.parse({ projectId: null }))).toEqual({ project_id: null });
+    expect(patchToRow(taskPatchSchema.parse({ areaId: id }))).toEqual({ area_id: id });
+    expect(taskPatchSchema.safeParse({ projectId: "crumb" }).success).toBe(false);
+  });
+
   it("rejeita valores fora da escala, datas inválidas e patch vazio", () => {
     expect(taskPatchSchema.safeParse({ importance: 7 }).success).toBe(false);
     expect(taskPatchSchema.safeParse({ dueDate: "amanhã" }).success).toBe(false);

@@ -42,7 +42,7 @@ describe("isAgoraCandidate", () => {
 });
 
 describe("buildAgoraView", () => {
-  it("em andamento primeiro, depois prazo, depois a mais antiga", () => {
+  it("em andamento primeiro, depois a maior nota", () => {
     const old = task({ title: "antiga" });
     const due = task({ title: "com prazo", dueDate: "2026-10-05" });
     const doing = task({ title: "fazendo", status: "IN_PROGRESS" });

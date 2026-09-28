@@ -1,5 +1,6 @@
 import type { AgoraView, Task, TaskSummary } from "@/types/task";
 import { addDays } from "@/lib/dates";
+import { comparePriority } from "./score";
 
 const OPEN_STATUSES = new Set(["INBOX", "TODO", "IN_PROGRESS"]);
 
@@ -16,21 +17,6 @@ export function isAgoraCandidate(task: Task, today: string): boolean {
   return false;
 }
 
-/**
- * Ordem PROVISÓRIA (Fase 3): em andamento → prazo mais próximo → mais antiga.
- * A Fase 5 troca isto pelo score de prioridade (importância, urgência, prazo, esforço).
- */
-export function compareProvisional(a: Task, b: Task): number {
-  const progress = Number(b.status === "IN_PROGRESS") - Number(a.status === "IN_PROGRESS");
-  if (progress !== 0) return progress;
-  if (a.dueDate !== b.dueDate) {
-    if (!a.dueDate) return 1;
-    if (!b.dueDate) return -1;
-    return a.dueDate < b.dueDate ? -1 : 1;
-  }
-  return a.createdAt.localeCompare(b.createdAt);
-}
-
 function toSummary(task: Task): TaskSummary {
   return {
     id: task.id,
@@ -42,7 +28,7 @@ function toSummary(task: Task): TaskSummary {
 }
 
 export function buildAgoraView(tasks: Task[], today: string): AgoraView {
-  const ranked = tasks.filter((t) => isAgoraCandidate(t, today)).sort(compareProvisional);
+  const ranked = tasks.filter((t) => isAgoraCandidate(t, today)).sort(comparePriority(today));
   const [now, ...rest] = ranked;
   return {
     today,

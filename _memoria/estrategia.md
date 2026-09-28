@@ -1,10 +1,10 @@
-﻿# Estratégia
+# Estratégia
 
 > O que importa agora. Prioridades, metas, prazos.
 
 ## Fase
 
-Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Agora usa ordem provisória (src/lib/priorities/agora.ts) até a Fase 5. Fase 4 (atributos: prazo, duração, energia, importância, urgência) concluída em 2026-09-28 com salvamento automático — React Hook Form descartado por não ser necessário.
+Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Fase 4 (atributos: prazo, duração, energia, importância, urgência) concluída em 2026-09-28 com salvamento automático — React Hook Form descartado por não ser necessário. Fase 5 (motor de prioridade, src/lib/priorities/score.ts) concluída em 2026-09-28; aguardando aprovação para a Fase 6 (projetos e áreas).
 
 ## Prioridade principal
 
@@ -26,6 +26,7 @@ MVP mobile-first seguindo as fases, uma de cada vez, com aprovação do Carlos e
 - Tarefa salva sozinha: chips salvam no toque, título/descrição ao sair do campo (sem botão Salvar).
 - Importância/urgência na UI com 3 níveis (Baixa/Média/Alta = 1/3/5 no banco).
 - "Esta semana" = até domingo. Prazo vencido aparece como "Era pra …", nunca "atrasado".
+- Prioridade (Fase 5): nota = 3×importância + 3×urgência efetiva + bônus. Importância sem valor = Média (3). Urgência efetiva = maior entre a marcada e a do prazo (vencido/hoje 5, amanhã 4, esta semana 3, até 14 dias 2, depois 1, sem prazo 0). Bônus: +2 se ≤15 min; +1 por semana parada (updatedAt), máx. +3. Desempate: prazo mais cedo → mais antiga. Em andamento fica fixo no topo. Energia fora da Agora (usada na Fase 7). Nota nunca aparece na tela.
 
 ## O que pode esperar
 

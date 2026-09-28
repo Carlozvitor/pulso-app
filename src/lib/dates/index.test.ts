@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { greetingFor, hourIn } from ".";
+import { addDays, greetingFor, hourIn, todayIn } from ".";
 
 describe("hourIn", () => {
   it("converte para o fuso de Fortaleza (UTC−3)", () => {
@@ -15,5 +15,17 @@ describe("greetingFor", () => {
     expect(greetingFor(new Date("2026-09-28T15:00:00Z"))).toBe("Boa tarde."); // 12h
     expect(greetingFor(new Date("2026-09-28T21:00:00Z"))).toBe("Boa noite."); // 18h
     expect(greetingFor(new Date("2026-09-28T07:59:00Z"))).toBe("Boa noite."); // 04h59
+  });
+});
+
+describe("todayIn / addDays", () => {
+  it("vira o dia pelo fuso local, não por UTC", () => {
+    expect(todayIn(new Date("2026-09-29T02:30:00Z"))).toBe("2026-09-28"); // 23h30 em Fortaleza
+    expect(todayIn(new Date("2026-09-29T03:00:00Z"))).toBe("2026-09-29");
+  });
+
+  it("soma dias atravessando mês", () => {
+    expect(addDays("2026-09-30", 1)).toBe("2026-10-01");
+    expect(addDays("2026-10-01", -1)).toBe("2026-09-30");
   });
 });

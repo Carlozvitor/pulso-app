@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { QuickCapture } from "@/components/tasks/quick-capture";
+import { captureTask } from "@/lib/tasks/actions";
 
 type NavItem = {
   href: string;
@@ -53,9 +54,15 @@ export function BottomNavigation() {
   const pathname = usePathname();
   const [captureOpen, setCaptureOpen] = useState(false);
 
-  function handleCapture() {
-    // Fase 3: salvar na Inbox (Supabase). Por enquanto só confirma a interação.
-    toast("Captura ainda não é salva — chega na Fase 3.");
+  async function handleCapture(title: string) {
+    const result = await captureTask(title);
+    if (result.ok) {
+      toast("Anotado na Inbox.");
+    } else {
+      toast.error(result.error, {
+        action: { label: "Tentar de novo", onClick: () => void handleCapture(title) },
+      });
+    }
   }
 
   return (

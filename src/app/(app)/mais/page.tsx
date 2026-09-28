@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ChevronRight, FolderOpen } from "lucide-react";
+import { ChevronRight, FolderOpen, LogOut } from "lucide-react";
 import { PageHeader } from "@/components/navigation/page-header";
+import { signOut } from "@/lib/auth/actions";
 
 export const metadata = { title: "Mais" };
 
@@ -24,6 +25,16 @@ export default function MaisPage() {
           </li>
         ))}
       </ul>
+
+      <form action={signOut} className="mt-10 border-t border-border pt-2">
+        <button
+          type="submit"
+          className="-mx-4 flex min-h-14 w-[calc(100%+2rem)] items-center gap-4 px-4 text-left transition-colors duration-(--duration-fast) active:bg-surface"
+        >
+          <LogOut aria-hidden className="size-5 text-foreground-subtle" strokeWidth={1.75} />
+          <span className="text-body text-foreground-secondary">Sair</span>
+        </button>
+      </form>
     </>
   );
 }

@@ -5,14 +5,13 @@ import { TaskSection } from "@/components/agora/task-section";
 import { PageHeader } from "@/components/navigation/page-header";
 import { greetingFor } from "@/lib/dates";
 import { pendingLabel } from "@/lib/tasks/format";
-import { EMPTY_AGORA, SAMPLE_AGORA } from "@/lib/tasks/sample";
+import { getAgoraView } from "@/lib/tasks/queries";
 
 export const metadata = { title: "Agora" };
 
-export default async function AgoraPage({ searchParams }: PageProps<"/agora">) {
-  // Fase 2: dados de exemplo. `?estado=vazio` mostra o estado vazio para revisão.
-  const { estado } = await searchParams;
-  const view = estado === "vazio" ? EMPTY_AGORA : SAMPLE_AGORA;
+export default async function AgoraPage() {
+  const view = await getAgoraView();
+  const inboxOnly = !view.now && view.pendingCount > 0;
 
   return (
     <>
@@ -32,7 +31,11 @@ export default async function AgoraPage({ searchParams }: PageProps<"/agora">) {
         <EmptyState
           icon={Leaf}
           title="Nada pedindo sua atenção agora."
-          description="Quando lembrar de algo, toque em + para anotar."
+          description={
+            inboxOnly
+              ? "O que você capturou está na Inbox. Quando algo estiver pronto para fazer, ele aparece aqui."
+              : "Quando lembrar de algo, toque em + para anotar."
+          }
         />
       )}
     </>

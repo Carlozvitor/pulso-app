@@ -1,21 +1,22 @@
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { notFound } from "next/navigation";
+import { BackButton } from "@/components/navigation/back-button";
+import { TaskEditor } from "@/components/tasks/task-editor";
+import { getTask } from "@/lib/tasks/queries";
 
 export const metadata = { title: "Tarefa" };
 
-export default function TarefaPage() {
-  // Fase 3: detalhe e edição da tarefa.
+export default async function TarefaPage({ params }: PageProps<"/tarefas/[id]">) {
+  const { id } = await params;
+  const task = await getTask(id);
+  if (!task) notFound();
+
   return (
     <>
-      <Link
-        href="/agora"
-        className="-ml-2 inline-flex min-h-11 items-center gap-1 pr-3 text-sm text-foreground-secondary active:text-foreground"
-      >
-        <ChevronLeft aria-hidden className="size-5" />
-        Agora
-      </Link>
-      <h1 className="mt-4 text-display font-semibold tracking-tight">Tarefa</h1>
-      <p className="mt-2 text-sm text-foreground-subtle">Detalhe e edição chegam na Fase 3.</p>
+      <div className="pt-2 pb-4">
+        <BackButton />
+      </div>
+      {/* key: reinicia o formulário quando a tarefa muda no servidor */}
+      <TaskEditor key={task.updatedAt} task={task} />
     </>
   );
 }

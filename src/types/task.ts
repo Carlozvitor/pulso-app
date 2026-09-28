@@ -37,7 +37,8 @@ export type TaskSummary = {
 /** O que a tela Agora mostra — já priorizado e limitado. */
 export type AgoraView = {
   pendingCount: number;
-  now: TaskSummary | null;
+  /** A próxima ação — com status para saber se é "Começar" ou "Concluir". */
+  now: (TaskSummary & { status: TaskStatus }) | null;
   next: TaskSummary[];
   later: TaskSummary[];
 };

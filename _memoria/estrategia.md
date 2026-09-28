@@ -4,7 +4,7 @@
 
 ## Fase
 
-Fases 1 (Fundação) e 2 (Experiência mobile) concluídas em 2026-09-28. Próxima: Fase 3 — Captura e Inbox + Supabase (aguardando aprovação). A Agora ainda usa dados de exemplo (src/lib/tasks/sample.ts; ?estado=vazio mostra o vazio).
+Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Agora usa ordem provisória (src/lib/priorities/agora.ts) até a Fase 5. React Hook Form fica para a Fase 4 (formulário de atributos).
 
 ## Prioridade principal
 
@@ -16,7 +16,7 @@ MVP mobile-first seguindo as fases, uma de cada vez, com aprovação do Carlos e
 - `user_id` + RLS em todas as tabelas.
 - Supabase entra no início da Fase 3 (não na 8).
 - Prioridade calculada em runtime (`lib/priorities`), sem coluna `priority` no banco.
-- Login por código OTP de 6 dígitos (funciona dentro do PWA instalado no iOS).
+- Login por e-mail + senha (2026-09-28). O código OTP foi descartado: no plano gratuito com o SMTP padrão o Supabase não deixa editar templates (só manda link, que quebra no PWA do iOS). Autoconfirm ligado, senha mínima 8. Desligar novos cadastros depois da conta do Carlos.
 - Agora = TODO + IN_PROGRESS + itens da Inbox com prazo hoje/amanhã. Máx. 6 tarefas.
 - "Tenho X minutos": tarefa sem duração assume ~15 min.
 - Área vem do projeto quando a tarefa tem projeto; projetos ganham `due_date`; `session_tasks` para sessões.

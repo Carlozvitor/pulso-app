@@ -16,7 +16,7 @@ como dev principal, pensando também em UX e produto.
 - `_memoria/contexto-mestre.md` — documento mestre do produto (ler antes de qualquer funcionalidade)
 - `identidade/design-guide.md` — tokens de cor, tipografia, raios, movimento
 - `src/app/(app)/` — rotas do app: agora, inbox, agenda, mais, projetos, tarefas/[id]
-- `src/app/login/` — autenticação (OTP por e-mail, Fase 3)
+- `src/app/login/` — autenticação (e-mail + senha)
 - `src/components/ui/` — primitivos shadcn (base-nova / Base UI). Editar só tema/tokens
 - `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, feedback, pwa
 - `src/lib/priorities/` — motor de prioridade e seleção de sessão (TS puro, com testes)

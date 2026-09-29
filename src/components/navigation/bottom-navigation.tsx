@@ -18,7 +18,7 @@ type NavItem = {
 };
 
 const LEFT: NavItem[] = [
-  { href: "/agora", label: "Agora", icon: CircleDot },
+  { href: "/agora", label: "Agora", icon: CircleDot, match: ["/sessao"] },
   { href: "/inbox", label: "Inbox", icon: Inbox },
 ];
 

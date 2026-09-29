@@ -18,6 +18,11 @@ export function greetingFor(date: Date, timeZone: string = TIME_ZONE): string {
   return "Boa noite.";
 }
 
+/** "14:35" no fuso do usuário. */
+export function timeLabel(date: Date, timeZone: string = TIME_ZONE): string {
+  return new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone }).format(date);
+}
+
 /** Data de hoje (YYYY-MM-DD) no fuso do usuário. */
 export function todayIn(now: Date = new Date(), timeZone: string = TIME_ZONE): string {
   // en-CA formata como YYYY-MM-DD

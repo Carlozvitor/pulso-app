@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, dueLabel, endOfWeek, greetingFor, hourIn, todayIn } from ".";
+import { addDays, dueLabel, endOfWeek, greetingFor, hourIn, timeLabel, todayIn } from ".";
 
 describe("hourIn", () => {
   it("converte para o fuso de Fortaleza (UTC−3)", () => {
@@ -49,5 +49,12 @@ describe("dueLabel", () => {
     ["2026-09-20", "Era pra 20 set"],
   ])("%s → %s", (due, expected) => {
     expect(dueLabel(due, today)).toBe(expected);
+  });
+});
+
+describe("timeLabel", () => {
+  it("hora e minuto no fuso de Fortaleza (UTC−3)", () => {
+    expect(timeLabel(new Date("2026-09-28T17:35:00Z"))).toBe("14:35");
+    expect(timeLabel(new Date("2026-09-29T02:05:00Z"))).toBe("23:05");
   });
 });

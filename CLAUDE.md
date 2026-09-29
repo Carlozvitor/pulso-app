@@ -15,12 +15,12 @@ como dev principal, pensando também em UX e produto.
 - `_memoria/` — contexto do projeto, tom da interface, fase atual e decisões aprovadas
 - `_memoria/contexto-mestre.md` — documento mestre do produto (ler antes de qualquer funcionalidade)
 - `identidade/design-guide.md` — tokens de cor, tipografia, raios, movimento
-- `src/app/(app)/` — rotas do app: agora, inbox, agenda, mais, projetos, tarefas/[id]
+- `src/app/(app)/` — rotas do app: agora, inbox, agenda, mais, projetos, projetos/[id], areas, sessao, tarefas/[id]
 - `src/app/login/` — autenticação (e-mail + senha)
 - `src/components/ui/` — primitivos shadcn (base-nova / Base UI). Editar só tema/tokens
 - `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, feedback, pwa
 - `src/lib/priorities/` — motor de prioridade e seleção de sessão (TS puro, com testes)
-- `src/lib/{tasks,projects}/` — queries, server actions e schemas Zod
+- `src/lib/{tasks,projects,sessions}/` — queries, server actions e schemas Zod
 - `src/lib/supabase/` — clients (browser/server) e proxy de auth
 - `src/lib/dates/` — datas no fuso do usuário (America/Fortaleza)
 - `supabase/migrations/` — schema versionado

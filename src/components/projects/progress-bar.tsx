@@ -13,7 +13,7 @@ export function ProgressBar({ progress, label }: { progress: ProjectProgress; la
       className="h-1 w-full overflow-hidden rounded-full bg-border"
     >
       <div
-        className="h-full rounded-full bg-primary-soft transition-[width] duration-(--duration-base)"
+        className="h-full rounded-full bg-success transition-[width] duration-(--duration-base)"
         style={{ width: `${progress.percent}%` }}
       />
     </div>

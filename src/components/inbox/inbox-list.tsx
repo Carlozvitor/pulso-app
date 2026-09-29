@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useOptimistic, useTransition } from "react";
 import { toast } from "sonner";
 import type { TaskWithContext } from "@/types/task";
-import { setTaskStatus } from "@/lib/tasks/actions";
+import { setTaskStatus } from "@/lib/actions/client";
 import { CompleteButton } from "@/components/tasks/complete-button";
 import { taskMeta } from "@/components/tasks/task-meta";
 
@@ -38,7 +38,7 @@ export function InboxList({ tasks, today }: { tasks: TaskWithContext[]; today: s
           <CompleteButton title={task.title} onComplete={() => complete(task)} />
           <Link
             href={`/tarefas/${task.id}`}
-            className="-mr-4 flex min-h-14 min-w-0 flex-1 items-center py-3 pr-4 transition-colors duration-(--duration-fast) active:bg-surface"
+            className="-mr-4 flex min-h-14 min-w-0 flex-1 items-center py-3 pr-4 transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
           >
             <span className="min-w-0">
               <span className="block truncate text-body">{task.title}</span>

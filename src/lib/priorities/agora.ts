@@ -12,21 +12,35 @@ export const AGORA_LIMITS = { next: 3, later: 2 } as const;
  * (para nada importante ficar preso na Inbox).
  */
 export function isAgoraCandidate(task: Task, today: string): boolean {
+  // "Agora não": fica guardada em A fazer e volta sozinha no dia marcado.
+  if (isSnoozed(task, today)) return false;
   if (task.status === "TODO" || task.status === "IN_PROGRESS") return true;
   if (task.status === "INBOX" && task.dueDate) return task.dueDate <= addDays(today, 1);
   return false;
 }
 
+/** "Agora não" ainda valendo hoje. */
+export function isSnoozed(task: Pick<Task, "snoozedUntil">, today: string): boolean {
+  return task.snoozedUntil !== null && task.snoozedUntil > today;
+}
+
+/** Pausada = parou de fazer sem concluir (A fazer + marca). */
+export function isPaused(task: Pick<Task, "status" | "pausedAt">): boolean {
+  return task.status === "TODO" && task.pausedAt !== null;
+}
+
 /** Resolve o rótulo "projeto ou área" de cada tarefa (vem de lib/projects). */
 export type ContextOf = (task: Task) => string | null;
 
-function toSummary(task: Task, contextOf: ContextOf): TaskSummary {
+export function toSummary(task: Task, contextOf: ContextOf): TaskSummary {
   return {
     id: task.id,
     title: task.title,
     context: contextOf(task),
     estimatedMinutes: task.estimatedMinutes,
     dueDate: task.dueDate,
+    energy: task.energy,
+    paused: isPaused(task),
   };
 }
 

@@ -1,5 +1,5 @@
-import { BackButton } from "@/components/navigation/back-button";
-import { PageHeader } from "@/components/navigation/page-header";
+import { Timer } from "lucide-react";
+import { Page } from "@/components/layout/page";
 import { ActiveSession } from "@/components/session/active-session";
 import { SessionPicker } from "@/components/session/session-picker";
 import { SessionProposal } from "@/components/session/session-proposal";
@@ -47,12 +47,8 @@ export default async function SessaoPage({ searchParams }: PageProps<"/sessao">)
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <div className="pt-2">
-        <BackButton />
-      </div>
-      <PageHeader title="Tenho alguns minutos" description="O PULSO monta uma sessão curta que cabe no seu tempo." />
+    <Page back icon={Timer} title="Tenho alguns minutos" description="O PULSO monta uma sessão curta que cabe no seu tempo.">
       {children}
-    </>
+    </Page>
   );
 }

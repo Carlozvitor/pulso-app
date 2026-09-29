@@ -19,7 +19,7 @@ export function ProjectRow({ project, today, quiet }: { project: ProjectSummary;
   return (
     <Link
       href={`/projetos/${project.id}`}
-      className="-mx-4 flex min-h-16 flex-col justify-center gap-2 px-4 py-3 transition-colors duration-(--duration-fast) active:bg-surface"
+      className="-mx-4 flex min-h-16 flex-col justify-center gap-2 px-4 py-3 transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
     >
       <span className="flex items-baseline justify-between gap-4">
         <span className={cn("truncate text-body", quiet ? "text-foreground-secondary" : "text-foreground")}>

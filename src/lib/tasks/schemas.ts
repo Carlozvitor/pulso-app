@@ -7,6 +7,25 @@ export const captureSchema = z.object({
   title: z.string().trim().min(1, "Escreva algo para capturar.").max(500),
 });
 
+/**
+ * Captura rápida (+): passa pela fila do aparelho antes de ir ao servidor.
+ * O id nasce no celular — reenviar a mesma captura nunca cria tarefa duplicada.
+ */
+export const queuedCaptureSchema = captureSchema.extend({
+  id: taskIdSchema,
+  capturedAt: z.iso.datetime({ offset: true }),
+});
+
+export type QueuedCapture = z.input<typeof queuedCaptureSchema>;
+
+/** Guarda a hora real da captura (pode ter sido offline), mas nunca uma hora no futuro. */
+export function queuedCaptureToRow(capture: z.output<typeof queuedCaptureSchema>, now = new Date()) {
+  const capturedAt = new Date(capture.capturedAt);
+  const createdAt = capturedAt > now ? now : capturedAt;
+  // Anotou, já é tarefa a fazer (a Inbox deixou de ser etapa obrigatória).
+  return { id: capture.id, title: capture.title, status: "TODO" as const, created_at: createdAt.toISOString() };
+}
+
 const scaleField = z.number().int().min(0).max(5).nullable();
 
 /** Patch parcial: só os campos enviados são alterados (salvamento automático). */
@@ -72,6 +91,8 @@ export const taskRowSchema = z
     created_at: z.string(),
     updated_at: z.string(),
     completed_at: z.string().nullable(),
+    paused_at: z.string().nullable(),
+    snoozed_until: z.string().nullable(),
   })
   .transform(
     (r): Task => ({
@@ -89,8 +110,10 @@ export const taskRowSchema = z
       createdAt: r.created_at,
       updatedAt: r.updated_at,
       completedAt: r.completed_at,
+      pausedAt: r.paused_at,
+      snoozedUntil: r.snoozed_until,
     }),
   );
 
 export const TASK_COLUMNS =
-  "id, title, description, status, importance, urgency, energy, estimated_minutes, due_date, project_id, area_id, created_at, updated_at, completed_at";
+  "id, title, description, status, importance, urgency, energy, estimated_minutes, due_date, project_id, area_id, created_at, updated_at, completed_at, paused_at, snoozed_until";

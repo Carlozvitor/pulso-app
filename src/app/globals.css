@@ -9,11 +9,12 @@
    Tokens do PULSO — fonte de verdade: identidade/design-guide.md
    ------------------------------------------------------------------ */
 :root {
-  /* Superfícies (elevação por cor, não por sombra) */
-  --background: #0a0a0b;
-  --surface: #111214;
-  --elevated: #18191c;
-  --border: #25262a;
+  /* Superfícies — fundo quase preto, painéis com moldura (elevação por cor, não por sombra) */
+  --background: #050506;
+  --surface: #0d0d0f; /* painéis e listas */
+  --elevated: #16161a; /* sheets, popovers, campos */
+  --border: #232327;
+  --border-strong: #2e2e33;
 
   /* Texto */
   --foreground: #f4f4f5;
@@ -21,14 +22,34 @@
   --foreground-subtle: #8a8a93; /* texto discreto — passa 4.5:1 sobre surface */
   --muted-ui: #71717a; /* só elementos não textuais */
 
-  /* Accent (usar com moderação) */
-  --primary: #4c5bff; /* botão principal e "+" — branco sobre ele ≈ 4.9:1 */
+  /* Accent (botão principal, captura, foco) */
+  --primary: #4c5bff; /* branco sobre ele ≈ 4.9:1 */
   --primary-foreground: #ffffff;
-  --primary-soft: #8b95ff; /* item ativo, progresso, links, foco */
+  --primary-soft: #8b95ff; /* item ativo, links, foco */
 
   /* Semânticas — nunca para "atraso" */
-  --success: #4fae7c;
+  --success: #34d399; /* conclusão e anéis de progresso */
   --destructive: #e5484d; /* só erros reais e exclusão */
+
+  /*
+   * Famílias de cor por seção (cards com leve degradê e borda da mesma cor):
+   * teal = Agora · plum = Projetos · amber = Prazos/Agenda
+   */
+  --teal-a: #0c3a42;
+  --teal-b: #081b20;
+  --teal-line: #1d5c66;
+  --teal-tile: #0f4e59;
+  --teal-ink: #5eead4;
+  --plum-a: #37195a;
+  --plum-b: #180d28;
+  --plum-line: #5a2f8c;
+  --plum-tile: #4a2478;
+  --plum-ink: #c9a7ff;
+  --amber-a: #4d260c;
+  --amber-b: #1f1007;
+  --amber-line: #8a4818;
+  --amber-tile: #6d3510;
+  --amber-ink: #fdba74;
 
   /* Mapeamento para os nomes que o shadcn espera */
   --card: var(--surface);
@@ -44,20 +65,37 @@
   --input: var(--border);
   --ring: var(--primary-soft);
 
-  /* Raios: 10 controles · 14 cards · 20 bottom sheets */
-  --radius: 0.875rem;
+  /* Raios: 10 controles · 12 painéis e cards · 20 bottom sheets */
+  --radius: 0.75rem;
 
-  /* Layout mobile */
+  /* Escala de texto: celular 13/15/17/20/28 · PC 13/14/15/20/24 */
+  --fs-caption: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-body: 1.0625rem;
+  --fs-title: 1.25rem;
+  --fs-display: 1.75rem;
+
+  /* Layout */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --bottom-nav-height: 4rem;
+  --topbar-height: 3.75rem;
+  --sidebar-width: 20rem;
 
   /* Movimento */
   --duration-fast: 150ms;
   --duration-base: 200ms;
   --duration-slow: 250ms;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --fs-sm: 0.875rem;
+    --fs-body: 0.9375rem;
+    --fs-display: 1.5rem;
+  }
 }
 
 @theme inline {
@@ -84,6 +122,13 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-teal-tile: var(--teal-tile);
+  --color-teal-ink: var(--teal-ink);
+  --color-plum-tile: var(--plum-tile);
+  --color-plum-ink: var(--plum-ink);
+  --color-amber-tile: var(--amber-tile);
+  --color-amber-ink: var(--amber-ink);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -91,17 +136,17 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans);
 
-  /* Escala tipográfica mobile: 13 / 15 / 17 / 20 / 28 */
-  --text-caption: 0.8125rem;
+  /* Escala tipográfica — valores em :root (--fs-*), menores no PC */
+  --text-caption: var(--fs-caption);
   --text-caption--line-height: 1.125rem;
-  --text-sm: 0.9375rem;
+  --text-sm: var(--fs-sm);
   --text-sm--line-height: 1.375rem;
-  --text-body: 1.0625rem;
-  --text-body--line-height: 1.5rem;
-  --text-title: 1.25rem;
-  --text-title--line-height: 1.75rem;
-  --text-display: 1.75rem;
-  --text-display--line-height: 2.125rem;
+  --text-body: var(--fs-body);
+  --text-body--line-height: 1.5;
+  --text-title: var(--fs-title);
+  --text-title--line-height: 1.35;
+  --text-display: var(--fs-display);
+  --text-display--line-height: 1.2;
   --text-display--letter-spacing: -0.02em;
 
   --radius-sm: calc(var(--radius) * 0.6);
@@ -115,6 +160,8 @@
   --spacing-safe-top: var(--safe-top);
   --spacing-safe-bottom: var(--safe-bottom);
   --spacing-bottom-nav: var(--bottom-nav-height);
+  --spacing-topbar: var(--topbar-height);
+  --spacing-sidebar: var(--sidebar-width);
 
   /* ease-out forte: resposta imediata, assentamento suave */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -170,4 +217,67 @@
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------
+   Painéis e cards coloridos
+   ------------------------------------------------------------------ */
+/* Painel com moldura sobre o fundo preto (barra lateral, painel principal, listas). Aceita lg:panel. */
+@utility panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+@layer components {
+  /* Card de uma família de cor: degradê leve + borda da mesma cor + brilho no canto */
+  .tint {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid var(--tint-line);
+    border-radius: var(--radius);
+    background: linear-gradient(160deg, var(--tint-a), var(--tint-b));
+  }
+  .tint::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / 0.07), transparent 55%);
+  }
+  .tint-teal {
+    --tint-a: var(--teal-a);
+    --tint-b: var(--teal-b);
+    --tint-line: var(--teal-line);
+    --tint-tile: var(--teal-tile);
+    --tint-ink: var(--teal-ink);
+  }
+  .tint-plum {
+    --tint-a: var(--plum-a);
+    --tint-b: var(--plum-b);
+    --tint-line: var(--plum-line);
+    --tint-tile: var(--plum-tile);
+    --tint-ink: var(--plum-ink);
+  }
+  .tint-amber {
+    --tint-a: var(--amber-a);
+    --tint-b: var(--amber-b);
+    --tint-line: var(--amber-line);
+    --tint-tile: var(--amber-tile);
+    --tint-ink: var(--amber-ink);
+  }
+  /* Sem família: mesma forma, sem cor (itens "mais tarde", estados vazios) */
+  .tint-neutral {
+    --tint-a: #141417;
+    --tint-b: #0d0d0f;
+    --tint-line: var(--border);
+    --tint-tile: #222227;
+    --tint-ink: var(--foreground-secondary);
+  }
+  .tint-tile {
+    background: var(--tint-tile);
+    color: var(--tint-ink);
+  }
 }

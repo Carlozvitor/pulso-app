@@ -12,7 +12,7 @@ export function projectProgress(statuses: TaskStatus[]): ProjectProgress {
 const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, "pt-BR");
 
 /** Prazo mais cedo primeiro; sem prazo depois; empate pelo nome. */
-function compareProjects(a: Project, b: Project): number {
+export function compareProjects(a: Project, b: Project): number {
   if (a.dueDate !== b.dueDate) {
     if (!a.dueDate) return 1;
     if (!b.dueDate) return -1;
@@ -50,4 +50,12 @@ export function contextLabel(task: Pick<Task, "projectId" | "areaId">, lookup: C
     if (project) return project;
   }
   return (task.areaId && lookup.areas.get(task.areaId)) || null;
+}
+
+/** Iniciais para o selo do projeto: "CRUMB CLUB" → "CC", "PORTFÓLIO" → "PO". */
+export function projectMonogram(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "?";
+  const letters = words.length === 1 ? words[0].slice(0, 2) : words[0][0] + words[1][0];
+  return letters.toLocaleUpperCase("pt-BR");
 }

@@ -6,6 +6,23 @@
 
 Fases 1 e 2 concluídas em 2026-09-28. Fase 3 (Captura, Inbox, edição, status + Supabase/auth/RLS) concluída em 2026-09-28: migration aplicada no Supabase (pesazkdmmirxffhqkhhs) e fluxo testado de ponta a ponta com conta descartável; conta do Carlos criada e novos cadastros desligados (disable_signup). Fase 4 (atributos: prazo, duração, energia, importância, urgência) concluída em 2026-09-28 com salvamento automático — React Hook Form descartado por não ser necessário. Fase 5 (motor de prioridade, src/lib/priorities/score.ts) concluída em 2026-09-28. Fase 6 (projetos e áreas: /projetos, /projetos/[id], /areas, projeto/área na tarefa, nome do projeto nas listas) concluída e testada pelo Carlos em 2026-09-28, sem mudança no banco; cadastro inicial feito via dados/cadastro-inicial.sql (5 áreas; AURA CAFÉ, PORTFÓLIO e PULSO em Pessoal; CRUMB CLUB sem área). Fase 7 (Tenho X minutos: /sessao, src/lib/priorities/session.ts, src/lib/sessions/) com código pronto em 2026-09-28, sem mudança no banco; falta teste do Carlos. Teste no celular: npm run dev e abrir http://192.168.1.5:3000 (IP liberado em allowedDevOrigins).
 
+### Hub do Carlos (2026-09-29)
+
+Fase 8 e Fase 9 etapa 1 (visual novo + layout PC, com Feitas, A fazer, captura direto em TODO, "Agora não" e Pausar/Retomar) concluídas e salvas no GitHub em 2026-09-29. O Carlos entregou o documento mestre do **Hub do Carlos** (`_memoria/hub-mestre.md`, agora fonte de verdade de produto): o PULSO vira o módulo de execução dentro do Hub.
+
+Decisões aprovadas (2026-09-29):
+- O Hub é o PULSO crescendo: mesmo app, mesmo repo, mesmo Supabase.
+- URLs atuais do PULSO ficam iguais (/agora, /a-fazer…); a Central vira a página inicial.
+- Módulo só aparece na barra lateral quando estiver construído (sem telas "em breve").
+- Áreas atuais viram origens: Valentine → Trabalho/Valentine; Faculdade → Faculdade; Pessoal → Vida pessoal; Trabalho → Trabalho; Finanças → Dinheiro.
+- Fase 9 etapas pendentes: teclado vira polimento para depois (ficam N e /); agenda semanal entra na H3; "fechar o dia" em espera.
+
+Fases do Hub (uma por vez, com aprovação):
+- **H1. Casca + Central** — nome "Hub do Carlos", barra lateral nova, Central (Agora, Hoje, Próximas atenções, Captura). Sem banco novo. ← próxima
+- **H2. Origem + Trabalho** — árvore de origens por módulo; tarefa mostra a origem; módulo Trabalho.
+- **H3. Compromissos** — tabela própria (Agenda ≠ Tarefa), visão semanal, horários no "Hoje".
+- **H4. Faculdade** · **H5. Dinheiro** · **H6. Projetos** (Pausado, objetivo, links) · **H7. Treino** · **H8. Vida pessoal**.
+
 ## Prioridade principal
 
 MVP mobile-first seguindo as fases, uma de cada vez, com aprovação do Carlos entre elas:

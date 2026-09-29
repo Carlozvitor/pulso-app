@@ -6,7 +6,7 @@ import type { Area, Project } from "@/types/project";
 import { AttributeRow } from "@/components/tasks/attribute-row";
 import { ChipGroup } from "@/components/tasks/chip-group";
 import { DueField } from "@/components/tasks/due-field";
-import { updateProject } from "@/lib/projects/actions";
+import { updateProject } from "@/lib/actions/client";
 import type { ProjectPatch } from "@/lib/projects/schemas";
 
 const STATUS_LABEL: Record<Project["status"], string> = {

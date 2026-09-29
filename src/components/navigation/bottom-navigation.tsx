@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, CircleDot, Ellipsis, Inbox, Plus, type LucideIcon } from "lucide-react";
-import { toast } from "sonner";
-import { useState } from "react";
+import { CalendarDays, CircleDot, Ellipsis, ListTodo, Plus, type LucideIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { QuickCapture } from "@/components/tasks/quick-capture";
-import { captureTask } from "@/lib/tasks/actions";
+import { CAPTURE_EVENT, DESKTOP_QUERY, captureWithFeedback } from "@/components/tasks/capture-feedback";
 
 type NavItem = {
   href: string;
@@ -19,12 +18,12 @@ type NavItem = {
 
 const LEFT: NavItem[] = [
   { href: "/agora", label: "Agora", icon: CircleDot, match: ["/sessao"] },
-  { href: "/inbox", label: "Inbox", icon: Inbox },
+  { href: "/a-fazer", label: "A fazer", icon: ListTodo },
 ];
 
 const RIGHT: NavItem[] = [
   { href: "/agenda", label: "Agenda", icon: CalendarDays },
-  { href: "/mais", label: "Mais", icon: Ellipsis, match: ["/projetos", "/areas"] },
+  { href: "/mais", label: "Mais", icon: Ellipsis, match: ["/projetos", "/areas", "/feitas", "/busca", "/inbox"] },
 ];
 
 function isActive(pathname: string, item: NavItem) {
@@ -54,22 +53,20 @@ export function BottomNavigation() {
   const pathname = usePathname();
   const [captureOpen, setCaptureOpen] = useState(false);
 
-  async function handleCapture(title: string) {
-    const result = await captureTask(title);
-    if (result.ok) {
-      toast("Anotado na Inbox.");
-    } else {
-      toast.error(result.error, {
-        action: { label: "Tentar de novo", onClick: () => void handleCapture(title) },
-      });
-    }
-  }
+  // Tecla N (teclado externo no celular/tablet): abre a captura. No PC quem responde é a barra de captura flutuante.
+  useEffect(() => {
+    const open = () => {
+      if (!window.matchMedia(DESKTOP_QUERY).matches) setCaptureOpen(true);
+    };
+    window.addEventListener(CAPTURE_EVENT, open);
+    return () => window.removeEventListener(CAPTURE_EVENT, open);
+  }, []);
 
   return (
     <>
       <nav
         aria-label="Principal"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-(--safe-bottom)"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background pb-(--safe-bottom) lg:hidden"
       >
         <div className="mx-auto flex h-(--bottom-nav-height) max-w-lg items-stretch px-2">
           {LEFT.map((item) => (
@@ -95,7 +92,7 @@ export function BottomNavigation() {
         </div>
       </nav>
 
-      <QuickCapture open={captureOpen} onOpenChange={setCaptureOpen} onCapture={handleCapture} />
+      <QuickCapture open={captureOpen} onOpenChange={setCaptureOpen} onCapture={(title) => void captureWithFeedback(title)} />
     </>
   );
 }

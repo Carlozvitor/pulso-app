@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { safeReturnPath } from "./return-path";
 
 export type AuthResult = { ok: false; error: string };
 
@@ -15,7 +16,8 @@ function parse(email: string, password: string) {
   return credentialsSchema.safeParse({ email: email.trim().toLowerCase(), password });
 }
 
-export async function signIn(email: string, password: string): Promise<AuthResult> {
+/** `volta`: tela onde a pessoa estava quando a sessão caiu. */
+export async function signIn(email: string, password: string, volta?: string): Promise<AuthResult> {
   const parsed = parse(email, password);
   if (!parsed.success) return { ok: false, error: "E-mail ou senha incorretos." };
 
@@ -27,10 +29,10 @@ export async function signIn(email: string, password: string): Promise<AuthResul
       error: error.status === 429 ? "Muitas tentativas. Espere um minuto." : "E-mail ou senha incorretos.",
     };
   }
-  redirect("/agora");
+  redirect(safeReturnPath(volta));
 }
 
-export async function signUp(email: string, password: string): Promise<AuthResult> {
+export async function signUp(email: string, password: string, volta?: string): Promise<AuthResult> {
   const parsed = parse(email, password);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
 
@@ -44,7 +46,7 @@ export async function signUp(email: string, password: string): Promise<AuthResul
   }
   // Com autoconfirm ligado a sessão já vem pronta; sem ela, algo mudou na config do Supabase.
   if (!data.session) return { ok: false, error: "Conta criada, mas o login não foi concluído. Tente Entrar." };
-  redirect("/agora");
+  redirect(safeReturnPath(volta));
 }
 
 export async function signOut() {

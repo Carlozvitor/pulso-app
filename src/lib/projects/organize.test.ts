@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Area, Project } from "@/types/project";
-import { contextLabel, groupProjects, projectProgress, type ContextLookup } from "./organize";
+import { contextLabel, groupProjects, projectMonogram, projectProgress, type ContextLookup } from "./organize";
 
 let seq = 0;
 function project(partial: Partial<Project>): Project {
@@ -78,5 +78,14 @@ describe("contextLabel", () => {
 
   it("id desconhecido cai para a área", () => {
     expect(contextLabel({ projectId: "sumiu", areaId: "a1" }, lookup)).toBe("Trabalho");
+  });
+});
+
+describe("projectMonogram", () => {
+  it("duas palavras: primeira letra de cada; uma palavra: duas primeiras letras", () => {
+    expect(projectMonogram("CRUMB CLUB")).toBe("CC");
+    expect(projectMonogram("aura café")).toBe("AC");
+    expect(projectMonogram("PORTFÓLIO")).toBe("PO");
+    expect(projectMonogram("  ")).toBe("?");
   });
 });

@@ -19,7 +19,7 @@ type QuickCaptureProps = {
 
 /**
  * Captura rápida: um campo, um botão. Nada obrigatório além do texto —
- * projeto, prazo, energia etc. ficam para depois, na Inbox.
+ * projeto, prazo, energia etc. ficam para depois. Entra direto em A fazer.
  */
 export function QuickCapture({ open, onOpenChange, onCapture }: QuickCaptureProps) {
   const [value, setValue] = useState("");
@@ -53,6 +53,7 @@ export function QuickCapture({ open, onOpenChange, onCapture }: QuickCaptureProp
               autoFocus
               autoComplete="off"
               enterKeyHint="done"
+              maxLength={500}
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="Ex.: Comprar remédio"

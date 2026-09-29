@@ -70,3 +70,36 @@ export function dueLabel(dueDate: string, today: string): string {
   if (diff < 7) return WEEKDAYS[weekday(dueDate)];
   return short;
 }
+
+const WEEKDAYS_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** "3 out" */
+export function shortDate(isoDate: string): string {
+  const [, m, d] = isoDate.split("-").map(Number);
+  return `${d} ${MONTHS[m - 1]}`;
+}
+
+/** Título de um dia na agenda: Hoje · Amanhã · Quinta, 1 out */
+export function dayTitle(isoDate: string, today: string): string {
+  const diff = daysBetween(today, isoDate);
+  if (diff === 0) return "Hoje";
+  if (diff === 1) return "Amanhã";
+  return `${capitalize(WEEKDAYS[weekday(isoDate)])}, ${shortDate(isoDate)}`;
+}
+
+/** Pílula de data do cabeçalho: "Ter, 29 set" */
+export function datePill(isoDate: string): string {
+  return `${WEEKDAYS_SHORT[weekday(isoDate)]}, ${shortDate(isoDate)}`;
+}
+
+/** Título de um dia que já passou (histórico): Hoje · Ontem · Segunda, 28 set */
+export function pastDayTitle(isoDate: string, today: string): string {
+  const diff = daysBetween(today, isoDate);
+  if (diff === 0) return "Hoje";
+  if (diff === -1) return "Ontem";
+  return `${capitalize(WEEKDAYS[weekday(isoDate)])}, ${shortDate(isoDate)}`;
+}

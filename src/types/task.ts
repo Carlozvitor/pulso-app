@@ -23,6 +23,10 @@ export type Task = {
   createdAt: string;
   updatedAt: string;
   completedAt: string | null;
+  /** Pausada (status TODO + marca). Some quando começa, conclui ou arquiva. */
+  pausedAt: string | null;
+  /** "Agora não": fora da Agora até essa data (YYYY-MM-DD). */
+  snoozedUntil: string | null;
 };
 
 /** Tarefa com o nome do projeto (ou da área) já resolvido, para listas. */
@@ -36,6 +40,9 @@ export type TaskSummary = {
   context: string | null;
   estimatedMinutes: number | null;
   dueDate: string | null;
+  energy: Energy | null;
+  /** Pausada: aparece como "Pausada", com "Retomar". */
+  paused: boolean;
 };
 
 /** O que a tela Agora mostra — já priorizado e limitado. */

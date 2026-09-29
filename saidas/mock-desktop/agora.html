@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PULSO — maquete desktop (Agora)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #050506;
+    --panel: #0d0d0f;
+    --panel-2: #131316;
+    --line: #232327;
+    --line-2: #2e2e33;
+    --text: #f4f4f5;
+    --text-2: #a1a1aa;
+    --text-3: #8a8a93;
+    --chip: #5b5b61;
+    --accent: #4c5bff;
+    --ok: #34d399;
+
+    /* famílias de cor */
+    --teal-a: #0c3a42; --teal-b: #081b20; --teal-line: #1d5c66; --teal-tile: #0f4e59; --teal-ink: #5eead4;
+    --plum-a: #37195a; --plum-b: #180d28; --plum-line: #5a2f8c; --plum-tile: #4a2478; --plum-ink: #c9a7ff;
+    --amber-a: #4d260c; --amber-b: #1f1007; --amber-line: #8a4818; --amber-tile: #6d3510; --amber-ink: #fdba74;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 14px/1.45 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+    display: grid; grid-template-rows: 60px 1fr; overflow: hidden;
+  }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; }
+
+  /* ── topo ───────────────────────────── */
+  .top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 19px; letter-spacing: -0.01em; }
+  .mark { width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgb(139 149 255 / .45); display: grid; place-items: center; }
+  .mark i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); display: block; }
+  .top-center { display: flex; align-items: baseline; gap: 10px; }
+  .top-center b { font-weight: 600; font-size: 16px; }
+  .top-center span { color: var(--text-3); font-size: 13px; }
+  .top-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn { height: 34px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 8px; font: 500 13px "Geist"; color: var(--text); border: 1px solid var(--line-2); background: var(--panel-2); }
+  .btn svg.lucide { width: 15px; height: 15px; }
+  .btn.primary { background: #3a3f63; border-color: #555b8a; }
+  kbd { font: 600 11px "Geist Mono"; color: var(--text-2); background: rgb(255 255 255 / .06); border: 1px solid var(--line-2); border-radius: 5px; padding: 1px 5px; }
+
+  /* ── corpo ──────────────────────────── */
+  .body { display: grid; grid-template-columns: 320px 1fr; gap: 12px; padding: 0 8px 12px; min-height: 0; }
+  .side { display: grid; grid-template-rows: 1fr auto; gap: 16px; min-height: 0; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+
+  .ws { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .ws-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 14px 10px; }
+  .ws-head h2 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .ws-head h2 svg.lucide { width: 14px; height: 14px; color: var(--text-3); }
+  .tabs { display: flex; gap: 6px; padding: 0 12px 12px; border-bottom: 1px solid var(--line); }
+  .tab { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); padding: 5px 8px; border-radius: 6px; }
+  .tab.on { background: #2a2a2f; color: var(--text); }
+  .tab small { font: 600 10px "Geist Mono"; background: rgb(255 255 255 / .08); padding: 1px 5px; border-radius: 4px; color: var(--text-2); }
+  .list { overflow: auto; padding: 8px 6px; }
+  .item { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 8px; }
+  .item.on { background: #18181c; }
+  .ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; flex: none; }
+  .ico svg.lucide { width: 16px; height: 16px; }
+  .item b { display: block; font-weight: 500; font-size: 13px; }
+  .item span { display: block; font-size: 12px; color: var(--text-3); }
+  .item .count { margin-left: auto; font: 500 12px "Geist Mono"; color: var(--text-3); }
+  .sep { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); padding: 12px 10px 6px; }
+
+  .capture { padding: 18px; }
+  .capture h3 { font-size: 19px; font-weight: 500; line-height: 1.25; letter-spacing: -0.01em; }
+  .capture p { color: var(--text-3); font-size: 13px; margin-top: 4px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .pill { font-size: 12.5px; color: var(--text-2); background: #1a1a1e; border: 1px solid var(--line); border-radius: 999px; padding: 6px 11px; }
+  .prompt { background: #16161a; border: 1px solid var(--line); border-radius: 10px; padding: 12px 12px 10px; }
+  .prompt .ph { color: var(--text-3); font-size: 13.5px; }
+  .prompt .row { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
+  .prompt .tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); background: #222227; border-radius: 6px; padding: 4px 8px; }
+  .prompt .tag svg.lucide { width: 13px; height: 13px; }
+  .send { width: 26px; height: 26px; border-radius: 50%; background: #26262b; display: grid; place-items: center; color: var(--text-3); }
+  .send svg.lucide { width: 14px; height: 14px; }
+
+  /* ── painel principal ───────────────── */
+  .main { overflow: auto; }
+  .main-head { display: flex; align-items: center; gap: 16px; padding: 20px 24px; border-bottom: 1px solid var(--line); }
+  .app-ico { width: 48px; height: 48px; border-radius: 10px; background: #f4f4f5; color: #0a0a0b; display: grid; place-items: center; }
+  .app-ico svg.lucide { width: 24px; height: 24px; stroke-width: 2; }
+  .main-head h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+  .main-head p { color: var(--text-2); font-size: 14px; }
+  .head-right { margin-left: auto; display: flex; gap: 10px; }
+  .chipbtn { height: 38px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: 8px; font-weight: 500; }
+  .chipbtn.icon { width: 38px; padding: 0; justify-content: center; background: #1b1d2b; border-color: #34375a; color: #fbbf24; }
+  .chipbtn.live { background: #0c2a1e; border-color: #1c5b3f; color: #6ee7b7; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+
+  .content { padding: 22px 24px 32px; }
+  .search { height: 46px; border: 1px solid var(--line); border-radius: 10px; background: #0a0a0c; display: flex; align-items: center; gap: 10px; padding: 0 16px; color: var(--text-3); }
+  .filters { display: flex; align-items: center; gap: 10px; margin: 26px 0 30px; }
+  .filters .lbl { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); }
+  .filters .lbl svg.lucide { width: 15px; height: 15px; }
+  .f { height: 36px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: var(--chip); color: #e7e7ea; font-weight: 500; border: 1px solid #707077; }
+  .f.on { background: #1a1b24; border-color: #3b3e55; color: #b9bdd6; }
+
+  .section { display: flex; align-items: baseline; justify-content: space-between; margin: 0 2px 12px; }
+  .section h2 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+  .section a { color: var(--text-3); font-size: 13px; text-decoration: none; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-bottom: 32px; }
+
+  .card { position: relative; border-radius: 12px; padding: 22px 24px 18px; border: 1px solid; overflow: hidden; min-height: 208px; display: flex; flex-direction: column; }
+  .card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / .07), transparent 55%); }
+  .teal  { background: linear-gradient(160deg, var(--teal-a), var(--teal-b));  border-color: var(--teal-line); }
+  .plum  { background: linear-gradient(160deg, var(--plum-a), var(--plum-b));  border-color: var(--plum-line); }
+  .amber { background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border-color: var(--amber-line); }
+  .card .tile { width: 48px; height: 48px; border-radius: 9px; display: grid; place-items: center; }
+  .teal .tile { background: var(--teal-tile); color: var(--teal-ink); }
+  .plum .tile { background: var(--plum-tile); color: var(--plum-ink); }
+  .amber .tile { background: var(--amber-tile); color: var(--amber-ink); }
+  .card .tile svg.lucide { width: 22px; height: 22px; }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .ring { width: 44px; height: 44px; position: relative; display: grid; place-items: center; }
+  .ring svg.r { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .ring svg.lucide { width: 16px; height: 16px; stroke-width: 2.25; color: var(--ok); }
+  .card .label { margin-top: 22px; color: rgb(255 255 255 / .78); font-size: 14.5px; }
+  .card .big { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-top: 2px; }
+  .card .big.title { font-size: 21px; font-weight: 650; letter-spacing: -0.01em; }
+  .card .foot { margin-top: auto; padding-top: 12px; border-top: 1px solid rgb(255 255 255 / .09); display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: rgb(255 255 255 / .55); }
+  .card .foot b { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ok); }
+  .card .foot b.soft { color: rgb(255 255 255 / .75); }
+
+  .hero { grid-column: span 2; }
+  .hero .big.title { font-size: 28px; }
+  .hero .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .go { height: 40px; padding: 0 18px; border-radius: 9px; background: var(--teal-ink); color: #042f2e; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; border: 0; }
+  .go svg.lucide { width: 16px; height: 16px; stroke-width: 2.25; }
+  .ghost { height: 40px; padding: 0 16px; border-radius: 9px; background: rgb(255 255 255 / .06); color: var(--text); border: 1px solid rgb(255 255 255 / .12); font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+  .mini { list-style: none; padding: 0; margin-top: 10px; display: grid; gap: 6px; font-size: 13px; color: rgb(255 255 255 / .8); }
+  .mini li { position: relative; padding-left: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini li::before { content: ""; position: absolute; left: 0; top: .6em; width: 5px; height: 5px; border-radius: 50%; background: var(--amber-ink); opacity: .8; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="mark"><i></i></span>pulso</div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências, 1 pedindo atenção agora</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="side">
+      <section class="panel ws">
+        <div class="ws-head"><h2>Organização <i data-lucide="info"></i></h2><i data-lucide="panel-left-close" style="color:var(--text-3);width:16px;height:16px"></i></div>
+        <div class="tabs">
+          <span class="tab on">Tudo <small>9</small></span>
+          <span class="tab">Projetos <small>4</small></span>
+          <span class="tab">Áreas <small>5</small></span>
+        </div>
+        <div class="list">
+          <div class="item on"><span class="ico" style="background:#0f4e59;color:#5eead4"><i data-lucide="circle-dot"></i></span><div><b>Agora</b><span>O que merece atenção</span></div></div>
+          <div class="item"><span class="ico" style="background:#26262b;color:#d4d4d8"><i data-lucide="inbox"></i></span><div><b>Inbox</b><span>3 para organizar</span></div><span class="count">3</span></div>
+          <div class="item"><span class="ico" style="background:#6d3510;color:#fdba74"><i data-lucide="calendar-days"></i></span><div><b>Agenda</b><span>Próximos 7 dias</span></div></div>
+          <div class="sep">Projetos</div>
+          <div class="item"><span class="ico" style="background:#4a2478;color:#c9a7ff"><i data-lucide="cookie"></i></span><div><b>CRUMB CLUB</b><span>Projeto · sem área</span></div><span class="count">5</span></div>
+          <div class="item"><span class="ico" style="background:#4a2478;color:#c9a7ff"><i data-lucide="coffee"></i></span><div><b>AURA CAFÉ</b><span>Projeto · Pessoal</span></div><span class="count">3</span></div>
+          <div class="item"><span class="ico" style="background:#4a2478;color:#c9a7ff"><i data-lucide="layout-template"></i></span><div><b>PORTFÓLIO</b><span>Projeto · Pessoal</span></div><span class="count">2</span></div>
+          <div class="item"><span class="ico" style="background:#4a2478;color:#c9a7ff"><i data-lucide="activity"></i></span><div><b>PULSO</b><span>Projeto · Pessoal</span></div><span class="count">4</span></div>
+          <div class="sep">Áreas</div>
+          <div class="item"><span class="ico" style="background:#1f2937;color:#93c5fd"><i data-lucide="heart"></i></span><div><b>Valentine</b><span>Área</span></div></div>
+          <div class="item"><span class="ico" style="background:#1f2937;color:#93c5fd"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span>Área</span></div></div>
+        </div>
+      </section>
+
+      <section class="panel capture">
+        <h3>Anote antes<br />que escape</h3>
+        <p>Vai para a Inbox. Os detalhes ficam para depois.</p>
+        <div class="pills">
+          <span class="pill">Pagar fatura do cartão</span>
+          <span class="pill">Ideia: cardápio de outono</span>
+          <span class="pill">Ligar pro banco</span>
+        </div>
+        <div class="prompt">
+          <div class="ph">O que você precisa fazer?</div>
+          <div class="row"><span class="tag"><i data-lucide="inbox"></i>Inbox</span><span class="send"><i data-lucide="arrow-up"></i></span></div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="panel main">
+      <div class="main-head">
+        <span class="app-ico"><i data-lucide="circle-dot"></i></span>
+        <div><h1>Agora</h1><p>O que merece sua atenção</p></div>
+        <div class="head-right">
+          <span class="chipbtn icon" title="Energia"><i data-lucide="zap"></i></span>
+          <span class="chipbtn"><i data-lucide="calendar"></i>Ter, 29 set</span>
+          <span class="chipbtn live"><span class="dot"></span>Em foco</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="search"><i data-lucide="search"></i>Buscar tarefas, projetos… <kbd style="margin-left:auto">/</kbd></div>
+        <div class="filters">
+          <span class="lbl"><i data-lucide="filter"></i>Filtro:</span>
+          <span class="f on">Tudo</span><span class="f">Pessoal</span><span class="f">Faculdade</span><span class="f">Valentine</span><span class="f">Trabalho</span>
+        </div>
+
+        <div class="section"><h2>Agora e depois</h2><a>Ver tudo</a></div>
+        <div class="grid">
+          <article class="card teal hero">
+            <div class="card-top"><span class="tile"><i data-lucide="target"></i></span>
+              <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round"/></svg><i data-lucide="play"></i></span></div>
+            <div class="label">CRUMB CLUB · era pra ontem</div>
+            <div class="big title">Fechar orçamento com o fornecedor de embalagens</div>
+            <div class="actions"><span class="go"><i data-lucide="play"></i>Começar</span><span class="ghost">Agora não</span></div>
+            <div class="foot" style="margin-top:18px"><span>Energia média</span><b class="soft">~25 min</b></div>
+          </article>
+          <article class="card teal">
+            <div class="card-top"><span class="tile"><i data-lucide="book-open"></i></span>
+              <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="20 120"/></svg><i data-lucide="arrow-right"></i></span></div>
+            <div class="label">Faculdade · hoje</div>
+            <div class="big title">Revisar capítulo 4 de Estatística</div>
+            <div class="foot"><span>Depois</span><b class="soft">45 min</b></div>
+          </article>
+          <article class="card teal">
+            <div class="card-top"><span class="tile"><i data-lucide="message-circle"></i></span>
+              <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 120"/></svg><i data-lucide="arrow-right"></i></span></div>
+            <div class="label">AURA CAFÉ · amanhã</div>
+            <div class="big title">Responder proposta do designer</div>
+            <div class="foot"><span>Depois</span><b class="soft">10 min</b></div>
+          </article>
+        </div>
+
+        <div class="section"><h2>Projetos</h2><a>Todos os projetos</a></div>
+        <div class="grid">
+          <article class="card plum"><div class="card-top"><span class="tile"><i data-lucide="cookie"></i></span>
+            <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="74 120"/></svg><i data-lucide="arrow-up"></i></span></div>
+            <div class="label">CRUMB CLUB</div><div class="big">62%</div>
+            <div class="foot"><span>8 de 13 tarefas</span><b>prazo 15 out</b></div></article>
+          <article class="card plum"><div class="card-top"><span class="tile"><i data-lucide="coffee"></i></span>
+            <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="36 120"/></svg><i data-lucide="arrow-up"></i></span></div>
+            <div class="label">AURA CAFÉ</div><div class="big">30%</div>
+            <div class="foot"><span>3 de 10 tarefas</span><b class="soft">sem prazo</b></div></article>
+          <article class="card plum"><div class="card-top"><span class="tile"><i data-lucide="layout-template"></i></span>
+            <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="96 120"/></svg><i data-lucide="arrow-up"></i></span></div>
+            <div class="label">PORTFÓLIO</div><div class="big">80%</div>
+            <div class="foot"><span>8 de 10 tarefas</span><b>prazo 30 set</b></div></article>
+          <article class="card plum"><div class="card-top"><span class="tile"><i data-lucide="activity"></i></span>
+            <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="54 120"/></svg><i data-lucide="arrow-up"></i></span></div>
+            <div class="label">PULSO</div><div class="big">45%</div>
+            <div class="foot"><span>9 de 20 tarefas</span><b class="soft">sem prazo</b></div></article>
+        </div>
+
+        <div class="section"><h2>Próximos dias</h2><a>Abrir agenda</a></div>
+        <div class="grid">
+          <article class="card amber"><div class="card-top"><span class="tile"><i data-lucide="sun"></i></span></div>
+            <div class="label">Hoje</div><div class="big">3 tarefas</div>
+            <ul class="mini"><li>Revisar capítulo 4</li><li>Pagar fatura do cartão</li></ul></article>
+          <article class="card amber"><div class="card-top"><span class="tile"><i data-lucide="sunrise"></i></span></div>
+            <div class="label">Amanhã</div><div class="big">2 tarefas</div>
+            <ul class="mini"><li>Responder proposta do designer</li><li>Presente da Valentine</li></ul></article>
+          <article class="card amber"><div class="card-top"><span class="tile"><i data-lucide="calendar"></i></span></div>
+            <div class="label">Quinta, 1 out</div><div class="big">1 tarefa</div>
+            <ul class="mini"><li>Entregar trabalho de Marketing</li></ul></article>
+          <article class="card amber"><div class="card-top"><span class="tile"><i data-lucide="calendar-range"></i></span></div>
+            <div class="label">Até domingo</div><div class="big">4 tarefas</div>
+            <ul class="mini"><li>Fotos do cardápio</li><li>Atualizar case no portfólio</li></ul></article>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

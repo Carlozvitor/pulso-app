@@ -17,3 +17,11 @@ export function inboxLabel(count: number): string | null {
   if (count <= 0) return null;
   return count === 1 ? "Você possui 1 item para organizar." : `Você possui ${count} itens para organizar.`;
 }
+
+/**
+ * Texto seguro para o filtro `or` do PostgREST: curingas (% _), aspas, vírgulas e
+ * parênteses quebrariam a expressão — viram espaço. Buscar por eles não faz falta aqui.
+ */
+export function searchTerm(query: string): string {
+  return query.replace(/[%_\\",()*]/g, " ").replace(/\s+/g, " ").trim().slice(0, 100);
+}

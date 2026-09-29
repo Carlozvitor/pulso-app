@@ -3,12 +3,13 @@
 import { useState, useTransition } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { signIn, signUp } from "@/lib/auth/actions";
+import { signIn, signUp } from "@/lib/actions/client";
 
 const fieldClass =
   "h-12 w-full rounded-md border border-border bg-surface px-4 text-body text-foreground placeholder:text-foreground-subtle focus-visible:border-primary-soft focus-visible:outline-none";
 
-export function LoginForm() {
+/** `volta`: tela para onde voltar depois de entrar (a action valida o caminho). */
+export function LoginForm({ volta }: { volta?: string }) {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,8 +22,8 @@ export function LoginForm() {
     event.preventDefault();
     setError(null);
     startTransition(async () => {
-      // Em caso de sucesso a action redireciona para /agora.
-      const result = await (signingUp ? signUp : signIn)(email, password);
+      // Em caso de sucesso a action redireciona (para `volta` ou para a Agora).
+      const result = await (signingUp ? signUp : signIn)(email, password, volta);
       if (result && !result.ok) setError(result.error);
     });
   }

@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { SectionLabel } from "@/components/agora/section-label";
 import { CompleteButton } from "@/components/tasks/complete-button";
 import { taskMeta } from "@/components/tasks/task-meta";
-import { endSession } from "@/lib/sessions/actions";
-import { setTaskStatus } from "@/lib/tasks/actions";
+import { endSession, setTaskStatus } from "@/lib/actions/client";
 import { timeLabel } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
@@ -61,7 +60,7 @@ export function ActiveSession({ session, today }: { session: Session; today: str
                 <CompleteButton title={task.title} done={done} onComplete={() => toggle(task.id, task.status)} />
                 <Link
                   href={`/tarefas/${task.id}`}
-                  className="-mr-4 flex min-h-14 min-w-0 flex-1 items-center py-3 pr-4 transition-colors duration-(--duration-fast) active:bg-surface"
+                  className="-mr-4 flex min-h-14 min-w-0 flex-1 items-center py-3 pr-4 transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
                 >
                   <span className="min-w-0">
                     <span

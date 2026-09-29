@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDuration, pendingLabel } from "./format";
+import { formatDuration, pendingLabel, searchTerm } from "./format";
 
 describe("formatDuration", () => {
   it.each([
@@ -18,5 +18,13 @@ describe("pendingLabel", () => {
     expect(pendingLabel(0)).toBeNull();
     expect(pendingLabel(1)).toBe("Você tem 1 pendência.");
     expect(pendingLabel(8)).toBe("Você tem 8 pendências.");
+  });
+});
+
+describe("searchTerm", () => {
+  it("tira o que quebraria o filtro e junta espaços", () => {
+    expect(searchTerm("  orçamento, (embalagens)  ")).toBe("orçamento embalagens");
+    expect(searchTerm('100% "certo"_*')).toBe("100 certo");
+    expect(searchTerm("%%")).toBe("");
   });
 });

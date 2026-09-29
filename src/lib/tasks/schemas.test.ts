@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { patchToRow, taskPatchSchema } from "./schemas";
+import { patchToRow, queuedCaptureSchema, queuedCaptureToRow, taskPatchSchema } from "./schemas";
 
 describe("taskPatchSchema", () => {
   it("aceita patch de um campo só e converte para colunas", () => {
@@ -26,5 +26,35 @@ describe("taskPatchSchema", () => {
     expect(taskPatchSchema.safeParse({ estimatedMinutes: 0 }).success).toBe(false);
     expect(taskPatchSchema.safeParse({ title: "  " }).success).toBe(false);
     expect(taskPatchSchema.safeParse({}).success).toBe(false);
+  });
+});
+
+describe("queuedCaptureSchema", () => {
+  const id = "0b8f3c3e-6a2d-4f7e-9b1a-2c4d5e6f7a8b";
+
+  it("aceita a captura da fila e limpa o título", () => {
+    const parsed = queuedCaptureSchema.parse({ id, title: "  Comprar remédio ", capturedAt: "2026-09-29T10:00:00.000Z" });
+    expect(parsed.title).toBe("Comprar remédio");
+  });
+
+  it("rejeita id inválido, título vazio ou hora que não é data", () => {
+    expect(queuedCaptureSchema.safeParse({ id: "x", title: "a", capturedAt: "2026-09-29T10:00:00Z" }).success).toBe(false);
+    expect(queuedCaptureSchema.safeParse({ id, title: " ", capturedAt: "2026-09-29T10:00:00Z" }).success).toBe(false);
+    expect(queuedCaptureSchema.safeParse({ id, title: "a", capturedAt: "ontem" }).success).toBe(false);
+  });
+});
+
+describe("queuedCaptureToRow", () => {
+  const id = "0b8f3c3e-6a2d-4f7e-9b1a-2c4d5e6f7a8b";
+  const now = new Date("2026-09-29T12:00:00.000Z");
+
+  it("mantém a hora real de uma captura feita offline", () => {
+    const row = queuedCaptureToRow({ id, title: "a", capturedAt: "2026-09-29T08:30:00.000Z" }, now);
+    expect(row).toEqual({ id, title: "a", status: "TODO", created_at: "2026-09-29T08:30:00.000Z" });
+  });
+
+  it("relógio adiantado no celular não gera tarefa do futuro", () => {
+    const row = queuedCaptureToRow({ id, title: "a", capturedAt: "2026-09-30T08:00:00.000Z" }, now);
+    expect(row.created_at).toBe(now.toISOString());
   });
 });

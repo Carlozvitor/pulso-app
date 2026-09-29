@@ -13,14 +13,18 @@ como dev principal, pensando também em UX e produto.
 
 **Estrutura de pastas:**
 - `_memoria/` — contexto do projeto, tom da interface, fase atual e decisões aprovadas
-- `_memoria/contexto-mestre.md` — documento mestre do produto (ler antes de qualquer funcionalidade)
+- `_memoria/hub-mestre.md` — documento mestre do Hub do Carlos (fonte de verdade de produto; o PULSO é o módulo de execução)
+- `_memoria/contexto-mestre.md` — documento mestre do PULSO (ler antes de qualquer funcionalidade)
 - `identidade/design-guide.md` — tokens de cor, tipografia, raios, movimento
-- `src/app/(app)/` — rotas do app: agora, inbox, agenda, mais, projetos, projetos/[id], areas, sessao, tarefas/[id]
+- `src/app/(app)/` — rotas do app: agora, a-fazer, inbox, agenda, feitas, busca, mais, projetos, projetos/[id], areas, sessao, tarefas/[id]
 - `src/app/login/` — autenticação (e-mail + senha)
 - `src/components/ui/` — primitivos shadcn (base-nova / Base UI). Editar só tema/tokens
-- `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, feedback, pwa
+- `src/components/layout/` — moldura do app: topo e barra lateral (PC), `Page` (cabeçalho de tela), atalhos de teclado
+- `src/components/cards/` — peças dos cards coloridos (selo, anel de progresso, rodapé)
+- `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, sync, feedback, pwa
 - `src/lib/priorities/` — motor de prioridade e seleção de sessão (TS puro, com testes)
 - `src/lib/{tasks,projects,sessions}/` — queries, server actions e schemas Zod
+- `src/lib/actions/client.ts` — Server Actions para componentes (falha de rede vira `{ ok: false }`); componentes importam daqui
 - `src/lib/supabase/` — clients (browser/server) e proxy de auth
 - `src/lib/dates/` — datas no fuso do usuário (America/Fortaleza)
 - `supabase/migrations/` — schema versionado

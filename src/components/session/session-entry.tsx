@@ -7,7 +7,7 @@ export function SessionEntry({ activeEndsAt }: { activeEndsAt: string | null }) 
   return (
     <Link
       href="/sessao"
-      className="-mx-4 mt-3 flex min-h-12 items-center gap-3 px-4 text-sm text-foreground-secondary transition-colors duration-(--duration-fast) active:bg-surface"
+      className="-mx-4 mt-3 flex min-h-12 items-center gap-3 px-4 text-sm text-foreground-secondary transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
     >
       <Timer aria-hidden className="size-5 text-foreground-subtle" strokeWidth={1.75} />
       <span className="tabular flex-1">

@@ -6,10 +6,11 @@ import { toast } from "sonner";
 import type { Area } from "@/types/project";
 import { Button } from "@/components/ui/button";
 import { ConfirmSheet } from "@/components/feedback/confirm-sheet";
-import { createArea, deleteArea, renameArea } from "@/lib/projects/actions";
+import { ListPanel } from "@/components/layout/page";
+import { createArea, deleteArea, renameArea } from "@/lib/actions/client";
 
 const inputClass =
-  "h-12 w-full min-w-0 rounded-md border border-transparent bg-transparent px-0 text-body text-foreground placeholder:text-foreground-subtle focus-visible:border-border focus-visible:bg-surface focus-visible:px-3 focus-visible:outline-none";
+  "h-12 w-full min-w-0 rounded-md border border-transparent bg-transparent px-0 text-body text-foreground placeholder:text-foreground-subtle focus-visible:border-border focus-visible:bg-elevated focus-visible:px-3 focus-visible:outline-none";
 
 /** Criar, renomear (toque no nome e edite) e apagar áreas. */
 export function AreaList({ areas }: { areas: Area[] }) {
@@ -40,21 +41,23 @@ export function AreaList({ areas }: { areas: Area[] }) {
   return (
     <>
       {areas.length > 0 && (
-        <ul className="divide-y divide-border">
-          {areas.map((area) => (
-            <li key={area.id} className="flex items-center gap-2">
-              <AreaName area={area} />
-              <button
-                type="button"
-                onClick={() => setDeleting(area)}
-                aria-label={`Apagar área ${area.name}`}
-                className="-mr-2.5 flex size-11 shrink-0 items-center justify-center text-foreground-subtle active:text-foreground"
-              >
-                <Trash2 aria-hidden className="size-5" strokeWidth={1.75} />
-              </button>
-            </li>
-          ))}
-        </ul>
+        <ListPanel>
+          <ul className="divide-y divide-border">
+            {areas.map((area) => (
+              <li key={area.id} className="flex items-center gap-2">
+                <AreaName area={area} />
+                <button
+                  type="button"
+                  onClick={() => setDeleting(area)}
+                  aria-label={`Apagar área ${area.name}`}
+                  className="-mr-2.5 flex size-11 shrink-0 items-center justify-center text-foreground-subtle active:text-foreground"
+                >
+                  <Trash2 aria-hidden className="size-5" strokeWidth={1.75} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </ListPanel>
       )}
 
       <form onSubmit={add} className="mt-6 flex gap-3">
@@ -98,10 +101,8 @@ function AreaName({ area }: { area: Area }) {
     const next = name.trim();
     if (!next || next === saved) return setName(saved);
     const result = await renameArea(area.id, next);
-    if (!result.ok) {
-      toast.error(result.error);
-      return setName(saved);
-    }
+    // Se falhar, o nome digitado fica no campo; sair do campo de novo tenta outra vez.
+    if (!result.ok) return void toast.error(result.error);
     setSaved(next);
   }
 

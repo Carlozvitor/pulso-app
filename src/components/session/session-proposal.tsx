@@ -8,7 +8,7 @@ import type { SessionProposal as Proposal } from "@/types/session";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { SectionLabel } from "@/components/agora/section-label";
 import { taskMeta } from "@/components/tasks/task-meta";
-import { startSession } from "@/lib/sessions/actions";
+import { startSession } from "@/lib/actions/client";
 import { SESSION_ENERGY_LABEL, proposalHref } from "@/lib/sessions/schemas";
 import { formatDuration } from "@/lib/tasks/format";
 

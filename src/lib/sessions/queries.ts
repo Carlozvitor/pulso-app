@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireUser } from "@/lib/supabase/server";
+import { isPaused } from "@/lib/priorities/agora";
 import { buildSession, isSessionActive, sessionEndsAt } from "@/lib/priorities/session";
 import { contextLabel } from "@/lib/projects/organize";
 import { getContextLookup } from "@/lib/projects/queries";
@@ -13,7 +14,7 @@ const taskRows = z.array(taskRowSchema);
 const linkRows = z.array(z.object({ task_id: z.string(), position: z.number().int() }));
 
 function toSummary(task: Task, context: string | null): TaskSummary {
-  return { id: task.id, title: task.title, context, estimatedMinutes: task.estimatedMinutes, dueDate: task.dueDate };
+  return { id: task.id, title: task.title, context, estimatedMinutes: task.estimatedMinutes, dueDate: task.dueDate, energy: task.energy, paused: isPaused(task) };
 }
 
 /** Proposta calculada na hora — nada é salvo até "Começar". */

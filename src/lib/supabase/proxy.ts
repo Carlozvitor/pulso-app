@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { loginHref, safeReturnPath } from "@/lib/auth/return-path";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "./env";
 
 const PUBLIC_PATHS = ["/login"];
@@ -28,16 +29,21 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isPublic = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
-  if (!signedIn && !isPublic) return redirectKeepingCookies(request, response, "/login");
-  if (signedIn && isPublic) return redirectKeepingCookies(request, response, "/agora");
+  if (!signedIn && !isPublic) {
+    // Server Action: quem redireciona é o requireUser da própria action. Um redirect aqui
+    // devolveria HTML no lugar da resposta da action e a tela quebraria.
+    if (request.headers.has("next-action")) return response;
+    return redirectKeepingCookies(request, response, loginHref(pathname + request.nextUrl.search));
+  }
+  if (signedIn && isPublic) {
+    return redirectKeepingCookies(request, response, safeReturnPath(request.nextUrl.searchParams.get("volta")));
+  }
 
   return response;
 }
 
-function redirectKeepingCookies(request: NextRequest, from: NextResponse, pathname: string) {
-  const url = request.nextUrl.clone();
-  url.pathname = pathname;
-  url.search = "";
+function redirectKeepingCookies(request: NextRequest, from: NextResponse, target: string) {
+  const url = new URL(target, request.url);
   const redirect = NextResponse.redirect(url);
   from.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
   return redirect;

@@ -1,51 +1,74 @@
 # Identidade visual — PULSO
 
-> Dark + tecnológico + sofisticado + minimalista. Foco, clareza, tranquilidade, controle.
+> Dark, tecnológico e com personalidade: painéis com moldura sobre fundo preto e cards
+> coloridos por seção. Referência aprovada em 2026-09-29: estilo "dashboard Taskade"
+> (maquete em `saidas/mock-desktop/`). A cor organiza a tela — cada seção tem a sua família.
 
 ---
 
 ## Cores
 
-- **Fundo principal:** `#0A0A0B`
-- **Superfície / cards:** `#111214` · **Elevado (sheets, popovers):** `#18191C`
-- **Borda:** `#25262A`
-- **Texto principal:** `#F4F4F5` · **Secundário:** `#A1A1AA` · **Discreto (texto):** `#8A8A93` · **Muted (só não-texto):** `#71717A`
-- **Accent / CTA:** `#4C5BFF` (texto branco sobre ele ≈ 4.9:1) · **Accent suave (ativo, progresso, links):** `#8B95FF`
-- **Sucesso:** verde dessaturado, só no feedback de conclusão
-- **Cor proibida:** vermelho de "atraso"; neon; interface toda azul
+**Base**
+- **Fundo:** `#050506` (quase preto)
+- **Painel / listas:** `#0D0D0F` · **Elevado (campos, sheets, hover):** `#16161A`
+- **Borda:** `#232327` · **Borda forte (botões, pílulas):** `#2E2E33`
+- **Texto:** principal `#F4F4F5` · secundário `#A1A1AA` · discreto `#8A8A93` · muted (só não-texto) `#71717A`
+- **Accent / captura:** `#4C5BFF` · **Accent suave (links, foco):** `#8B95FF`
+- **Verde (conclusão, anéis de progresso, "em andamento", prazo futuro):** `#34D399`
+
+**Famílias por seção** — card com degradê leve (160°, `a` → `b`), borda da mesma cor e brilho no canto superior esquerdo:
+
+| Família | Seção | a / b | Borda | Selo | Tinta |
+|---|---|---|---|---|---|
+| **teal** | Agora (próxima ação, depois) | `#0C3A42` / `#081B20` | `#1D5C66` | `#0F4E59` | `#5EEAD4` |
+| **plum** | Projetos | `#37195A` / `#180D28` | `#5A2F8C` | `#4A2478` | `#C9A7FF` |
+| **amber** | Prazos / Agenda | `#4D260C` / `#1F1007` | `#8A4818` | `#6D3510` | `#FDBA74` |
+| **neutral** | "Mais tarde", estados vazios | `#141417` / `#0D0D0F` | `#232327` | `#222227` | `#A1A1AA` |
+
+Classes em `globals.css`: `.tint .tint-teal|plum|amber|neutral`, `.tint-tile`, utilitário `panel`.
+
+**Nunca:** vermelho de "atraso" (prazo vencido é "Era pra …", neutro), neon, glassmorphism.
 
 ---
 
 ## Tipografia
 
-- **Família:** Geist Sans (Geist Mono para números/durações quando fizer sentido)
-- **Escala:** 13 / 15 / 17 / 20 / 28 px · inputs ≥ 16px (evita zoom no iOS)
-- **Peso do título:** 600
+- **Família:** Geist Sans (Geist Mono só em atalhos de teclado e contadores pequenos)
+- **Escala:** celular 13 / 15 / 17 / 20 / 28 px · PC 13 / 14 / 15 / 20 / 24 px (tokens `--fs-*`) · inputs ≥ 16px no celular
+- **Números e títulos de card:** grandes e em negrito (600–700) — `62%`, `3 tarefas`, título da próxima ação 28px
+- **Rótulos de seção:** 13px, 600, caixa alta, espaçamento 0.1em
 
 ---
 
-## Estilo geral
+## Layout
 
-Elevação por cor, não por sombra. Accent usado com moderação (botão principal, `+`, item ativo, progresso, foco). Poucos cards, poucas bordas.
+- **PC (≥ 1024px):** topo (marca · saudação + pendências · "Tenho alguns minutos" · "Capturar N") + barra lateral fixa de 320px (painel "Organização" com abas) + painel principal com moldura + **barra de captura flutuante** no centro, embaixo do painel principal (Enter adiciona à Inbox; N foca).
+- **Cabeçalho de toda tela:** selo branco com ícone + título + subtítulo; pílulas à direita (data, "Sessão até…", "Em andamento" em verde).
+- **Grades:** 4 colunas em telas largas (≥ 1280px), 2 abaixo disso; a próxima ação ocupa 2 colunas.
+- **Celular:** mesma linguagem, cards empilhados (1 coluna para tarefas, 2 para projetos e dias) e navegação embaixo.
+- **Listas** (Inbox, Áreas, busca) ficam dentro de um painel, com largura máxima de ~768px no PC.
 
 ---
 
 ## Elementos-chave
 
-- Bordas: 1px `#25262A`, só quando separam algo de verdade
-- Border-radius: 10 (controles) / 14 (cards) / 20 (bottom sheets)
-- Botões: altura mínima 44px, área de toque ≥ 44×44
-- Sombras: praticamente nenhuma
-- Movimento: 150–250ms ease-out, respeitando `prefers-reduced-motion`
+- Raios: 9 (selos, botões de card) · 10 (campos) · 12 (painéis e cards) · 20 (bottom sheets) · pílula para filtros
+- Selo do card: 44–48px, cor da família; projetos usam as iniciais ("CC")
+- Anel de progresso: 44px, trilho branco 10%, arco verde
+- Filtros: pílulas cinza (`#5B5B61`); a ativa fica escura com contorno (`#1A1B24` / `#3B3E55`)
+- Sombras: nenhuma — profundidade por cor e borda
+- Botões: alvo mínimo 44px no celular; no PC podem ter 36–40px
+- Movimento: 150–250ms ease-out; hover clareia o card (`brightness`); respeitar `prefers-reduced-motion`
 
 ---
 
-## O que NUNCA fazer
+## Regra do conteúdo
 
-Neon excessivo, gradientes em excesso, glassmorphism, sombras pesadas, animações decorativas, hover como interação necessária.
+A referência é um dashboard, o PULSO não. Números só quando ajudam a agir
+(progresso do projeto, quantas tarefas vencem no dia). Nada de métricas de produtividade.
 
 ---
 
 ## Logo
 
-- **Arquivo:** ainda não existe (ícone PWA provisório em `public/icons/`)
+- **Arquivo:** ainda não existe (ícone PWA provisório em `public/icons/`). Marca provisória: anel azul com ponto `#4C5BFF` + "pulso" em minúsculas.

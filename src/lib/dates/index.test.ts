@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, dueLabel, endOfWeek, greetingFor, hourIn, timeLabel, todayIn } from ".";
+import { addDays, datePill, dayTitle, dueLabel, pastDayTitle, endOfWeek, greetingFor, hourIn, shortDate, timeLabel, todayIn } from ".";
 
 describe("hourIn", () => {
   it("converte para o fuso de Fortaleza (UTC−3)", () => {
@@ -56,5 +56,28 @@ describe("timeLabel", () => {
   it("hora e minuto no fuso de Fortaleza (UTC−3)", () => {
     expect(timeLabel(new Date("2026-09-28T17:35:00Z"))).toBe("14:35");
     expect(timeLabel(new Date("2026-09-29T02:05:00Z"))).toBe("23:05");
+  });
+});
+
+describe("dayTitle / datePill / shortDate", () => {
+  const today = "2026-09-29"; // terça
+
+  it("hoje e amanhã pelo nome; depois, dia da semana e data", () => {
+    expect(dayTitle("2026-09-29", today)).toBe("Hoje");
+    expect(dayTitle("2026-09-30", today)).toBe("Amanhã");
+    expect(dayTitle("2026-10-01", today)).toBe("Quinta, 1 out");
+  });
+
+  it("pílula curta do cabeçalho", () => {
+    expect(datePill("2026-09-29")).toBe("Ter, 29 set");
+    expect(shortDate("2026-10-04")).toBe("4 out");
+  });
+});
+
+describe("pastDayTitle", () => {
+  it("hoje, ontem e depois dia da semana com data", () => {
+    expect(pastDayTitle("2026-09-29", "2026-09-29")).toBe("Hoje");
+    expect(pastDayTitle("2026-09-28", "2026-09-29")).toBe("Ontem");
+    expect(pastDayTitle("2026-09-27", "2026-09-29")).toBe("Domingo, 27 set");
   });
 });

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { z } from "zod";
 import { requireUser } from "@/lib/supabase/server";
 import { comparePriority } from "@/lib/priorities/score";
@@ -14,15 +15,18 @@ const taskRows = z.array(taskRowSchema);
 const namedRows = z.array(z.object({ id: z.string(), name: z.string() }));
 const statusRows = z.array(z.object({ project_id: z.string(), status: z.enum(TASK_STATUSES) }));
 
-export async function listAreas(): Promise<Area[]> {
+export const listAreas = cache(async function listAreas(): Promise<Area[]> {
   const { supabase } = await requireUser();
   const { data, error } = await supabase.from("areas").select("id, name").order("name");
   if (error) throw error;
   return areaRows.parse(data);
-}
+});
 
 /** Tela Projetos: ativos agrupados por área + concluídos/arquivados à parte. */
-export async function listProjects(): Promise<{ groups: ProjectGroup[]; finished: ProjectSummary[] }> {
+export const listProjects = cache(async function listProjects(): Promise<{
+  groups: ProjectGroup[];
+  finished: ProjectSummary[];
+}> {
   const { supabase } = await requireUser();
   const [projects, areas, statuses] = await Promise.all([
     supabase.from("projects").select(PROJECT_COLUMNS),
@@ -50,7 +54,7 @@ export async function listProjects(): Promise<{ groups: ProjectGroup[]; finished
       .filter((p) => p.status !== "ACTIVE")
       .sort((a, b) => (b.completedAt ?? b.createdAt).localeCompare(a.completedAt ?? a.createdAt)),
   };
-}
+});
 
 export type ProjectDetail = {
   project: Project;
@@ -96,7 +100,7 @@ export async function getAssignOptions(): Promise<{ areas: Area[]; projects: Pro
 }
 
 /** Nomes de todos os projetos e áreas — para rotular tarefas nas listas. */
-export async function getContextLookup(): Promise<ContextLookup> {
+export const getContextLookup = cache(async function getContextLookup(): Promise<ContextLookup> {
   const { supabase } = await requireUser();
   const [areas, projects] = await Promise.all([
     supabase.from("areas").select("id, name"),
@@ -108,4 +112,4 @@ export async function getContextLookup(): Promise<ContextLookup> {
     areas: new Map(areaRows.parse(areas.data).map((a) => [a.id, a.name])),
     projects: new Map(namedRows.parse(projects.data).map((p) => [p.id, p.name])),
   };
-}
+});

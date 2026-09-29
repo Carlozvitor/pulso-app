@@ -66,7 +66,7 @@ export function TaskAssign({ task, options, save }: TaskAssignProps) {
             type="button"
             aria-labelledby="project-label project-value"
             onClick={() => setPicking(true)}
-            className="-mx-4 -my-2 flex min-h-12 items-center justify-between gap-4 px-4 text-left transition-colors duration-(--duration-fast) active:bg-surface"
+            className="-mx-4 -my-2 flex min-h-12 items-center justify-between gap-4 px-4 text-left transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
           >
             <span
               id="project-value"
@@ -160,7 +160,7 @@ function PickerOption({ label, selected, onClick }: { label: string; selected: b
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className="-mx-4 flex min-h-12 w-[calc(100%+2rem)] items-center justify-between gap-4 px-4 text-left text-body transition-colors duration-(--duration-fast) active:bg-surface"
+      className="-mx-4 flex min-h-12 w-[calc(100%+2rem)] items-center justify-between gap-4 px-4 text-left text-body transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
     >
       <span className="truncate">{label}</span>
       {selected && <Check aria-hidden className="size-5 shrink-0 text-primary-soft" />}

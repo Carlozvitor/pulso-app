@@ -21,6 +21,8 @@ function task(partial: Partial<Task>): Task {
     createdAt: `2026-09-28T12:00:${String(seq).padStart(2, "0")}Z`,
     updatedAt: "2026-09-28T12:00:00Z",
     completedAt: null,
+    pausedAt: null,
+    snoozedUntil: null,
     ...partial,
   };
 }

@@ -5,7 +5,7 @@ import { DurationBadge } from "./duration-badge";
 import { taskMeta } from "./task-meta";
 
 type TaskItemProps = {
-  task: TaskSummary;
+  task: Pick<TaskSummary, "id" | "title" | "context" | "dueDate" | "estimatedMinutes">;
   today: string;
   /** Itens de "mais tarde" ficam um tom abaixo. */
   quiet?: boolean;
@@ -17,7 +17,7 @@ export function TaskItem({ task, today, quiet }: TaskItemProps) {
   return (
     <Link
       href={`/tarefas/${task.id}`}
-      className="-mx-4 flex min-h-14 items-center gap-4 px-4 py-3 transition-colors duration-(--duration-fast) active:bg-surface"
+      className="-mx-4 flex min-h-14 items-center gap-4 px-4 py-3 transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
     >
       <div className="min-w-0 flex-1">
         <p className={cn("truncate text-body", quiet ? "text-foreground-secondary" : "text-foreground")}>

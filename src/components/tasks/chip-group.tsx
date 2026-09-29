@@ -19,7 +19,7 @@ export const chipClass = (selected: boolean) =>
     "inline-flex h-11 shrink-0 items-center justify-center rounded-full border px-4 text-sm font-medium whitespace-nowrap transition-colors duration-(--duration-fast)",
     selected
       ? "border-primary-soft bg-primary-soft/15 text-foreground"
-      : "border-border text-foreground-secondary active:bg-surface",
+      : "border-border text-foreground-secondary hover:bg-elevated/60 active:bg-elevated",
   );
 
 /** Escolha única; tocar na opção marcada limpa o valor. */

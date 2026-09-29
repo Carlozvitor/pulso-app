@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { BackButton } from "@/components/navigation/back-button";
+import { FolderOpen } from "lucide-react";
+import { Page } from "@/components/layout/page";
 import { ProgressBar } from "@/components/projects/progress-bar";
 import { ProjectEditor } from "@/components/projects/project-editor";
 import { ProjectStatusActions } from "@/components/projects/project-status-actions";
@@ -18,17 +19,14 @@ export default async function ProjetoPage({ params }: PageProps<"/projetos/[id]"
   const today = todayIn();
 
   return (
-    <>
-      <div className="pt-2 pb-4">
-        <BackButton />
-      </div>
+    <Page back icon={FolderOpen} title="Projeto" description={areas.find((a) => a.id === project.areaId)?.name ?? "Sem área"}>
       {/* Sem key por dados do projeto: o salvamento automático não pode remontar o editor no meio da edição. */}
       <ProjectEditor project={project} areas={areas} today={today} />
 
       {progress.total > 0 && (
         <div className="mt-8 flex flex-col gap-2">
           <p className="tabular text-sm text-foreground-secondary">
-            {progress.done} de {progress.total} concluídas
+            {progress.percent}% · {progress.done} de {progress.total} concluídas
           </p>
           <ProgressBar progress={progress} label={`Progresso de ${project.name}`} />
         </div>
@@ -42,12 +40,14 @@ export default async function ProjetoPage({ params }: PageProps<"/projetos/[id]"
           context: null,
           estimatedMinutes: t.estimatedMinutes,
           dueDate: t.dueDate,
+          energy: t.energy,
+          paused: t.status === "TODO" && t.pausedAt !== null,
         }))}
         today={today}
         canAdd={project.status === "ACTIVE"}
       />
 
       <ProjectStatusActions projectId={project.id} status={project.status} openCount={openTasks.length} />
-    </>
+    </Page>
   );
 }

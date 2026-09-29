@@ -1,7 +1,6 @@
 import { Inbox } from "lucide-react";
-import { EmptyState } from "@/components/feedback/empty-state";
-import { InboxList } from "@/components/inbox/inbox-list";
-import { PageHeader } from "@/components/navigation/page-header";
+import { InboxContent } from "@/components/inbox/inbox-content";
+import { Page } from "@/components/layout/page";
 import { inboxLabel } from "@/lib/tasks/format";
 import { listInbox } from "@/lib/tasks/queries";
 import { todayIn } from "@/lib/dates";
@@ -12,17 +11,8 @@ export default async function InboxPage() {
   const tasks = await listInbox();
 
   return (
-    <>
-      <PageHeader title="Inbox" description={inboxLabel(tasks.length)} />
-      {tasks.length > 0 ? (
-        <InboxList tasks={tasks} today={todayIn()} />
-      ) : (
-        <EmptyState
-          icon={Inbox}
-          title="Nada para organizar."
-          description="Tudo que você capturar com + chega aqui primeiro."
-        />
-      )}
-    </>
+    <Page icon={Inbox} title="Inbox" description={inboxLabel(tasks.length) ?? "Itens soltos para organizar."}>
+      <InboxContent tasks={tasks} today={todayIn()} />
+    </Page>
   );
 }

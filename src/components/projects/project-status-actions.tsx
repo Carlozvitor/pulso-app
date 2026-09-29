@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import type { ProjectStatus } from "@/types/project";
 import { Button } from "@/components/ui/button";
 import { ConfirmSheet } from "@/components/feedback/confirm-sheet";
-import { finishProject, reopenProject } from "@/lib/projects/actions";
+import { finishProject, reopenProject } from "@/lib/actions/client";
 
 type Finish = { to: "DONE" | "ARCHIVED"; confirm: string; toast: string };
 

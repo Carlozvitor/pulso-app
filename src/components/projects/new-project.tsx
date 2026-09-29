@@ -11,10 +11,11 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/compone
 import { AttributeRow } from "@/components/tasks/attribute-row";
 import { ChipGroup } from "@/components/tasks/chip-group";
 import { DueField } from "@/components/tasks/due-field";
-import { createProject } from "@/lib/projects/actions";
+import { createProject } from "@/lib/actions/client";
 
 /** "Novo projeto": só o nome é obrigatório. Ao criar, abre o projeto. */
-export function NewProject({ areas, today }: { areas: Area[]; today: string }) {
+/** `inline`: botão compacto para o cabeçalho da página (em vez de ocupar a largura toda). */
+export function NewProject({ areas, today, inline }: { areas: Area[]; today: string; inline?: boolean }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [areaId, setAreaId] = useState<string | null>(null);
@@ -40,7 +41,12 @@ export function NewProject({ areas, today }: { areas: Area[]; today: string }) {
 
   return (
     <>
-      <Button variant="secondary" size="touch" onClick={() => setOpen(true)} className="w-full">
+      <Button
+        variant="secondary"
+        size="touch"
+        onClick={() => setOpen(true)}
+        className={inline ? "h-9 w-auto border-border-strong px-3.5 text-sm font-medium lg:h-10" : "w-full"}
+      >
         <Plus aria-hidden />
         Novo projeto
       </Button>

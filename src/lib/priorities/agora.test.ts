@@ -21,6 +21,8 @@ function task(partial: Partial<Task>): Task {
     createdAt: `2026-09-01T00:00:${String(seq).padStart(2, "0")}Z`,
     updatedAt: "2026-09-01T00:00:00Z",
     completedAt: null,
+    pausedAt: null,
+    snoozedUntil: null,
     ...partial,
   };
 }
@@ -72,5 +74,19 @@ describe("buildAgoraView", () => {
     const view = buildAgoraView([task({ status: "INBOX" })], TODAY);
     expect(view.now).toBeNull();
     expect(view.pendingCount).toBe(1);
+  });
+});
+
+describe("Agora não e pausada", () => {
+  it("tarefa adiada sai da Agora e volta no dia marcado", () => {
+    const snoozed = task({ status: "TODO", snoozedUntil: "2026-09-29" });
+    expect(isAgoraCandidate(snoozed, TODAY)).toBe(false);
+    expect(isAgoraCandidate(snoozed, "2026-09-29")).toBe(true);
+  });
+
+  it("pausada continua na Agora e vem marcada", () => {
+    const paused = task({ status: "TODO", pausedAt: "2026-09-28T10:00:00Z" });
+    const view = buildAgoraView([paused], TODAY);
+    expect(view.now?.paused).toBe(true);
   });
 });

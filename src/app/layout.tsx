@@ -16,14 +16,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "PULSO",
-    template: "%s · PULSO",
+    default: "Hub do Carlos",
+    template: "%s · Hub do Carlos",
   },
   description: "O que merece sua atenção agora.",
-  applicationName: "PULSO",
+  applicationName: "Hub do Carlos",
   appleWebApp: {
     capable: true,
-    title: "PULSO",
+    title: "Hub",
     statusBarStyle: "black-translucent",
   },
   formatDetection: {

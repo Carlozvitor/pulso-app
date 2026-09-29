@@ -3,7 +3,7 @@
 // Fase 8: sem conexão, abrir o app mostra /offline.html (dá para capturar lá) em vez da tela de erro do navegador.
 // Dados continuam SEM cache — cachear cedo demais gera dados velhos na tela.
 
-const CACHE = "pulso-offline-v1";
+const CACHE = "pulso-offline-v2";
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {

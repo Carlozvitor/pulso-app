@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, CircleDot, Ellipsis, ListTodo, Plus, type LucideIcon } from "lucide-react";
+import { CircleDot, Ellipsis, ListTodo, Plus, Zap, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { QuickCapture } from "@/components/tasks/quick-capture";
@@ -17,13 +17,18 @@ type NavItem = {
 };
 
 const LEFT: NavItem[] = [
+  { href: "/central", label: "Central", icon: Zap },
   { href: "/agora", label: "Agora", icon: CircleDot, match: ["/sessao"] },
-  { href: "/a-fazer", label: "A fazer", icon: ListTodo },
 ];
 
 const RIGHT: NavItem[] = [
-  { href: "/agenda", label: "Agenda", icon: CalendarDays },
-  { href: "/mais", label: "Mais", icon: Ellipsis, match: ["/projetos", "/areas", "/feitas", "/busca", "/inbox"] },
+  { href: "/a-fazer", label: "A fazer", icon: ListTodo },
+  {
+    href: "/mais",
+    label: "Mais",
+    icon: Ellipsis,
+    match: ["/agenda", "/projetos", "/areas", "/feitas", "/busca", "/inbox", "/configuracoes"],
+  },
 ];
 
 function isActive(pathname: string, item: NavItem) {

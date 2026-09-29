@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H1 (Central, celular)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #050506; --line: #232327; --line-2: #2e2e33;
+    --text: #f4f4f5; --text-2: #a1a1aa; --text-3: #8a8a93;
+    --accent: #4c5bff; --accent-soft: #8b95ff; --ok: #34d399;
+    --teal-a: #0c3a42; --teal-b: #081b20; --teal-line: #1d5c66; --teal-tile: #0f4e59; --teal-ink: #5eead4;
+    --plum-a: #37195a; --plum-b: #180d28; --plum-line: #5a2f8c; --plum-tile: #4a2478; --plum-ink: #c9a7ff;
+    --amber-a: #4d260c; --amber-b: #1f1007; --amber-line: #8a4818; --amber-tile: #6d3510; --amber-ink: #fdba74;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #1a1a1d; color: var(--text); font: 15px/1.45 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; }
+
+  .phone { width: 390px; height: 844px; border-radius: 44px; border: 10px solid #000; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 30px 80px rgb(0 0 0 / .6); }
+  .scroll { height: 100%; overflow: auto; padding: 54px 16px 110px; scrollbar-width: none; }
+  .status { position: absolute; top: 0; inset-inline: 0; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font-weight: 600; font-size: 14px; background: var(--bg); z-index: 3; }
+
+  .brandrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 14px; color: var(--text-2); }
+  .logo { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(150deg, #5d6bff, #3340d6); display: grid; place-items: center; font-weight: 700; font-size: 13px; color: #fff; }
+  .date { font-size: 13px; color: var(--text-3); }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .lead { color: var(--text-2); font-size: 15px; margin-top: 4px; }
+
+  .capture { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 8px 0 14px; border-radius: 12px; background: #0f1020; border: 1px solid #2f3461; margin-top: 18px; }
+  .capture > svg.lucide { color: var(--accent-soft); }
+  .capture .ph { flex: 1; color: #9aa0c8; font-size: 16px; }
+  .capture .send { width: 36px; height: 36px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; }
+
+  .section { display: flex; align-items: baseline; justify-content: space-between; margin: 28px 2px 10px; }
+  .section h2 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+  .section a { color: var(--text-3); font-size: 13px; }
+
+  .card { position: relative; border-radius: 12px; padding: 18px; border: 1px solid; overflow: hidden; }
+  .card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 0% 0%, rgb(255 255 255 / .07), transparent 55%); }
+  .teal  { background: linear-gradient(160deg, var(--teal-a), var(--teal-b));  border-color: var(--teal-line); }
+  .plum  { background: linear-gradient(160deg, var(--plum-a), var(--plum-b));  border-color: var(--plum-line); }
+  .amber { background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border-color: var(--amber-line); }
+  .neutral { background: linear-gradient(160deg, #141417, #0d0d0f); border-color: var(--line); }
+  .tile { width: 40px; height: 40px; border-radius: 9px; display: grid; place-items: center; }
+  .teal .tile { background: var(--teal-tile); color: var(--teal-ink); }
+  .plum .tile { background: var(--plum-tile); color: var(--plum-ink); font-weight: 700; font-size: 12px; }
+  .amber .tile { background: var(--amber-tile); color: var(--amber-ink); }
+  .neutral .tile { background: #222227; color: var(--text-2); }
+  .label { margin-top: 14px; color: rgb(255 255 255 / .75); font-size: 13.5px; }
+  .title { font-size: 21px; font-weight: 650; letter-spacing: -0.01em; line-height: 1.2; margin-top: 2px; }
+  .actions { display: flex; gap: 10px; margin-top: 16px; }
+  .go { flex: 1; height: 46px; border-radius: 10px; background: var(--teal-ink); color: #042f2e; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .ghost { height: 46px; padding: 0 18px; border-radius: 10px; background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .12); font-weight: 500; display: inline-flex; align-items: center; }
+
+  .next { display: grid; gap: 8px; margin-top: 8px; }
+  .nrow { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: #0b1a1e; border: 1px solid #16363c; }
+  .nrow .check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #3b6a70; flex: none; }
+  .nrow b { font-weight: 500; font-size: 15px; display: block; }
+  .nrow span { font-size: 12.5px; color: var(--text-3); }
+
+  .head { display: flex; align-items: center; gap: 12px; }
+  .head b { font-size: 19px; font-weight: 700; display: block; }
+  .head span { font-size: 12.5px; color: rgb(255 255 255 / .6); }
+  .rows { list-style: none; padding: 0; margin-top: 12px; display: grid; gap: 2px; }
+  .row { display: grid; grid-template-columns: 62px 1fr; gap: 10px; align-items: center; padding: 10px 10px; border-radius: 8px; background: rgb(0 0 0 / .2); }
+  .row .when { font: 600 11.5px "Geist Mono"; color: rgb(255 255 255 / .6); }
+  .amber .row .when { color: var(--amber-ink); }
+  .row b { font-weight: 500; font-size: 14.5px; display: block; }
+  .row span.o { font-size: 12px; color: rgb(255 255 255 / .5); }
+  .row span.o.proj { color: var(--plum-ink); }
+
+  .pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pgrid .card { padding: 14px; }
+  .pgrid .big { font-size: 24px; font-weight: 700; margin-top: 2px; }
+  .pgrid .label { margin-top: 10px; font-size: 12.5px; }
+  .pgrid small { font-size: 11.5px; color: rgb(255 255 255 / .55); }
+
+  .navbar { position: absolute; bottom: 0; inset-inline: 0; height: 86px; background: rgb(9 9 11 / .96); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding-top: 8px; z-index: 3; }
+  .tab { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--text-3); }
+  .tab.on { color: var(--text); }
+  .tab.on svg.lucide { color: var(--accent-soft); }
+  .plus { justify-self: center; width: 52px; height: 52px; border-radius: 16px; background: var(--accent); display: grid; place-items: center; margin-top: -4px; }
+  .plus svg.lucide { width: 24px; height: 24px; stroke-width: 2.25; }
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status"><span>14:32</span><span style="display:flex;gap:6px"><i data-lucide="signal" style="width:16px"></i><i data-lucide="wifi" style="width:16px"></i><i data-lucide="battery-full" style="width:20px"></i></span></div>
+    <div class="scroll">
+      <div class="brandrow"><span class="brand"><span class="logo">C</span>Hub do Carlos</span><span class="date">Ter, 29 set</span></div>
+      <h1>Boa tarde, Carlos</h1>
+      <p class="lead">3 prazos hoje. Uma coisa em andamento.</p>
+
+      <div class="capture"><i data-lucide="plus"></i><span class="ph">O que está na sua cabeça?</span><span class="send"><i data-lucide="arrow-up"></i></span></div>
+
+      <div class="section"><h2>Agora</h2><a>Abrir no PULSO</a></div>
+      <article class="card teal">
+        <span class="tile"><i data-lucide="target"></i></span>
+        <div class="label">CRUMB CLUB · em andamento</div>
+        <div class="title">Fechar orçamento com o fornecedor de embalagens</div>
+        <div class="actions"><span class="go"><i data-lucide="check"></i>Concluir</span><span class="ghost">Pausar</span></div>
+      </article>
+      <div class="next">
+        <div class="nrow"><span class="check"></span><div><b>Revisar capítulo 4 de Estatística</b><span>Faculdade · hoje · 45 min</span></div></div>
+        <div class="nrow"><span class="check"></span><div><b>Responder proposta do designer</b><span>AURA CAFÉ · amanhã · 10 min</span></div></div>
+      </div>
+
+      <div class="section"><h2>Hoje</h2></div>
+      <article class="card amber">
+        <div class="head"><span class="tile"><i data-lucide="sun"></i></span><div><b>3 prazos</b><span>Terça, 29 de setembro</span></div></div>
+        <ul class="rows">
+          <li class="row"><span class="when">Hoje</span><div><b>Revisar capítulo 4</b><span class="o">Faculdade</span></div></li>
+          <li class="row"><span class="when">Hoje</span><div><b>Pagar fatura do cartão</b><span class="o">Finanças</span></div></li>
+          <li class="row"><span class="when">Hoje</span><div><b>Mandar post da Valentine</b><span class="o">Valentine</span></div></li>
+        </ul>
+      </article>
+
+      <div class="section"><h2>Próximas atenções</h2></div>
+      <article class="card neutral">
+        <ul class="rows" style="margin-top:0">
+          <li class="row"><span class="when">Amanhã</span><div><b>PORTFÓLIO</b><span class="o proj">Prazo do projeto · 8 de 10</span></div></li>
+          <li class="row"><span class="when">Amanhã</span><div><b>Responder proposta do designer</b><span class="o">AURA CAFÉ</span></div></li>
+          <li class="row"><span class="when">Qui, 1</span><div><b>Entregar trabalho de Marketing</b><span class="o">Faculdade</span></div></li>
+        </ul>
+      </article>
+
+      <div class="section"><h2>Minha vida</h2><a>Projetos</a></div>
+      <div class="pgrid">
+        <article class="card plum"><span class="tile">CC</span><div class="label">CRUMB CLUB</div><div class="big">62%</div><small>prazo 15 out</small></article>
+        <article class="card plum"><span class="tile">PO</span><div class="label">PORTFÓLIO</div><div class="big">80%</div><small>prazo 30 set</small></article>
+        <article class="card plum"><span class="tile">AC</span><div class="label">AURA CAFÉ</div><div class="big">30%</div><small>sem prazo</small></article>
+        <article class="card plum"><span class="tile">PU</span><div class="label">PULSO</div><div class="big">45%</div><small>sem prazo</small></article>
+      </div>
+    </div>
+
+    <nav class="navbar">
+      <span class="tab on"><i data-lucide="zap"></i>Central</span>
+      <span class="tab"><i data-lucide="circle-dot"></i>Agora</span>
+      <span class="plus"><i data-lucide="plus"></i></span>
+      <span class="tab"><i data-lucide="list-todo"></i>A fazer</span>
+      <span class="tab"><i data-lucide="ellipsis"></i>Mais</span>
+    </nav>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

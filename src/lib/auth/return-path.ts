@@ -1,4 +1,4 @@
-export const HOME_PATH = "/agora";
+export const HOME_PATH = "/central";
 
 /**
  * Para onde voltar depois do login. Só aceita caminho interno do app —
@@ -21,7 +21,7 @@ export function safeReturnPath(value: string | null | undefined): string {
   return path;
 }
 
-/** "/login", ou "/login?volta=…" quando há lugar melhor que a Agora para voltar. */
+/** "/login", ou "/login?volta=…" quando há lugar melhor que a Central para voltar. */
 export function loginHref(from: string | null | undefined): string {
   const path = safeReturnPath(from);
   return path === HOME_PATH ? "/login" : `/login?volta=${encodeURIComponent(path)}`;

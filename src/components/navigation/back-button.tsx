@@ -9,7 +9,7 @@ export function BackButton() {
   return (
     <button
       type="button"
-      onClick={() => (window.history.length > 1 ? router.back() : router.push("/agora"))}
+      onClick={() => (window.history.length > 1 ? router.back() : router.push("/central"))}
       className="-ml-2 inline-flex min-h-11 items-center gap-1 pr-3 text-sm text-foreground-secondary active:text-foreground"
     >
       <ChevronLeft aria-hidden className="size-5" />

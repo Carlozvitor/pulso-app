@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Task } from "@/types/task";
-import { BEFORE_TODAY_LABEL, agendaDays, upcomingBuckets } from "./agenda";
+import { BEFORE_TODAY_LABEL, agendaDays } from "./agenda";
 
 const TODAY = "2026-09-29"; // terça
 let seq = 0;
@@ -56,37 +56,5 @@ describe("agendaDays", () => {
       TODAY,
     );
     expect(today.tasks.map((t) => t.title)).toEqual(["alta", "baixa"]);
-  });
-});
-
-describe("upcomingBuckets", () => {
-  it("sempre 4 blocos, com rótulos por dia", () => {
-    const buckets = upcomingBuckets([], TODAY);
-    expect(buckets.map((b) => b.label)).toEqual(["Hoje", "Amanhã", "Quinta, 1 out", "Até terça, 6 out"]);
-    expect(buckets.every((b) => b.count === 0 && b.preview.length === 0)).toBe(true);
-  });
-
-  it("hoje inclui o que já passou; semana vai até 7 dias", () => {
-    const buckets = upcomingBuckets(
-      [
-        task({ dueDate: "2026-09-25" }),
-        task({ dueDate: TODAY }),
-        task({ dueDate: "2026-09-30" }),
-        task({ dueDate: "2026-10-01" }),
-        task({ dueDate: "2026-10-06" }),
-        task({ dueDate: "2026-10-07" }),
-      ],
-      TODAY,
-    );
-    expect(buckets.map((b) => b.count)).toEqual([2, 1, 1, 1]);
-  });
-
-  it("mostra só as primeiras como prévia", () => {
-    const [hoje] = upcomingBuckets(
-      [task({ dueDate: TODAY }), task({ dueDate: TODAY }), task({ dueDate: TODAY })],
-      TODAY,
-    );
-    expect(hoje.count).toBe(3);
-    expect(hoje.preview).toHaveLength(2);
   });
 });

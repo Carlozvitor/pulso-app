@@ -3,11 +3,11 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "PULSO",
-    short_name: "PULSO",
+    name: "Hub do Carlos",
+    short_name: "Hub",
     description: "O que merece sua atenção agora.",
     lang: "pt-BR",
-    start_url: "/agora",
+    start_url: "/central",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

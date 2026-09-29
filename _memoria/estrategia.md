@@ -18,8 +18,8 @@ Decisões aprovadas (2026-09-29):
 - Fase 9 etapas pendentes: teclado vira polimento para depois (ficam N e /); agenda semanal entra na H3; "fechar o dia" em espera.
 
 Fases do Hub (uma por vez, com aprovação):
-- **H1. Casca + Central** — nome "Hub do Carlos", barra lateral nova, Central (Agora, Hoje, Próximas atenções, Captura). Sem banco novo. ← próxima
-- **H2. Origem + Trabalho** — árvore de origens por módulo; tarefa mostra a origem; módulo Trabalho.
+- **H1. Casca + Central** — nome "Hub do Carlos", barra lateral nova, Central (Agora, Hoje, Próximas atenções, Captura). Sem banco novo. Código pronto em 2026-09-29 (Central em /central e página inicial; lógica em src/lib/central; Configurações em /configuracoes; Agora ficou só com tarefas; celular: Central · Agora · + · A fazer · Mais). Testada e aprovada pelo Carlos em 2026-09-29. ✔
+- **H2. Origem + Trabalho** — árvore de origens por módulo; tarefa mostra a origem; módulo Trabalho. ← próxima (plano em discussão)
 - **H3. Compromissos** — tabela própria (Agenda ≠ Tarefa), visão semanal, horários no "Hoje".
 - **H4. Faculdade** · **H5. Dinheiro** · **H6. Projetos** (Pausado, objetivo, links) · **H7. Treino** · **H8. Vida pessoal**.
 

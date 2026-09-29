@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { ChevronRight, CircleCheck, Ellipsis, FolderOpen, Inbox, Layers, LogOut, Search } from "lucide-react";
+import { CalendarDays, ChevronRight, CircleCheck, Ellipsis, Inbox, Rocket, Search, Settings } from "lucide-react";
 import { ListPanel, Page } from "@/components/layout/page";
-import { signOut } from "@/lib/auth/actions";
 
 export const metadata = { title: "Mais" };
 
 const LINKS = [
+  { href: "/agenda", label: "Agenda", icon: CalendarDays },
+  { href: "/projetos", label: "Projetos", icon: Rocket },
   { href: "/feitas", label: "Feitas", icon: CircleCheck },
-  { href: "/projetos", label: "Projetos", icon: FolderOpen },
-  { href: "/areas", label: "Áreas", icon: Layers },
   { href: "/busca", label: "Buscar", icon: Search },
   { href: "/inbox", label: "Inbox", icon: Inbox },
+  { href: "/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
 
 export default function MaisPage() {
@@ -32,16 +32,6 @@ export default function MaisPage() {
           ))}
         </ul>
       </ListPanel>
-
-      <form action={signOut} className="mt-6">
-        <button
-          type="submit"
-          className="panel flex min-h-14 w-full items-center gap-4 px-4 text-left transition-colors duration-(--duration-fast) active:bg-elevated"
-        >
-          <LogOut aria-hidden className="size-5 text-foreground-subtle" strokeWidth={1.75} />
-          <span className="text-body text-foreground-secondary">Sair</span>
-        </button>
-      </form>
     </Page>
   );
 }

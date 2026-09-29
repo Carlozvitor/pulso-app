@@ -13,7 +13,7 @@ function openLabel(count: number): string {
 const buttonClass =
   "inline-flex h-9 items-center gap-2 rounded-lg border border-border-strong bg-elevated px-3 text-[0.8125rem] font-medium text-foreground transition-colors duration-(--duration-fast) hover:bg-[#1d1d22]";
 
-/** Topo no PC: marca, saudação com o resumo, e as ações de sempre. */
+/** Topo no PC: marca do Hub (volta para a Central), saudação com o resumo, e as ações de sempre. */
 export async function TopBar() {
   const open = await countOpenTasks();
   return <TopBarView open={open} greeting={greetingFor(new Date()).replace(/\.$/, "")} />;
@@ -22,11 +22,17 @@ export async function TopBar() {
 export function TopBarView({ open, greeting }: { open: number; greeting: string }) {
   return (
     <header className="sticky top-0 z-30 hidden h-topbar grid-cols-[1fr_auto_1fr] items-center bg-background px-4 lg:grid">
-      <Link href="/agora" className="flex items-center gap-2.5 justify-self-start text-[1.1875rem] font-semibold tracking-tight">
-        <span aria-hidden className="flex size-[26px] items-center justify-center rounded-full border-2 border-primary-soft/45">
-          <span className="size-2.5 rounded-full bg-primary" />
+      <Link href="/central" className="flex items-center gap-2.5 justify-self-start">
+        <span
+          aria-hidden
+          className="flex size-[30px] items-center justify-center rounded-[9px] bg-linear-150 from-[#5d6bff] to-[#3340d6] text-[0.9375rem] font-bold text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]"
+        >
+          C
         </span>
-        pulso
+        <span className="leading-tight">
+          <span className="block text-[0.65625rem] font-semibold tracking-[0.12em] text-foreground-subtle">CARLOS</span>
+          <span className="block text-base font-semibold tracking-tight">Hub do Carlos</span>
+        </span>
       </Link>
 
       <p className="flex items-baseline gap-2">

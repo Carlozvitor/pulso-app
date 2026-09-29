@@ -1,202 +1,168 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, CircleCheck, CircleDot, Inbox, Layers, ListTodo, type LucideIcon } from "lucide-react";
+import {
+  Activity,
+  CalendarDays,
+  CircleCheck,
+  CircleDot,
+  Inbox,
+  ListTodo,
+  Rocket,
+  Settings,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type SidebarProject = { id: string; name: string; monogram: string; areaName: string | null; open: number };
-export type SidebarArea = { id: string; name: string };
-
-type Tab = "tudo" | "projetos" | "areas";
+export type SidebarProject = { id: string; name: string; monogram: string; open: number };
 
 type ItemProps = {
   href: string;
   title: string;
-  subtitle?: string;
-  count?: number;
+  subtitle: string;
   active: boolean;
-  tile: { className: string; icon?: LucideIcon; text?: string };
+  tile: { className: string; icon: LucideIcon };
 };
 
-function Item({ href, title, subtitle, count, active, tile }: ItemProps) {
-  const Icon = tile.icon;
+/** Item principal: selo colorido, nome e uma linha de apoio. */
+function Item({ href, title, subtitle, active, tile: { className, icon: Icon } }: ItemProps) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-2.5 py-2 transition-colors duration-(--duration-fast)",
+        active ? "bg-[#1b1c24] shadow-[inset_0_0_0_1px_#2b2d40]" : "hover:bg-[#141417]",
+      )}
+    >
+      <span aria-hidden className={cn("flex size-[30px] shrink-0 items-center justify-center rounded-lg", className)}>
+        <Icon className="size-4" strokeWidth={1.75} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[0.84375rem] font-medium">{title}</span>
+        <span className="block truncate text-xs text-foreground-subtle">{subtitle}</span>
+      </span>
+    </Link>
+  );
+}
+
+type KidProps = {
+  href: string;
+  label: string;
+  active: boolean;
+  icon?: LucideIcon;
+  /** Iniciais do projeto no lugar do ícone. */
+  monogram?: string;
+  count?: number;
+};
+
+/** Subitem, pendurado no item de cima por uma linha. */
+function Kid({ href, label, active, icon: Icon, monogram, count }: KidProps) {
   return (
     <li>
       <Link
         href={href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "flex items-center gap-3 rounded-lg px-2.5 py-2 transition-colors duration-(--duration-fast)",
-          active ? "bg-[#18181c]" : "hover:bg-[#141417]",
+          "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[0.8125rem] transition-colors duration-(--duration-fast)",
+          active ? "bg-[#1b1c24] text-foreground" : "text-foreground-secondary hover:bg-[#141417] hover:text-foreground",
         )}
       >
-        <span
-          aria-hidden
-          className={cn("flex size-[30px] shrink-0 items-center justify-center rounded-lg text-[0.6875rem] font-bold", tile.className)}
-        >
-          {Icon ? <Icon className="size-4" strokeWidth={1.75} /> : tile.text}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-[0.8125rem] font-medium">{title}</span>
-          {subtitle && <span className="block truncate text-xs text-foreground-subtle">{subtitle}</span>}
-        </span>
-        {count !== undefined && count > 0 && (
-          <span className="tabular font-mono text-xs text-foreground-subtle">{count}</span>
+        {Icon ? (
+          <Icon aria-hidden className={cn("size-3.5 shrink-0", active ? "text-primary-soft" : "text-foreground-subtle")} strokeWidth={1.75} />
+        ) : (
+          <span aria-hidden className="flex size-[18px] shrink-0 items-center justify-center rounded-[5px] bg-plum-tile text-[0.5625rem] font-bold text-plum-ink">
+            {monogram}
+          </span>
         )}
+        <span className="min-w-0 flex-1 truncate">{label}</span>
+        {count !== undefined && count > 0 && <span className="tabular font-mono text-[0.6875rem] text-foreground-subtle">{count}</span>}
       </Link>
     </li>
   );
 }
 
-function Group({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
+function Kids({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="mt-3 first:mt-0">
-      <div className="flex items-baseline justify-between px-2.5 pt-2 pb-1.5">
-        <p className="text-[0.6875rem] font-semibold tracking-[0.08em] text-foreground-subtle uppercase">{title}</p>
-        {action}
-      </div>
-      <ul>{children}</ul>
-    </div>
+    <ul aria-label={label} className="mt-0.5 mb-1.5 ml-[1.5625rem] grid gap-px border-l border-border pl-2.5">
+      {children}
+    </ul>
   );
 }
 
-const TILE = {
-  teal: "bg-teal-tile text-teal-ink",
-  plum: "bg-plum-tile text-plum-ink",
-  amber: "bg-amber-tile text-amber-ink",
-  neutral: "bg-[#26262b] text-[#d4d4d8]",
-  area: "bg-[#1f2937] text-[#93c5fd]",
-  done: "bg-[#0c2a1e] text-success",
-};
+function projectsLabel(count: number): string {
+  if (count === 0) return "Nenhum em andamento";
+  return count === 1 ? "1 em andamento" : `${count} em andamento`;
+}
 
-/** Painel "Organização": atalhos principais, projetos ativos e áreas, com abas. */
+/**
+ * Navegação do Hub no PC: Central e PULSO no topo, os módulos da vida embaixo
+ * (só os que já existem) e Configurações no rodapé.
+ */
 export function SidebarNav({
   projects,
-  areas,
   inboxCount,
   todoCount,
 }: {
   projects: SidebarProject[];
-  areas: SidebarArea[];
   inboxCount: number;
   todoCount: number;
 }) {
   const pathname = usePathname();
-  const [tab, setTab] = useState<Tab>("tudo");
   const is = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
-  const tabs: { id: Tab; label: string; count: number }[] = [
-    { id: "tudo", label: "Tudo", count: projects.length + areas.length },
-    { id: "projetos", label: "Projetos", count: projects.length },
-    { id: "areas", label: "Áreas", count: areas.length },
-  ];
-
-  const projectList = (
-    <Group
-      title="Projetos"
-      action={
-        <Link href="/projetos" className="text-xs text-foreground-subtle hover:text-foreground">
-          Ver todos
-        </Link>
-      }
-    >
-      {projects.length === 0 && <li className="px-2.5 py-2 text-xs text-foreground-subtle">Nenhum projeto ativo.</li>}
-      {projects.map((p) => (
-        <Item
-          key={p.id}
-          href={`/projetos/${p.id}`}
-          title={p.name}
-          subtitle={p.areaName ? `Projeto · ${p.areaName}` : "Projeto · sem área"}
-          count={p.open}
-          active={pathname === `/projetos/${p.id}`}
-          tile={{ className: TILE.plum, text: p.monogram }}
-        />
-      ))}
-    </Group>
-  );
-
-  const areaList = (
-    <Group
-      title="Áreas"
-      action={
-        <Link href="/areas" className="text-xs text-foreground-subtle hover:text-foreground">
-          Editar
-        </Link>
-      }
-    >
-      {areas.length === 0 && <li className="px-2.5 py-2 text-xs text-foreground-subtle">Nenhuma área ainda.</li>}
-      {areas.map((a) => (
-        <Item
-          key={a.id}
-          href={`/agora?area=${a.id}`}
-          title={a.name}
-          subtitle="Área · ver na Agora"
-          active={false}
-          tile={{ className: TILE.area, icon: Layers }}
-        />
-      ))}
-    </Group>
-  );
-
   return (
-    <nav aria-label="Organização" className="panel flex min-h-0 flex-col overflow-hidden">
-      <div className="px-3.5 pt-3.5 pb-2.5">
-        <h2 className="text-base font-semibold">Organização</h2>
-      </div>
-      <div role="group" aria-label="Mostrar" className="flex gap-1.5 border-b border-border px-3 pb-3">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            aria-pressed={tab === t.id}
-            onClick={() => setTab(t.id)}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[0.8125rem] transition-colors duration-(--duration-fast)",
-              tab === t.id ? "bg-[#2a2a2f] text-foreground" : "text-foreground-secondary hover:text-foreground",
-            )}
-          >
-            {t.label}
-            <span className="rounded bg-white/8 px-1.5 font-mono text-[0.625rem] font-semibold text-foreground-secondary">
-              {t.count}
-            </span>
-          </button>
-        ))}
+    <nav aria-label="Hub" className="panel flex min-h-0 flex-col overflow-hidden">
+      <div className="min-h-0 flex-1 overflow-y-auto px-1.5 py-2.5 [scrollbar-width:thin]">
+        <Item
+          href="/central"
+          title="Central"
+          subtitle="O que merece atenção"
+          active={is("/central")}
+          tile={{ className: "bg-[#262a5c] text-[#a5acff]", icon: Zap }}
+        />
+
+        <div className="mt-1">
+          <Item href="/agora" title="PULSO" subtitle="O que fazer" active={false} tile={{ className: "bg-teal-tile text-teal-ink", icon: Activity }} />
+          <Kids label="PULSO">
+            <Kid href="/agora" label="Agora" icon={CircleDot} active={is("/agora") || is("/sessao")} />
+            <Kid href="/a-fazer" label="A fazer" icon={ListTodo} count={todoCount} active={is("/a-fazer")} />
+            <Kid href="/agenda" label="Agenda" icon={CalendarDays} active={is("/agenda")} />
+            <Kid href="/feitas" label="Feitas" icon={CircleCheck} active={is("/feitas")} />
+            {(inboxCount > 0 || is("/inbox")) && <Kid href="/inbox" label="Inbox" icon={Inbox} count={inboxCount} active={is("/inbox")} />}
+          </Kids>
+        </div>
+
+        <p className="flex items-center gap-2.5 px-2.5 pt-4 pb-2 text-[0.6875rem] font-semibold tracking-[0.1em] text-foreground-subtle uppercase after:h-px after:flex-1 after:bg-border">
+          Minha vida
+        </p>
+
+        <Item
+          href="/projetos"
+          title="Projetos"
+          subtitle={projectsLabel(projects.length)}
+          active={pathname === "/projetos"}
+          tile={{ className: "bg-plum-tile text-plum-ink", icon: Rocket }}
+        />
+        {projects.length > 0 && (
+          <Kids label="Projetos em andamento">
+            {projects.map((p) => (
+              <Kid key={p.id} href={`/projetos/${p.id}`} label={p.name} monogram={p.monogram} count={p.open} active={pathname === `/projetos/${p.id}`} />
+            ))}
+          </Kids>
+        )}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-1.5 py-2 [scrollbar-width:thin]">
-        {tab === "tudo" && (
-          <>
-            <ul>
-              <Item href="/agora" title="Agora" subtitle="O que merece atenção" active={is("/agora") || is("/sessao")} tile={{ className: TILE.teal, icon: CircleDot }} />
-              <Item
-                href="/a-fazer"
-                title="A fazer"
-                subtitle="Tudo que está para fazer"
-                count={todoCount}
-                active={is("/a-fazer")}
-                tile={{ className: TILE.neutral, icon: ListTodo }}
-              />
-              <Item href="/agenda" title="Agenda" subtitle="Tarefas com prazo" active={is("/agenda")} tile={{ className: TILE.amber, icon: CalendarDays }} />
-              <Item href="/feitas" title="Feitas" subtitle="O que já foi concluído" active={is("/feitas")} tile={{ className: TILE.done, icon: CircleCheck }} />
-              {(inboxCount > 0 || is("/inbox")) && (
-                <Item
-                  href="/inbox"
-                  title="Inbox"
-                  subtitle={`${inboxCount} para organizar`}
-                  count={inboxCount}
-                  active={is("/inbox")}
-                  tile={{ className: TILE.neutral, icon: Inbox }}
-                />
-              )}
-            </ul>
-            {projectList}
-            {areaList}
-          </>
-        )}
-        {tab === "projetos" && projectList}
-        {tab === "areas" && areaList}
+      <div className="border-t border-border px-1.5 py-2">
+        <Item
+          href="/configuracoes"
+          title="Configurações"
+          subtitle="Áreas, conta, sair"
+          active={is("/configuracoes") || is("/areas")}
+          tile={{ className: "bg-[#1d1d21] text-foreground-secondary", icon: Settings }}
+        />
       </div>
     </nav>
   );

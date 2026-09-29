@@ -5,7 +5,7 @@ import { todayIn } from "@/lib/dates";
 import { contextLabel } from "@/lib/projects/organize";
 import { getContextLookup } from "@/lib/projects/queries";
 import type { AgoraView, Task, TaskWithContext } from "@/types/task";
-import { agendaDays, upcomingBuckets, type DayGroup, type UpcomingBucket } from "./agenda";
+import { agendaDays, type DayGroup } from "./agenda";
 import { groupDoneByDay, type DoneDay } from "./done";
 import { todoSections, type TodoSections } from "./todo";
 import { searchTerm } from "./format";
@@ -32,29 +32,22 @@ export async function getTask(id: string): Promise<Task | null> {
   return data ? taskRowSchema.parse(data) : null;
 }
 
-export type AgoraPage = {
-  view: AgoraView;
-  upcoming: UpcomingBucket[];
-};
-
-/**
- * Tudo que está aberto — volume pessoal, o ranking é feito em memória.
- * `areaId`: filtro por área (a área da tarefa já vem do projeto, pelo banco).
- */
-export async function getAgoraPage(areaId?: string | null): Promise<AgoraPage> {
+/** Tudo que está aberto — volume pessoal, o ranking é feito em memória. */
+export async function listOpenTasks(): Promise<Task[]> {
   const { supabase } = await requireUser();
-  const [{ data, error }, lookup] = await Promise.all([
-    supabase.from("tasks").select(TASK_COLUMNS).in("status", OPEN_STATUSES),
-    getContextLookup(),
-  ]);
+  const { data, error } = await supabase.from("tasks").select(TASK_COLUMNS).in("status", OPEN_STATUSES);
   if (error) throw error;
-  const today = todayIn();
-  const contextOf = (t: Task) => contextLabel(t, lookup);
-  const tasks = taskRows.parse(data).filter((t) => !areaId || t.areaId === areaId);
-  return {
-    view: buildAgoraView(tasks, today, contextOf),
-    upcoming: upcomingBuckets(tasks, today, contextOf),
-  };
+  return taskRows.parse(data);
+}
+
+/** `areaId`: filtro por área (a área da tarefa já vem do projeto, pelo banco). */
+export async function getAgoraView(areaId?: string | null): Promise<AgoraView> {
+  const [tasks, lookup] = await Promise.all([listOpenTasks(), getContextLookup()]);
+  return buildAgoraView(
+    tasks.filter((t) => !areaId || t.areaId === areaId),
+    todayIn(),
+    (t: Task) => contextLabel(t, lookup),
+  );
 }
 
 /** Agenda: tudo que está aberto e tem prazo, por dia. */

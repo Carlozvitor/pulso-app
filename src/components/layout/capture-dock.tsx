@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowUp, CloudUpload, ListTodo } from "lucide-react";
 import { CAPTURE_EVENT, DESKTOP_QUERY, captureWithFeedback } from "@/components/tasks/capture-feedback";
 import { usePendingCaptures } from "@/lib/tasks/pending-captures";
@@ -8,8 +9,14 @@ import { usePendingCaptures } from "@/lib/tasks/pending-captures";
 /**
  * Captura no PC: barra flutuante no centro, embaixo do painel principal — sempre à mão.
  * Enter adiciona em A fazer; N ou "Capturar" trazem o foco para cá; Esc sai do campo.
+ * Na Central ela some: lá a captura já está no topo da tela.
  */
 export function CaptureDock() {
+  const onCentral = usePathname() === "/central";
+  return onCentral ? null : <Dock />;
+}
+
+function Dock() {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const pending = usePendingCaptures();

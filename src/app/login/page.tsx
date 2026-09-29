@@ -11,7 +11,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <div aria-hidden className="mb-10 flex size-10 items-center justify-center rounded-full border-2 border-primary-soft/35">
           <div className="size-4 rounded-full bg-primary" />
         </div>
-        <h1 className="text-display font-semibold tracking-tight">Entrar no PULSO</h1>
+        <h1 className="text-display font-semibold tracking-tight">Entrar no Hub</h1>
         <p className="mt-2 mb-8 text-sm text-foreground-subtle">O que merece sua atenção agora.</p>
         <LoginForm volta={typeof volta === "string" ? volta : undefined} />
       </div>

@@ -3,8 +3,8 @@ import { loginHref, safeReturnPath } from "./return-path";
 
 describe("safeReturnPath", () => {
   it("sem valor volta para a Agora", () => {
-    expect(safeReturnPath(null)).toBe("/agora");
-    expect(safeReturnPath("")).toBe("/agora");
+    expect(safeReturnPath(null)).toBe("/central");
+    expect(safeReturnPath("")).toBe("/central");
   });
 
   it("aceita caminho interno com query", () => {
@@ -17,16 +17,16 @@ describe("safeReturnPath", () => {
   });
 
   it("recusa destino externo ou esquisito", () => {
-    expect(safeReturnPath("//evil.com")).toBe("/agora");
-    expect(safeReturnPath("/\\evil.com")).toBe("/agora");
-    expect(safeReturnPath("evil.com")).toBe("/agora");
-    expect(safeReturnPath("javascript:alert(1)")).toBe("/agora");
+    expect(safeReturnPath("//evil.com")).toBe("/central");
+    expect(safeReturnPath("/\\evil.com")).toBe("/central");
+    expect(safeReturnPath("evil.com")).toBe("/central");
+    expect(safeReturnPath("javascript:alert(1)")).toBe("/central");
   });
 
   it("nunca volta para o login nem para a raiz", () => {
-    expect(safeReturnPath("/login")).toBe("/agora");
-    expect(safeReturnPath("/login?volta=/inbox")).toBe("/agora");
-    expect(safeReturnPath("/")).toBe("/agora");
+    expect(safeReturnPath("/login")).toBe("/central");
+    expect(safeReturnPath("/login?volta=/inbox")).toBe("/central");
+    expect(safeReturnPath("/")).toBe("/central");
   });
 });
 
@@ -37,6 +37,6 @@ describe("loginHref", () => {
 
   it("sem destino útil fica só /login", () => {
     expect(loginHref(null)).toBe("/login");
-    expect(loginHref("/agora")).toBe("/login");
+    expect(loginHref("/central")).toBe("/login");
   });
 });

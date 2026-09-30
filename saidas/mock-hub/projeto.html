@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H6 (projeto)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .app-ico.plum.mono { font-weight: 700; font-size: 17px; letter-spacing: .02em; }
+  .main-head p { display: flex; align-items: center; gap: 8px; }
+  .main-head p .dot { color: var(--text-3); }
+
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 0; padding: 0; }
+  .hero > div { padding: 20px 22px 18px; }
+  .hero .side-stats { border-left: 1px solid rgb(255 255 255 / .1); display: grid; gap: 14px; align-content: start; }
+  .hero small.k { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgb(255 255 255 / .55); }
+  .hero small.k span { font-weight: 400; letter-spacing: 0; text-transform: none; color: rgb(255 255 255 / .4); }
+  .hero .goal { margin-top: 8px; font-size: 18px; line-height: 1.45; font-weight: 500; letter-spacing: -0.005em; max-width: 60ch; }
+  .facts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .fact { height: 30px; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border-radius: 8px; background: rgb(0 0 0 / .25); font-size: 13px; color: rgb(255 255 255 / .8); }
+  .fact svg.lucide { width: 14px; height: 14px; color: var(--plum-ink); }
+  .big { display: flex; align-items: baseline; gap: 10px; margin-top: 6px; }
+  .big b { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .big span { font-size: 13px; color: rgb(255 255 255 / .6); }
+  .pbar { height: 6px; border-radius: 99px; background: rgb(255 255 255 / .1); margin-top: 10px; overflow: hidden; }
+  .pbar i { display: block; height: 100%; border-radius: 99px; background: var(--plum-ink); }
+  .due b { display: block; font-size: 16px; font-weight: 600; margin-top: 4px; }
+  .due span { font-size: 12.5px; color: var(--amber-ink); }
+
+  .cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start; margin-top: 26px; }
+  .col-head { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 12px; }
+  .col-head h2 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+  .col-head span { font-size: 12px; color: var(--text-3); }
+
+  .context { padding: 0; }
+  .note { padding: 18px 20px; font-size: 14.5px; line-height: 1.6; color: #ece2fb; border-bottom: 1px solid rgb(255 255 255 / .08); }
+  .note p + p { margin-top: 10px; }
+  .note .saved { display: flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; color: rgb(255 255 255 / .45); }
+  .note .saved svg.lucide { width: 13px; height: 13px; }
+  .links { list-style: none; padding: 10px 10px 12px; display: grid; gap: 2px; }
+  .links .lbl { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgb(255 255 255 / .5); padding: 6px 10px 6px; }
+  .link { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 8px; }
+  .link:hover { background: rgb(0 0 0 / .2); }
+  .fav { width: 28px; height: 28px; border-radius: 7px; background: rgb(0 0 0 / .28); display: grid; place-items: center; color: var(--plum-ink); flex: none; }
+  .fav svg.lucide { width: 14px; height: 14px; }
+  .link b { display: block; font-weight: 500; font-size: 14px; }
+  .link span { display: block; font-size: 12px; color: rgb(255 255 255 / .45); }
+  .link .ext { margin-left: auto; color: rgb(255 255 255 / .35); width: 15px; height: 15px; }
+  .link.add-link { color: rgb(255 255 255 / .55); font-size: 13.5px; }
+  .link.add-link .fav { background: transparent; border: 1px dashed rgb(255 255 255 / .18); color: rgb(255 255 255 / .5); }
+
+  .actions-card { padding: 16px; }
+  .actions-card .tasks { margin-top: 12px; }
+  .task.paused b { color: rgb(255 255 255 / .6); }
+  .done-toggle { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding: 4px 4px 0; font-size: 12.5px; color: var(--text-3); }
+  .done-toggle svg.lucide { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova amanhã · 19:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--green-tile);color:var(--green-ink)"><i data-lucide="wallet"></i></span><div><b>Dinheiro</b><span class="sub">2 vencem hoje</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">2 hoje · próximo 14:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento · 1 pausado</span></div></a>
+        <ul class="kids">
+          <li class="kid on"><span class="mono">CC</span>CRUMB CLUB<span class="count">7</span></li>
+          <li class="kid"><span class="mono">NE</span>NEXOS<span class="count">4</span></li>
+          <li class="kid"><span class="mono">HC</span>Hub do Carlos<span class="count">9</span></li>
+          <li class="kid"><span class="mono">PO</span>PORTFÓLIO<span class="count">3</span></li>
+        </ul>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="crumbs"><i data-lucide="rocket"></i>Projetos <i data-lucide="chevron-right"></i> <b>CRUMB CLUB</b></div>
+      <div class="main-head">
+        <span class="app-ico plum mono">CC</span>
+        <div><h1>CRUMB CLUB</h1><p><span class="state run"><i data-lucide="play"></i>Em andamento</span><span class="dot">·</span>desde 3 set</p></div>
+        <div class="head-right">
+          <span class="chipbtn"><i data-lucide="pause"></i>Pausar</span>
+          <span class="chipbtn"><i data-lucide="check"></i>Concluir</span>
+          <span class="chipbtn" style="width:38px;padding:0;justify-content:center"><i data-lucide="ellipsis"></i></span>
+        </div>
+      </div>
+
+      <div class="content">
+        <article class="card plum hero">
+          <div>
+            <small class="k">Objetivo <span>salva sozinho</span></small>
+            <p class="goal">Lançar o clube de assinatura de cookies com 30 assinantes até o fim de outubro.</p>
+            <div class="facts">
+              <span class="fact"><i data-lucide="git-branch"></i>Origem: sem origem</span>
+            </div>
+          </div>
+          <div class="side-stats">
+            <div>
+              <small class="k">Progresso</small>
+              <div class="big"><b>42%</b><span>5 de 12 ações</span></div>
+              <div class="pbar"><i style="width:42%"></i></div>
+            </div>
+            <div class="due">
+              <small class="k">Prazo</small>
+              <b>Quarta, 15 de outubro</b>
+              <span>em 14 dias</span>
+            </div>
+          </div>
+        </article>
+
+        <div class="cols">
+          <section>
+            <div class="col-head"><h2>Contexto</h2><span>salva sozinho</span></div>
+            <article class="card plum context">
+              <div class="note">
+                <p>Planos: mensal (6 cookies) e quinzenal (12). Entrega sábado de manhã, Aldeota e Meireles.</p>
+                <p>Fornecedor das caixas: Embalagens Ceará · pedido mínimo 200 un.</p>
+                <p>Ideia pra depois: sabor do mês escolhido pelos assinantes no Instagram.</p>
+                <div class="saved"><i data-lucide="check"></i>Atualizado ontem</div>
+              </div>
+              <ul class="links">
+                <li class="lbl">Links</li>
+                <li class="link"><span class="fav"><i data-lucide="pen-tool"></i></span><div><b>Identidade no Figma</b><span>figma.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link"><span class="fav"><i data-lucide="folder"></i></span><div><b>Pasta do projeto</b><span>drive.google.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link"><span class="fav"><i data-lucide="link"></i></span><div><b>Instagram @crumbclub</b><span>instagram.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link add-link"><span class="fav"><i data-lucide="plus"></i></span>Adicionar link</li>
+              </ul>
+            </article>
+          </section>
+
+          <section>
+            <div class="col-head"><h2>Próximas ações no PULSO</h2><span>por prioridade</span></div>
+            <article class="card neutral actions-card">
+              <div class="add"><i data-lucide="plus"></i><span class="ph">Nova ação em CRUMB CLUB…</span><span class="dest"><i data-lucide="activity"></i>A fazer</span></div>
+              <ul class="tasks">
+                <li class="task doing"><span class="check"></span><div><b>Fechar cardápio de outubro</b><span class="meta">em andamento · 30 min</span></div><span class="right hot">Hoje</span></li>
+                <li class="task"><span class="check"></span><div><b>Fotografar as caixas novas</b><span class="meta">1 h</span></div><span class="right">Amanhã</span></li>
+                <li class="task"><span class="check"></span><div><b>Configurar pagamento recorrente</b><span class="meta">45 min</span></div><span class="right">Sex</span></li>
+                <li class="task"><span class="check"></span><div><b>Escrever a página de assinatura</b><span class="meta">–</span></div><span class="right">–</span></li>
+                <li class="task paused"><span class="check"></span><div><b>Mandar mensagem para 10 clientes antigos</b><span class="meta">pausada</span></div><span class="right">–</span></li>
+              </ul>
+              <div class="done-toggle"><i data-lucide="chevron-right"></i>5 feitas · ver</div>
+            </article>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Objetivo em destaque no topo. O texto que você já escreveu no projeto vira o objetivo.</li>
+      <li>Contexto = anotação livre + links (Figma, Drive…). Igual ao Trabalho.</li>
+      <li>"Próximas etapas" = as ações abertas do projeto no PULSO, por prioridade. Sem lista separada.</li>
+      <li>Pausar e Concluir à vista; Arquivar fica no "…".</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

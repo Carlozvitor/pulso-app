@@ -13,11 +13,14 @@ import { OriginField } from "@/components/origins/origin-field";
 import { DueField } from "@/components/tasks/due-field";
 import { createProject } from "@/lib/actions/client";
 
-/** "Novo projeto": só o nome é obrigatório. Ao criar, abre o projeto. */
-/** `inline`: botão compacto para o cabeçalho da página (em vez de ocupar a largura toda). */
-export function NewProject({ areas, today, inline }: { areas: Area[]; today: string; inline?: boolean }) {
+/**
+ * "Novo projeto": só o nome é obrigatório. Ao criar, abre o projeto.
+ * `variant`: "inline" = botão roxo do cabeçalho · "card" = card tracejado no fim da grade · "full" = largura toda.
+ */
+export function NewProject({ areas, today, variant = "full" }: { areas: Area[]; today: string; variant?: "full" | "inline" | "card" }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [goal, setGoal] = useState("");
   const [areaId, setAreaId] = useState<string | null>(null);
   const [dueDate, setDueDate] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -28,10 +31,11 @@ export function NewProject({ areas, today, inline }: { areas: Area[]; today: str
     event.preventDefault();
     if (!name.trim()) return;
     startTransition(async () => {
-      const result = await createProject({ name, areaId, dueDate });
+      const result = await createProject({ name, areaId, dueDate, description: goal });
       if (!result.ok) return void toast.error(result.error);
       setOpen(false);
       setName("");
+      setGoal("");
       setAreaId(null);
       setDueDate(null);
       router.push(`/projetos/${result.id}`);
@@ -40,15 +44,30 @@ export function NewProject({ areas, today, inline }: { areas: Area[]; today: str
 
   return (
     <>
-      <Button
-        variant="secondary"
-        size="touch"
-        onClick={() => setOpen(true)}
-        className={inline ? "h-9 w-auto border-border-strong px-3.5 text-sm font-medium lg:h-10" : "w-full"}
-      >
-        <Plus aria-hidden />
-        Novo projeto
-      </Button>
+      {variant === "card" ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="hidden min-h-56 flex-col items-center justify-center gap-2 rounded-(--radius) border border-dashed border-border-strong text-sm text-foreground-subtle transition-colors duration-(--duration-fast) hover:border-(--plum-line) hover:text-foreground sm:flex"
+        >
+          <Plus aria-hidden className="size-5" strokeWidth={1.75} />
+          Novo projeto
+        </button>
+      ) : (
+        <Button
+          variant="secondary"
+          size="touch"
+          onClick={() => setOpen(true)}
+          className={
+            variant === "inline"
+              ? "h-9 w-auto border-(--plum-line) bg-plum-tile px-3.5 text-sm font-medium text-[#f3e8ff] hover:bg-plum-tile hover:brightness-125 lg:h-10 [&_svg]:text-plum-ink"
+              : "w-full"
+          }
+        >
+          <Plus aria-hidden />
+          Novo projeto
+        </Button>
+      )}
 
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerPrimitive.VirtualKeyboardProvider>
@@ -77,6 +96,18 @@ export function NewProject({ areas, today, inline }: { areas: Area[]; today: str
                   className="h-12 w-full rounded-md border border-border bg-surface px-4 text-body text-foreground placeholder:text-foreground-subtle focus-visible:border-primary-soft focus-visible:outline-none"
                 />
               </div>
+
+              <AttributeRow id="new-project-goal" label="Objetivo" hint="Opcional. Em uma ou duas frases, o que este projeto quer alcançar.">
+                <textarea
+                  aria-labelledby="new-project-goal"
+                  rows={2}
+                  maxLength={2000}
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                  placeholder="Ex.: Lançar o portfólio com 3 cases até novembro."
+                  className="min-h-20 w-full resize-none rounded-md border border-border bg-surface px-4 py-3 text-body text-foreground placeholder:text-foreground-subtle focus-visible:border-primary-soft focus-visible:outline-none [field-sizing:content]"
+                />
+              </AttributeRow>
 
               {areas.length > 0 && (
                 <AttributeRow id="new-project-area" label="Origem">

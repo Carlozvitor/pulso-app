@@ -4,19 +4,21 @@ import { requireUser } from "@/lib/supabase/server";
 import { comparePriority } from "@/lib/priorities/score";
 import { todayIn } from "@/lib/dates";
 import { TASK_COLUMNS, taskRowSchema } from "@/lib/tasks/schemas";
-import type { Area, Project, ProjectGroup, ProjectProgress, ProjectSummary } from "@/types/project";
-import { TASK_STATUSES, type Task, type TaskStatus } from "@/types/task";
-import { groupProjects, projectProgress, type ContextLookup } from "./organize";
-import { AREA_COLUMNS, PROJECT_COLUMNS, areaRowSchema, idSchema, projectRowSchema } from "./schemas";
+import type { Area, AreaLink, Project, ProjectLists, ProjectSummary } from "@/types/project";
+import type { Task, TaskStatus } from "@/types/task";
+import { splitProjects, summarizeProjects, type ContextLookup } from "./organize";
+import { AREA_COLUMNS, PROJECT_COLUMNS, areaLinkRowSchema, areaRowSchema, idSchema, projectRowSchema } from "./schemas";
 import { indexOrigins } from "@/lib/origins/tree";
 
 const areaRows = z.array(areaRowSchema);
 const projectRows = z.array(projectRowSchema);
 const taskRows = z.array(taskRowSchema);
+const linkRows = z.array(areaLinkRowSchema);
+const idRows = z.array(z.object({ id: z.string() }));
 const namedRows = z.array(z.object({ id: z.string(), name: z.string() }));
 const titledRows = z.array(z.object({ id: z.string(), title: z.string() }));
 const assessmentRefRows = z.array(z.object({ id: z.string(), title: z.string(), area_id: z.string() }));
-const statusRows = z.array(z.object({ project_id: z.string(), status: z.enum(TASK_STATUSES) }));
+const notesRow = z.object({ notes: z.string().nullable(), notes_updated_at: z.string().nullable() });
 
 export const listAreas = cache(async function listAreas(): Promise<Area[]> {
   const { supabase } = await requireUser();
@@ -25,68 +27,83 @@ export const listAreas = cache(async function listAreas(): Promise<Area[]> {
   return areaRows.parse(data);
 });
 
-/** Tela Projetos: ativos agrupados por área + concluídos/arquivados à parte. */
-export const listProjects = cache(async function listProjects(): Promise<{
-  groups: ProjectGroup[];
-  finished: ProjectSummary[];
-}> {
+/**
+ * Projetos pausados: as ações deles ficam guardadas — fora da Agora, do A fazer, da Central
+ * e da sessão — até retomar. Em cache por requisição (todas as listas de ações leem daqui).
+ */
+export const listPausedProjectIds = cache(async function listPausedProjectIds(): Promise<Set<string>> {
   const { supabase } = await requireUser();
-  const [projects, areas, statuses] = await Promise.all([
+  const { data, error } = await supabase.from("projects").select("id").eq("status", "PAUSED");
+  if (error) throw error;
+  return new Set(idRows.parse(data).map((r) => r.id));
+});
+
+/** Tela Projetos (e barra lateral, Central): todos, separados pelas abas. */
+export const listProjects = cache(async function listProjects(): Promise<ProjectLists> {
+  const { supabase } = await requireUser();
+  const [projects, areas, tasks] = await Promise.all([
     supabase.from("projects").select(PROJECT_COLUMNS),
     supabase.from("areas").select(AREA_COLUMNS),
-    supabase.from("tasks").select("project_id, status").not("project_id", "is", null),
+    // Arquivadas não contam no progresso; as outras dão o progresso e a próxima ação.
+    supabase.from("tasks").select(TASK_COLUMNS).not("project_id", "is", null).neq("status", "ARCHIVED"),
   ]);
   if (projects.error) throw projects.error;
   if (areas.error) throw areas.error;
-  if (statuses.error) throw statuses.error;
+  if (tasks.error) throw tasks.error;
 
-  const byProject = new Map<string, TaskStatus[]>();
-  for (const row of statusRows.parse(statuses.data)) {
-    byProject.set(row.project_id, [...(byProject.get(row.project_id) ?? []), row.status]);
-  }
-  const summaries = projectRows
-    .parse(projects.data)
-    .map((p): ProjectSummary => ({ ...p, progress: projectProgress(byProject.get(p.id) ?? []) }));
-
-  return {
-    groups: groupProjects(
-      summaries.filter((p) => p.status === "ACTIVE"),
-      areaRows.parse(areas.data),
-    ),
-    finished: summaries
-      .filter((p) => p.status !== "ACTIVE")
-      .sort((a, b) => (b.completedAt ?? b.createdAt).localeCompare(a.completedAt ?? a.createdAt)),
-  };
+  const summaries = summarizeProjects(projectRows.parse(projects.data), taskRows.parse(tasks.data), areaRows.parse(areas.data), todayIn());
+  return splitProjects(summaries);
 });
 
+/** Quantas concluídas aparecem em "feitas" na página do projeto. */
+const DONE_ON_PROJECT = 20;
+
 export type ProjectDetail = {
-  project: Project;
+  project: ProjectSummary;
   areas: Area[];
-  progress: ProjectProgress;
+  notes: string | null;
+  notesUpdatedAt: string | null;
+  links: AreaLink[];
   /** Tarefas abertas, na ordem de prioridade. */
   openTasks: Task[];
+  /** Concluídas, da mais recente para a mais antiga (no máximo DONE_ON_PROJECT). */
+  doneTasks: Task[];
+  doneCount: number;
 };
 
 export async function getProject(id: string): Promise<ProjectDetail | null> {
   if (!idSchema.safeParse(id).success) return null;
   const { supabase } = await requireUser();
-  const [project, areas, tasks] = await Promise.all([
-    supabase.from("projects").select(PROJECT_COLUMNS).eq("id", id).maybeSingle(),
+  const [project, areas, tasks, links] = await Promise.all([
+    supabase.from("projects").select(`${PROJECT_COLUMNS}, notes, notes_updated_at`).eq("id", id).maybeSingle(),
     supabase.from("areas").select(AREA_COLUMNS).order("name"),
     supabase.from("tasks").select(TASK_COLUMNS).eq("project_id", id),
+    supabase.from("project_links").select("id, title, url").eq("project_id", id).order("created_at"),
   ]);
   if (project.error) throw project.error;
   if (areas.error) throw areas.error;
   if (tasks.error) throw tasks.error;
+  if (links.error) throw links.error;
   if (!project.data) return null;
 
+  const today = todayIn();
   const all = taskRows.parse(tasks.data);
+  const parsedAreas = areaRows.parse(areas.data);
+  const [summary] = summarizeProjects([projectRowSchema.parse(project.data)], all, parsedAreas, today);
   const open = new Set<TaskStatus>(["INBOX", "TODO", "IN_PROGRESS"]);
+  const done = all
+    .filter((t) => t.status === "DONE")
+    .sort((a, b) => (b.completedAt ?? b.updatedAt).localeCompare(a.completedAt ?? a.updatedAt));
+  const { notes: text, notes_updated_at } = notesRow.parse(project.data);
   return {
-    project: projectRowSchema.parse(project.data),
-    areas: areaRows.parse(areas.data),
-    progress: projectProgress(all.map((t) => t.status)),
-    openTasks: all.filter((t) => open.has(t.status)).sort(comparePriority(todayIn())),
+    project: summary,
+    areas: parsedAreas,
+    notes: text,
+    notesUpdatedAt: notes_updated_at,
+    links: linkRows.parse(links.data),
+    openTasks: all.filter((t) => open.has(t.status)).sort(comparePriority(today)),
+    doneTasks: done.slice(0, DONE_ON_PROJECT),
+    doneCount: done.length,
   };
 }
 

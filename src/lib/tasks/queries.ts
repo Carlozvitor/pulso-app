@@ -3,9 +3,9 @@ import { z } from "zod";
 import { requireUser } from "@/lib/supabase/server";
 import { buildAgoraView } from "@/lib/priorities/agora";
 import { todayIn } from "@/lib/dates";
-import { contextLabel } from "@/lib/projects/organize";
+import { contextLabel, withoutPausedProjects } from "@/lib/projects/organize";
 import { descendantIds } from "@/lib/origins/tree";
-import { getContextLookup } from "@/lib/projects/queries";
+import { getContextLookup, listPausedProjectIds } from "@/lib/projects/queries";
 import type { AgoraView, Task, TaskWithContext } from "@/types/task";
 import { groupDoneByDay, type DoneDay } from "./done";
 import { todoSections, type TodoSections } from "./todo";
@@ -16,13 +16,11 @@ const taskRows = z.array(taskRowSchema);
 const OPEN_STATUSES = ["INBOX", "TODO", "IN_PROGRESS"] as const;
 
 export async function listInbox(): Promise<TaskWithContext[]> {
-  const { supabase } = await requireUser();
-  const [{ data, error }, lookup] = await Promise.all([
-    supabase.from("tasks").select(TASK_COLUMNS).eq("status", "INBOX").order("created_at", { ascending: false }),
-    getContextLookup(),
-  ]);
-  if (error) throw error;
-  return taskRows.parse(data).map((t) => ({ ...t, context: contextLabel(t, lookup) }));
+  const [open, lookup] = await Promise.all([listOpenTasks(), getContextLookup()]);
+  return open
+    .filter((t) => t.status === "INBOX")
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((t) => ({ ...t, context: contextLabel(t, lookup) }));
 }
 
 export async function getTask(id: string): Promise<Task | null> {
@@ -36,12 +34,16 @@ export async function getTask(id: string): Promise<Task | null> {
 /**
  * Tudo que está aberto — volume pessoal, o ranking é feito em memória.
  * Em cache por requisição: barra lateral, Central e módulos leem a mesma lista.
+ * As ações de projeto pausado ficam de fora (guardadas até retomar).
  */
 export const listOpenTasks = cache(async function listOpenTasks(): Promise<Task[]> {
   const { supabase } = await requireUser();
-  const { data, error } = await supabase.from("tasks").select(TASK_COLUMNS).in("status", OPEN_STATUSES);
+  const [{ data, error }, paused] = await Promise.all([
+    supabase.from("tasks").select(TASK_COLUMNS).in("status", OPEN_STATUSES),
+    listPausedProjectIds(),
+  ]);
   if (error) throw error;
-  return taskRows.parse(data);
+  return withoutPausedProjects(taskRows.parse(data), paused);
 });
 
 /**
@@ -81,26 +83,17 @@ export async function searchTasks(query: string): Promise<TaskWithContext[]> {
     .map((t) => ({ ...t, context: contextLabel(t, lookup) }));
 }
 
+const isTodo = (t: Task) => t.status === "TODO" || t.status === "IN_PROGRESS";
+
 /** Tela A fazer: tudo que está para fazer, em blocos. */
 export async function listTodo(): Promise<TodoSections> {
-  const { supabase } = await requireUser();
-  const [{ data, error }, lookup] = await Promise.all([
-    supabase.from("tasks").select(TASK_COLUMNS).in("status", ["TODO", "IN_PROGRESS"]),
-    getContextLookup(),
-  ]);
-  if (error) throw error;
-  return todoSections(taskRows.parse(data), todayIn(), (t) => contextLabel(t, lookup));
+  const [open, lookup] = await Promise.all([listOpenTasks(), getContextLookup()]);
+  return todoSections(open.filter(isTodo), todayIn(), (t) => contextLabel(t, lookup));
 }
 
 /** Quantas tarefas em A fazer (contador da barra lateral). */
 export async function countTodo(): Promise<number> {
-  const { supabase } = await requireUser();
-  const { count, error } = await supabase
-    .from("tasks")
-    .select("id", { count: "exact", head: true })
-    .in("status", ["TODO", "IN_PROGRESS"]);
-  if (error) throw error;
-  return count ?? 0;
+  return (await listOpenTasks()).filter(isTodo).length;
 }
 
 /** Quantas concluídas a tela Feitas mostra (as mais recentes). */
@@ -125,22 +118,10 @@ export async function listDone(): Promise<DoneDay[]> {
 
 /** Quantos itens na Inbox (contador da barra lateral). */
 export async function countInbox(): Promise<number> {
-  const { supabase } = await requireUser();
-  const { count, error } = await supabase
-    .from("tasks")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "INBOX");
-  if (error) throw error;
-  return count ?? 0;
+  return (await listOpenTasks()).filter((t) => t.status === "INBOX").length;
 }
 
 /** Quantas tarefas abertas (para o resumo do topo). */
 export async function countOpenTasks(): Promise<number> {
-  const { supabase } = await requireUser();
-  const { count, error } = await supabase
-    .from("tasks")
-    .select("id", { count: "exact", head: true })
-    .in("status", OPEN_STATUSES);
-  if (error) throw error;
-  return count ?? 0;
+  return (await listOpenTasks()).length;
 }

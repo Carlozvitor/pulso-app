@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H6 (celular)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#050506; --line:#232327; --line-2:#2e2e33; --text:#f4f4f5; --text-2:#a1a1aa; --text-3:#8a8a93; --accent:#4c5bff; --accent-soft:#8b95ff; --teal-ink:#5eead4; --ok:#34d399;
+    --amber-tile:#6d3510; --amber-line:#8a4818; --amber-ink:#fdba74;
+    --plum-a:#37195a; --plum-b:#180d28; --plum-line:#5a2f8c; --plum-tile:#4a2478; --plum-ink:#c9a7ff; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #1a1a1d; color: var(--text); font: 15px/1.45 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; }
+  .cap { color: #a1a1aa; font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .phone { width: 390px; height: 844px; border-radius: 44px; border: 10px solid #000; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 30px 80px rgb(0 0 0 / .6); }
+  .scroll { height: 100%; overflow: auto; padding: 54px 16px 110px; scrollbar-width: none; }
+  .status { position: absolute; top: 0; inset-inline: 0; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font-weight: 600; font-size: 14px; background: var(--bg); z-index: 3; }
+  .head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin: 0 -16px 14px; padding-inline: 16px; }
+  .seal { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; background: var(--plum-tile); color: var(--plum-ink); box-shadow: inset 0 0 0 1px var(--plum-line); font-weight: 700; font-size: 14px; }
+  .head h1 { font-size: 20px; font-weight: 600; }
+  .head p { font-size: 13px; color: var(--text-2); }
+  .head .tools { margin-left: auto; display: flex; gap: 6px; }
+  .tb { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; }
+  .tb.plum { background: var(--plum-tile); border-color: var(--plum-line); color: #f3e8ff; }
+  .back { display: flex; align-items: center; gap: 4px; color: var(--text-2); font-size: 14px; margin-bottom: 10px; }
+  .back svg.lucide { width: 16px; height: 16px; }
+
+  .tabs { display: flex; gap: 4px; padding: 4px; border-radius: 10px; background: #0a0a0c; border: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; margin-bottom: 14px; }
+  .tab { height: 32px; display: inline-flex; align-items: center; gap: 6px; padding: 0 11px; border-radius: 7px; font-size: 13.5px; color: var(--text-2); white-space: nowrap; }
+  .tab small { font: 600 11.5px "Geist Mono"; color: var(--text-3); }
+  .tab.on { background: #1b1c24; color: var(--text); box-shadow: inset 0 0 0 1px #2b2d40; }
+  .tab.on small { color: var(--plum-ink); }
+
+  .pj { border-radius: 12px; border: 1px solid var(--plum-line); background: linear-gradient(160deg, var(--plum-a), var(--plum-b)); padding: 14px; margin-bottom: 10px; }
+  .pj-top { display: flex; align-items: center; gap: 10px; }
+  .pj-top .t { width: 34px; height: 34px; border-radius: 8px; background: var(--plum-tile); color: var(--plum-ink); display: grid; place-items: center; font-weight: 700; font-size: 12px; flex: none; }
+  .pj-top b { display: block; font-weight: 600; font-size: 15.5px; }
+  .pj-top small { display: block; font-size: 12px; color: rgb(255 255 255 / .55); }
+  .pj-top .pc { margin-left: auto; font: 700 18px "Geist"; font-variant-numeric: tabular-nums; }
+  .pj .goal { font-size: 13.5px; color: rgb(255 255 255 / .8); margin-top: 10px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pbar { height: 4px; border-radius: 99px; background: rgb(255 255 255 / .1); margin-top: 10px; overflow: hidden; }
+  .pbar i { display: block; height: 100%; border-radius: 99px; background: var(--plum-ink); }
+  .pj .nx { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; font-size: 12.5px; color: rgb(255 255 255 / .6); }
+  .pj .nx b { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pj .nx .soon { color: var(--amber-ink); white-space: nowrap; }
+
+  .state { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600; background: rgb(253 186 116 / .12); color: var(--amber-ink); }
+  .state svg.lucide { width: 12px; height: 12px; }
+  .paused-box { border-radius: 12px; border: 1px solid var(--amber-line); background: linear-gradient(160deg, #2a1608, #120a04); padding: 14px; margin-bottom: 14px; }
+  .paused-box p { font-size: 13.5px; color: rgb(255 255 255 / .78); line-height: 1.5; }
+  .paused-box .btn { margin-top: 12px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--amber-tile); border: 1px solid var(--amber-line); font-weight: 500; }
+  .paused-box .btn svg.lucide { width: 16px; height: 16px; color: var(--amber-ink); }
+
+  .lbl { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin: 18px 2px 8px; display: flex; justify-content: space-between; }
+  .lbl a { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-3); font-size: 12.5px; }
+  .goalbox { border-radius: 12px; border: 1px solid var(--plum-line); background: linear-gradient(160deg, var(--plum-a), var(--plum-b)); padding: 14px; opacity: .8; }
+  .goalbox p { font-size: 15.5px; font-weight: 500; line-height: 1.45; }
+  .goalbox .row { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12.5px; color: rgb(255 255 255 / .6); }
+
+  .rows { border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(160deg, #141417, #0d0d0f); }
+  .rw { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .rw:last-child { border-bottom: 0; }
+  .rw .ck { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #4b4b52; flex: none; }
+  .rw b { display: block; font-weight: 500; font-size: 14.5px; color: rgb(255 255 255 / .6); }
+  .rw small { font-size: 12px; color: var(--text-3); }
+  .rw .ic { width: 28px; height: 28px; border-radius: 7px; background: #1c1c20; display: grid; place-items: center; color: var(--plum-ink); flex: none; }
+  .rw .ic svg.lucide { width: 14px; height: 14px; }
+  .rw.lk b { color: var(--text); }
+  .rw .go { margin-left: auto; color: var(--text-3); width: 15px; height: 15px; }
+
+  .navbar { position: absolute; bottom: 0; inset-inline: 0; height: 86px; background: rgb(9 9 11 / .96); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding-top: 8px; z-index: 3; }
+  .nt { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--text-3); }
+  .nt.on { color: var(--text); } .nt.on svg.lucide { color: var(--accent-soft); }
+  .plus { justify-self: center; width: 52px; height: 52px; border-radius: 16px; background: var(--accent); display: grid; place-items: center; margin-top: -4px; }
+</style>
+</head>
+<body>
+  <div>
+    <p class="cap">Projetos · aba Em andamento</p>
+    <div class="phone">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <div class="head">
+          <span class="seal"><i data-lucide="rocket"></i></span>
+          <div><h1>Projetos</h1><p>4 em andamento · 1 pausado</p></div>
+          <div class="tools"><span class="tb plum"><i data-lucide="plus"></i></span></div>
+        </div>
+        <div class="tabs">
+          <span class="tab on">Em andamento <small>4</small></span>
+          <span class="tab">Pausados <small>1</small></span>
+          <span class="tab">Concluídos <small>2</small></span>
+          <span class="tab">Arquivados <small>1</small></span>
+        </div>
+
+        <div class="pj">
+          <div class="pj-top"><span class="t">CC</span><div><b>CRUMB CLUB</b><small>Sem origem · 5 de 12 ações</small></div><span class="pc">42%</span></div>
+          <p class="goal">Lançar o clube de assinatura de cookies com 30 assinantes até o fim de outubro.</p>
+          <div class="pbar"><i style="width:42%"></i></div>
+          <div class="nx"><b>→ Fechar cardápio de outubro</b><span class="soon">15 out</span></div>
+        </div>
+        <div class="pj">
+          <div class="pj-top"><span class="t">NE</span><div><b>NEXOS</b><small>Clientes / Freelance · 6 de 10</small></div><span class="pc">60%</span></div>
+          <p class="goal">Entregar o site institucional com área de contato e blog, aprovado pelo cliente.</p>
+          <div class="pbar"><i style="width:60%"></i></div>
+          <div class="nx"><b>→ Montar página do blog no Figma</b><span>31 out</span></div>
+        </div>
+        <div class="pj">
+          <div class="pj-top"><span class="t">HC</span><div><b>Hub do Carlos</b><small>Vida pessoal · 12 de 19</small></div><span class="pc">63%</span></div>
+          <p class="goal">Um lugar só para a vida inteira: Central, PULSO e os módulos de contexto.</p>
+          <div class="pbar"><i style="width:63%"></i></div>
+          <div class="nx"><b>→ Aprovar maquete da H6</b><span>sem prazo</span></div>
+        </div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+
+  <div>
+    <p class="cap">Projeto pausado · AURA CAFÉ</p>
+    <div class="phone">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <span class="back"><i data-lucide="chevron-left"></i>Projetos</span>
+        <div class="head">
+          <span class="seal">AC</span>
+          <div><h1>AURA CAFÉ</h1><p><span class="state"><i data-lucide="pause"></i>Pausado desde 12 set</span></p></div>
+          <div class="tools"><span class="tb"><i data-lucide="ellipsis"></i></span></div>
+        </div>
+
+        <div class="paused-box">
+          <p>As 3 ações deste projeto estão guardadas: não aparecem na Agora, no A fazer nem na Central. Ao retomar, voltam do jeito que estavam.</p>
+          <div class="btn"><i data-lucide="play"></i>Retomar projeto</div>
+        </div>
+
+        <div class="goalbox">
+          <p>Montar a identidade visual e o cardápio de lançamento do café.</p>
+          <div class="row"><span>33% · 2 de 6 ações</span><span>sem prazo</span></div>
+          <div class="pbar"><i style="width:33%"></i></div>
+        </div>
+
+        <p class="lbl">Ações guardadas <a>3</a></p>
+        <div class="rows">
+          <div class="rw"><span class="ck"></span><div><b>Escolher paleta final</b><small>40 min</small></div></div>
+          <div class="rw"><span class="ck"></span><div><b>Testar 3 opções de logo</b><small>1 h</small></div></div>
+          <div class="rw"><span class="ck"></span><div><b>Orçar impressão do cardápio</b><small>–</small></div></div>
+        </div>
+
+        <p class="lbl">Links</p>
+        <div class="rows">
+          <div class="rw lk"><span class="ic"><i data-lucide="pen-tool"></i></span><div><b>Moodboard</b><small>pinterest.com</small></div><i data-lucide="external-link" class="go"></i></div>
+          <div class="rw lk"><span class="ic"><i data-lucide="folder"></i></span><div><b>Pasta do projeto</b><small>drive.google.com</small></div><i data-lucide="external-link" class="go"></i></div>
+        </div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -4,8 +4,23 @@ import { useRef, useState, useTransition } from "react";
 import { Check, ExternalLink, Link2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import type { AreaLink } from "@/types/project";
-import { addOriginLink, removeOriginLink, saveOriginNotes } from "@/lib/actions/client";
+import {
+  addOriginLink,
+  addProjectLink,
+  removeOriginLink,
+  removeProjectLink,
+  saveOriginNotes,
+  saveProjectNotes,
+} from "@/lib/actions/client";
 import { cn } from "@/lib/utils";
+
+/** De quem é o contexto: uma origem (Trabalho, disciplina…) ou um projeto. */
+type Owner = "origin" | "project";
+
+const SAVE = {
+  origin: { notes: saveOriginNotes, addLink: addOriginLink, removeLink: removeOriginLink },
+  project: { notes: saveProjectNotes, addLink: addProjectLink, removeLink: removeProjectLink },
+} as const;
 
 /** Cor do módulo e como ele chama os links (a Faculdade chama de "Materiais"). */
 const TONES = {
@@ -25,17 +40,26 @@ const TONES = {
     add: "Adicionar material",
     example: "Nome (ex.: Plano de ensino)",
   },
+  plum: {
+    card: "tint-plum",
+    text: "text-[#ece2fb]",
+    notes: "Planos, decisões, contatos, ideias para depois…",
+    links: "Links",
+    add: "Adicionar link",
+    example: "Nome (ex.: Identidade no Figma)",
+  },
 } as const;
 
 type Tone = keyof typeof TONES;
 
-/** Contexto de uma origem: anotação livre (salva ao sair do campo) e links. */
+/** Contexto de uma origem ou de um projeto: anotação livre (salva ao sair do campo) e links. */
 export function OriginContext({
   id,
   notes,
   updatedLabel,
   links,
   tone = "blue",
+  owner = "origin",
 }: {
   id: string;
   notes: string | null;
@@ -43,23 +67,36 @@ export function OriginContext({
   updatedLabel: string | null;
   links: AreaLink[];
   tone?: Tone;
+  owner?: Owner;
 }) {
   return (
     <div className={cn("tint flex flex-col", TONES[tone].card)}>
-      <NotesField id={id} initial={notes ?? ""} updatedLabel={updatedLabel} tone={tone} />
-      <LinkList areaId={id} links={links} tone={tone} />
+      <NotesField id={id} initial={notes ?? ""} updatedLabel={updatedLabel} tone={tone} owner={owner} />
+      <LinkList ownerId={id} links={links} tone={tone} owner={owner} />
     </div>
   );
 }
 
-function NotesField({ id, initial, updatedLabel, tone }: { id: string; initial: string; updatedLabel: string | null; tone: Tone }) {
+function NotesField({
+  id,
+  initial,
+  updatedLabel,
+  tone,
+  owner,
+}: {
+  id: string;
+  initial: string;
+  updatedLabel: string | null;
+  tone: Tone;
+  owner: Owner;
+}) {
   const [value, setValue] = useState(initial);
   const saved = useRef(initial);
   const [status, setStatus] = useState<"idle" | "saved">("idle");
 
   async function save() {
     if (value === saved.current) return;
-    const result = await saveOriginNotes(id, value);
+    const result = await SAVE[owner].notes(id, value);
     // Se falhar, o texto fica no campo; sair de novo tenta outra vez.
     if (!result.ok) return void toast.error(result.error);
     saved.current = value;
@@ -109,7 +146,7 @@ function hostOf(url: string): string {
   }
 }
 
-function LinkList({ areaId, links, tone }: { areaId: string; links: AreaLink[]; tone: Tone }) {
+function LinkList({ ownerId, links, tone, owner }: { ownerId: string; links: AreaLink[]; tone: Tone; owner: Owner }) {
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -118,7 +155,7 @@ function LinkList({ areaId, links, tone }: { areaId: string; links: AreaLink[]; 
   function add(event: React.FormEvent) {
     event.preventDefault();
     startTransition(async () => {
-      const result = await addOriginLink(areaId, { title, url });
+      const result = await SAVE[owner].addLink(ownerId, { title, url });
       if (!result.ok) return void toast.error(result.error);
       setTitle("");
       setUrl("");
@@ -128,10 +165,10 @@ function LinkList({ areaId, links, tone }: { areaId: string; links: AreaLink[]; 
 
   function remove(link: AreaLink) {
     startTransition(async () => {
-      const result = await removeOriginLink(link.id);
+      const result = await SAVE[owner].removeLink(link.id);
       if (!result.ok) return void toast.error(result.error);
       toast("Link removido.", {
-        action: { label: "Desfazer", onClick: () => void addOriginLink(areaId, { title: link.title, url: link.url }) },
+        action: { label: "Desfazer", onClick: () => void SAVE[owner].addLink(ownerId, { title: link.title, url: link.url }) },
       });
     });
   }

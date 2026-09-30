@@ -1,4 +1,4 @@
-import { compareProjects, projectMonogram } from "@/lib/projects/organize";
+import { projectMonogram } from "@/lib/projects/organize";
 import { listProjects } from "@/lib/projects/queries";
 import { countInbox, countTodo } from "@/lib/tasks/queries";
 import { getTodaySummary } from "@/lib/events/queries";
@@ -9,7 +9,7 @@ import { SidebarNav, type SidebarAgenda, type SidebarModule, type SidebarMoney, 
 
 /** Barra lateral do PC: a navegação do Hub, fixa na altura da tela. */
 export async function Sidebar() {
-  const [{ groups }, workNav, schoolNav, money, agenda, inboxCount, todoCount] = await Promise.all([
+  const [{ active, paused }, workNav, schoolNav, money, agenda, inboxCount, todoCount] = await Promise.all([
     listProjects(),
     getModuleNav("TRABALHO"),
     getFaculdadeNav(),
@@ -23,23 +23,31 @@ export async function Sidebar() {
     ? { areas: schoolNav.areas, open: Object.fromEntries(schoolNav.counts), attention: schoolNav.attention }
     : null;
 
-  const projects: SidebarProject[] = groups
-    .flatMap((group) => group.projects)
-    .sort(compareProjects)
-    .map((project) => ({
-      id: project.id,
-      name: project.name,
-      monogram: projectMonogram(project.name),
-      open: project.progress.total - project.progress.done,
-    }));
+  // Só os em andamento aparecem; pausado entra só na contagem.
+  const projects: SidebarProject[] = active.map((project) => ({
+    id: project.id,
+    name: project.name,
+    monogram: projectMonogram(project.name),
+    open: project.progress.total - project.progress.done,
+  }));
 
   return (
-    <SidebarView projects={projects} work={work} school={school} money={money} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} />
+    <SidebarView
+      projects={projects}
+      pausedProjects={paused.length}
+      work={work}
+      school={school}
+      money={money}
+      agenda={agenda}
+      inboxCount={inboxCount}
+      todoCount={todoCount}
+    />
   );
 }
 
 export function SidebarView({
   projects,
+  pausedProjects,
   work,
   school,
   money,
@@ -48,6 +56,7 @@ export function SidebarView({
   todoCount,
 }: {
   projects: SidebarProject[];
+  pausedProjects: number;
   work: SidebarModule;
   school: SidebarModule | null;
   money: SidebarMoney | null;
@@ -59,6 +68,7 @@ export function SidebarView({
     <aside className="sticky top-topbar hidden h-[calc(100dvh-var(--topbar-height)-0.75rem)] lg:grid">
       <SidebarNav
         projects={projects}
+        pausedProjects={pausedProjects}
         work={work}
         school={school}
         money={money}

@@ -1,4 +1,5 @@
-export const PROJECT_STATUSES = ["ACTIVE", "DONE", "ARCHIVED"] as const;
+/** Em andamento · Pausado (guardado, volta ao retomar) · Concluído · Arquivado. */
+export const PROJECT_STATUSES = ["ACTIVE", "PAUSED", "DONE", "ARCHIVED"] as const;
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
 
 export const MODULE_KEYS = ["TRABALHO", "FACULDADE", "DINHEIRO", "TREINO", "VIDA_PESSOAL"] as const;
@@ -18,13 +19,14 @@ export type Area = {
   archivedAt: string | null;
 };
 
-/** Contexto de uma origem: anotação livre e links. */
+/** Link de contexto (de uma origem ou de um projeto). */
 export type AreaLink = { id: string; title: string; url: string };
 
-/** Objetivo com começo e fim. A área das tarefas vem daqui. */
+/** Trabalho maior, com começo e fim. A origem das tarefas vem daqui. */
 export type Project = {
   id: string;
   name: string;
+  /** O objetivo do projeto (na tela, "Objetivo"). */
   description: string | null;
   status: ProjectStatus;
   areaId: string | null;
@@ -32,6 +34,8 @@ export type Project = {
   dueDate: string | null;
   createdAt: string;
   completedAt: string | null;
+  /** Quando foi pausado (só enquanto estiver pausado). */
+  pausedAt: string | null;
 };
 
 export type ProjectProgress = {
@@ -41,8 +45,24 @@ export type ProjectProgress = {
   percent: number;
 };
 
-/** Linha da tela Projetos. */
-export type ProjectSummary = Project & { progress: ProjectProgress };
+/** Card/linha da tela Projetos. */
+export type ProjectSummary = Project & {
+  progress: ProjectProgress;
+  /** Caminho da origem ("Trabalho → Clientes / Freelance"); null = sem origem. */
+  origin: string | null;
+  /** Módulo da origem, para o ícone ao lado do caminho. */
+  originModule: ModuleKey | null;
+  /** A primeira ação pela prioridade — a que a Agora mostraria. Só em projeto em andamento. */
+  next: { id: string; title: string } | null;
+};
+
+/** Projetos separados pelas abas da tela, cada lista já na ordem de exibição. */
+export type ProjectLists = {
+  active: ProjectSummary[];
+  paused: ProjectSummary[];
+  done: ProjectSummary[];
+  archived: ProjectSummary[];
+};
 
 /** Projetos agrupados por origem, na ordem de exibição. `area` null = "Sem origem". */
 export type ProjectGroup<P extends Project = ProjectSummary> = { area: Area | null; label: string; projects: P[] };

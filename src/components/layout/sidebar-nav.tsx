@@ -202,9 +202,11 @@ function ModuleTree({
   );
 }
 
-function projectsLabel(count: number): string {
-  if (count === 0) return "Nenhum em andamento";
-  return count === 1 ? "1 em andamento" : `${count} em andamento`;
+/** "4 em andamento · 1 pausado" — pausado só aparece na contagem. */
+function projectsLabel(count: number, paused: number): string {
+  const running = count === 0 ? "Nenhum em andamento" : count === 1 ? "1 em andamento" : `${count} em andamento`;
+  if (paused === 0) return running;
+  return `${running} · ${paused === 1 ? "1 pausado" : `${paused} pausados`}`;
 }
 
 /**
@@ -213,6 +215,7 @@ function projectsLabel(count: number): string {
  */
 export function SidebarNav({
   projects,
+  pausedProjects,
   work,
   school,
   money,
@@ -221,6 +224,7 @@ export function SidebarNav({
   todoCount,
 }: {
   projects: SidebarProject[];
+  pausedProjects: number;
   work: SidebarModule;
   school: SidebarModule | null;
   money: SidebarMoney | null;
@@ -313,7 +317,7 @@ export function SidebarNav({
           <Item
             href="/projetos"
             title="Projetos"
-            subtitle={projectsLabel(projects.length)}
+            subtitle={projectsLabel(projects.length, pausedProjects)}
             active={pathname === "/projetos" || (compact && pathname.startsWith("/projetos/"))}
             tile={{ className: "bg-plum-tile text-plum-ink", icon: Rocket }}
           />

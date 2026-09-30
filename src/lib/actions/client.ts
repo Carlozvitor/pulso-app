@@ -35,8 +35,13 @@ export const createOriginTask = resilient(origins.createOriginTask);
 
 export const createProject = resilient(projects.createProject);
 export const updateProject = resilient(projects.updateProject);
+export const pauseProject = resilient(projects.pauseProject);
+export const resumeProject = resilient(projects.resumeProject);
 export const finishProject = resilient(projects.finishProject);
 export const reopenProject = resilient(projects.reopenProject);
+export const saveProjectNotes = resilient(projects.saveProjectNotes);
+export const addProjectLink = resilient(projects.addProjectLink);
+export const removeProjectLink = resilient(projects.removeProjectLink);
 export const createProjectTask = resilient(projects.createProjectTask);
 
 export const createAssessment = resilient(faculdade.createAssessment);

@@ -77,7 +77,7 @@ export function TaskAssign({ task, options, save }: TaskAssignProps) {
     });
   }
 
-  // Só ativos na lista — mais o atual, se ele já foi concluído.
+  // Só em andamento na lista — mais o atual, se ele foi pausado ou concluído.
   const pickable = options.projects.filter((p) => p.status === "ACTIVE" || p.id === projectId);
   const hasAny = options.areas.length > 0 || options.projects.length > 0;
   if (!hasAny) return null;
@@ -85,7 +85,11 @@ export function TaskAssign({ task, options, save }: TaskAssignProps) {
   return (
     <>
       {options.projects.length > 0 && (
-        <AttributeRow id="project-label" label="Projeto">
+        <AttributeRow
+          id="project-label"
+          label="Projeto"
+          hint={project?.status === "PAUSED" ? "Projeto pausado: esta ação fica guardada até ele ser retomado" : undefined}
+        >
           <button
             type="button"
             aria-labelledby="project-label project-value"

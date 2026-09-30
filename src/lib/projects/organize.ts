@@ -1,6 +1,8 @@
-import type { Area, Project, ProjectGroup, ProjectProgress } from "@/types/project";
+import type { Area, Project, ProjectGroup, ProjectLists, ProjectProgress, ProjectSummary } from "@/types/project";
 import type { Task, TaskStatus } from "@/types/task";
-import { indexOrigins, originLabel, type OriginIndex } from "@/lib/origins/tree";
+import { isAgoraCandidate } from "@/lib/priorities/agora";
+import { comparePriority } from "@/lib/priorities/score";
+import { indexOrigins, originFullLabel, originLabel, type OriginIndex } from "@/lib/origins/tree";
 
 /** Concluídas ÷ total. Arquivadas não contam — saíram do escopo do projeto. */
 export function projectProgress(statuses: TaskStatus[]): ProjectProgress {
@@ -20,6 +22,61 @@ export function compareProjects(a: Project, b: Project): number {
     return a.dueDate < b.dueDate ? -1 : 1;
   }
   return byName(a, b);
+}
+
+/** Tira as ações dos projetos pausados (ficam guardadas até retomar). */
+export function withoutPausedProjects<T extends Pick<Task, "projectId">>(tasks: T[], paused: Set<string>): T[] {
+  return paused.size === 0 ? tasks : tasks.filter((t) => !t.projectId || !paused.has(t.projectId));
+}
+
+/** A próxima ação de um projeto: a primeira que a Agora mostraria (as do próprio projeto). */
+export function nextProjectAction(tasks: Task[], today: string): Task | null {
+  const [next] = tasks.filter((t) => isAgoraCandidate(t, today)).sort(comparePriority(today));
+  return next ?? null;
+}
+
+/**
+ * Card de cada projeto: progresso pelas tarefas (arquivadas não contam), caminho da origem
+ * e a próxima ação — esta só para projeto em andamento (pausado guarda as ações).
+ */
+export function summarizeProjects(projects: Project[], tasks: Task[], areas: Area[], today: string): ProjectSummary[] {
+  const index = indexOrigins(areas);
+  const byProject = new Map<string, Task[]>();
+  for (const task of tasks) {
+    if (task.projectId) byProject.set(task.projectId, [...(byProject.get(task.projectId) ?? []), task]);
+  }
+  return projects.map((project) => {
+    const own = byProject.get(project.id) ?? [];
+    const next = project.status === "ACTIVE" ? nextProjectAction(own, today) : null;
+    const origin = project.areaId ? index.get(project.areaId) : undefined;
+    return {
+      ...project,
+      progress: projectProgress(own.map((t) => t.status)),
+      origin: origin ? originFullLabel(origin.id, index) : null,
+      originModule: origin?.module ?? null,
+      next: next ? { id: next.id, title: next.title } : null,
+    };
+  });
+}
+
+/** Mais recente primeiro (pela data dada; sem ela, pela criação). */
+const newestBy =
+  <P extends Project>(when: (p: P) => string | null) =>
+  (a: P, b: P) =>
+    (when(b) ?? b.createdAt).localeCompare(when(a) ?? a.createdAt);
+
+/**
+ * As abas da tela Projetos: em andamento pelo prazo (mais perto primeiro), pausados pela
+ * pausa mais recente, concluídos e arquivados pelo fim mais recente.
+ */
+export function splitProjects<P extends Project>(projects: P[]): { [K in keyof ProjectLists]: P[] } {
+  const only = (status: Project["status"]) => projects.filter((p) => p.status === status);
+  return {
+    active: only("ACTIVE").sort(compareProjects),
+    paused: only("PAUSED").sort(newestBy<P>((p) => p.pausedAt)),
+    done: only("DONE").sort(newestBy<P>((p) => p.completedAt)),
+    archived: only("ARCHIVED").sort(newestBy<P>((p) => p.completedAt)),
+  };
 }
 
 /** Rótulo do grupo de projetos sem origem. */

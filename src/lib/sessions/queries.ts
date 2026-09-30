@@ -5,6 +5,7 @@ import { buildSession, isSessionActive, sessionEndsAt } from "@/lib/priorities/s
 import { contextLabel } from "@/lib/projects/organize";
 import { getContextLookup } from "@/lib/projects/queries";
 import { TASK_COLUMNS, taskRowSchema } from "@/lib/tasks/schemas";
+import { listOpenTasks } from "@/lib/tasks/queries";
 import { todayIn } from "@/lib/dates";
 import type { ActiveSession, SessionChoice, SessionProposal } from "@/types/session";
 import type { Task, TaskSummary } from "@/types/task";
@@ -19,14 +20,10 @@ function toSummary(task: Task, context: string | null): TaskSummary {
 
 /** Proposta calculada na hora — nada é salvo até "Começar". */
 export async function getSessionProposal(choice: SessionChoice, skipped: string[]): Promise<SessionProposal> {
-  const { supabase } = await requireUser();
-  const [{ data, error }, lookup] = await Promise.all([
-    supabase.from("tasks").select(TASK_COLUMNS).in("status", ["INBOX", "TODO", "IN_PROGRESS"]),
-    getContextLookup(),
-  ]);
-  if (error) throw error;
+  // Ações de projeto pausado não entram (listOpenTasks já tira).
+  const [open, lookup] = await Promise.all([listOpenTasks(), getContextLookup()]);
 
-  const plan = buildSession(taskRows.parse(data), { ...choice, today: todayIn(), skip: new Set(skipped) });
+  const plan = buildSession(open, { ...choice, today: todayIn(), skip: new Set(skipped) });
   return {
     ...choice,
     tasks: plan.tasks.map((t) => toSummary(t, contextLabel(t, lookup))),

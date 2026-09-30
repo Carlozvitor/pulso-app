@@ -6,7 +6,7 @@ import { attentionLabel, nextAttention } from "@/lib/faculdade/assessments";
 import { listAssessments } from "@/lib/faculdade/queries";
 import { nextActionIn, openCounts } from "@/lib/origins/summary";
 import { MODULES, isArchived, originHref, originLabel } from "@/lib/origins/tree";
-import { compareProjects, contextLabel } from "@/lib/projects/organize";
+import { contextLabel } from "@/lib/projects/organize";
 import { getContextLookup, listAreas, listProjects } from "@/lib/projects/queries";
 import { listOpenTasks } from "@/lib/tasks/queries";
 import { MODULE_KEYS, type ModuleKey, type ProjectSummary } from "@/types/project";
@@ -40,7 +40,7 @@ export type CentralPage = {
 };
 
 export async function getCentralPage(): Promise<CentralPage> {
-  const [tasks, { groups }, areas, lookup, events, assessments, money] = await Promise.all([
+  const [tasks, { active }, areas, lookup, events, assessments, money] = await Promise.all([
     listOpenTasks(),
     listProjects(),
     listAreas(),
@@ -49,7 +49,6 @@ export async function getCentralPage(): Promise<CentralPage> {
     listAssessments(),
     getDinheiroCentral(),
   ]);
-  const active = groups.flatMap((g) => g.projects);
   const now = nowIn();
   const today = now.date;
   const areaLabel = (id: string | null) => (id ? originLabel(id, lookup.origins) : null);
@@ -84,6 +83,7 @@ export async function getCentralPage(): Promise<CentralPage> {
     view: buildCentral(tasks, active, today, contextOf, { events, now, areaLabel, assessments: liveAssessments, money: money?.dues }),
     modules,
     agenda: { count: todayEvents.length, next: nextEvent ? { time: nextEvent.startTime, title: nextEvent.title } : null },
-    projects: [...active].sort(compareProjects).slice(0, projectSlots),
+    // Já vêm pelo prazo; pausados não entram na Central.
+    projects: active.slice(0, projectSlots),
   };
 }

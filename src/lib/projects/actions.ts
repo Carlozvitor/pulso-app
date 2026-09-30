@@ -5,11 +5,14 @@ import { requireUser } from "@/lib/supabase/server";
 import { captureSchema } from "@/lib/tasks/schemas";
 import type { ActionResult } from "@/lib/tasks/actions";
 import {
+  areaNotesSchema,
   createProjectSchema,
   idSchema,
+  linkInputSchema,
   projectPatchSchema,
   projectPatchToRow,
   type CreateProjectInput,
+  type LinkInput,
   type ProjectPatch,
 } from "./schemas";
 
@@ -26,7 +29,12 @@ export async function createProject(input: CreateProjectInput): Promise<CreateRe
   const { supabase } = await requireUser();
   const { data, error } = await supabase
     .from("projects")
-    .insert({ name: parsed.data.name, area_id: parsed.data.areaId, due_date: parsed.data.dueDate })
+    .insert({
+      name: parsed.data.name,
+      area_id: parsed.data.areaId,
+      due_date: parsed.data.dueDate,
+      description: parsed.data.description ?? null,
+    })
     .select("id")
     .single();
   if (error) return { ok: false, error: GENERIC_ERROR };
@@ -50,8 +58,37 @@ export async function updateProject(id: string, patch: ProjectPatch): Promise<Ac
 }
 
 /**
- * Concluir ou arquivar: as tarefas ainda abertas vão para o arquivo junto,
- * para não seguirem aparecendo na Agora de um projeto que acabou.
+ * Pausar guarda o projeto: as ações dele continuam como estão, mas saem da Agora, do
+ * A fazer, da Central e da sessão até retomar. A data da pausa vem do banco (gatilho).
+ */
+export async function pauseProject(id: string): Promise<ActionResult> {
+  const parsedId = idSchema.safeParse(id);
+  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
+
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("projects").update({ status: "PAUSED" }).eq("id", parsedId.data).eq("status", "ACTIVE");
+  if (error) return { ok: false, error: GENERIC_ERROR };
+
+  refresh();
+  return { ok: true };
+}
+
+/** Retomar: volta a andar e as ações reaparecem do jeito que estavam. */
+export async function resumeProject(id: string): Promise<ActionResult> {
+  const parsedId = idSchema.safeParse(id);
+  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
+
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("projects").update({ status: "ACTIVE" }).eq("id", parsedId.data).eq("status", "PAUSED");
+  if (error) return { ok: false, error: GENERIC_ERROR };
+
+  refresh();
+  return { ok: true };
+}
+
+/**
+ * Concluir ou arquivar (de em andamento ou de pausado): as tarefas ainda abertas vão
+ * para o arquivo junto, para não seguirem aparecendo na Agora de um projeto que acabou.
  */
 export async function finishProject(id: string, status: "DONE" | "ARCHIVED"): Promise<ActionResult> {
   const parsedId = idSchema.safeParse(id);
@@ -90,6 +127,53 @@ export async function reopenProject(id: string): Promise<ActionResult> {
   refresh();
   return { ok: true };
 }
+
+// ── Contexto: anotação e links ──────────────────────────────
+
+export async function saveProjectNotes(id: string, notes: string): Promise<ActionResult> {
+  const parsedId = idSchema.safeParse(id);
+  const parsed = areaNotesSchema.safeParse(notes);
+  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+
+  const { supabase } = await requireUser();
+  const { error } = await supabase
+    .from("projects")
+    .update({ notes: parsed.data, notes_updated_at: new Date().toISOString() })
+    .eq("id", parsedId.data);
+  if (error) return { ok: false, error: GENERIC_ERROR };
+
+  refresh();
+  return { ok: true };
+}
+
+export async function addProjectLink(projectId: string, input: LinkInput): Promise<ActionResult> {
+  const parsedId = idSchema.safeParse(projectId);
+  const parsed = linkInputSchema.safeParse(input);
+  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
+
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("project_links").insert({ project_id: parsedId.data, ...parsed.data });
+  if (error) return { ok: false, error: GENERIC_ERROR };
+
+  refresh();
+  return { ok: true };
+}
+
+export async function removeProjectLink(id: string): Promise<ActionResult> {
+  const parsedId = idSchema.safeParse(id);
+  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
+
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("project_links").delete().eq("id", parsedId.data);
+  if (error) return { ok: false, error: GENERIC_ERROR };
+
+  refresh();
+  return { ok: true };
+}
+
+// ── Ações do projeto ────────────────────────────────────────
 
 /** Tarefa criada dentro do projeto já está organizada: entra direto como "A fazer". */
 export async function createProjectTask(projectId: string, title: string): Promise<ActionResult> {

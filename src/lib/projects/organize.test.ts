@@ -15,6 +15,7 @@ function project(partial: Partial<Project>): Project {
     dueDate: null,
     createdAt: "2026-09-01T00:00:00Z",
     completedAt: null,
+    pausedAt: null,
     ...partial,
   };
 }

@@ -16,6 +16,8 @@ type PageProps = {
   crumbs?: { label: string; href?: string }[];
   /** Selo com a cor do módulo; sem isso, selo branco. */
   iconClassName?: string;
+  /** Iniciais no selo no lugar do ícone (projeto: "CC"). */
+  monogram?: string;
   children: React.ReactNode;
 };
 
@@ -23,7 +25,7 @@ type PageProps = {
  * Moldura de toda tela: cabeçalho (selo + título + ações) e o conteúdo.
  * No PC fica dentro do painel principal; no celular ocupa a coluna.
  */
-export function Page({ icon: Icon, title, description, actions, back, wide, crumbs, iconClassName, children }: PageProps) {
+export function Page({ icon: Icon, title, description, actions, back, wide, crumbs, iconClassName, monogram, children }: PageProps) {
   return (
     <>
       <header className="-mx-4 flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-border px-4 pt-3 pb-4 lg:mx-0 lg:px-6 lg:py-5">
@@ -59,7 +61,11 @@ export function Page({ icon: Icon, title, description, actions, back, wide, crum
             iconClassName,
           )}
         >
-          <Icon className="size-5 lg:size-6" strokeWidth={2} />
+          {monogram ? (
+            <span className="text-sm font-bold tracking-wide lg:text-base">{monogram}</span>
+          ) : (
+            <Icon className="size-5 lg:size-6" strokeWidth={2} />
+          )}
         </span>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-title font-semibold tracking-tight">{title}</h1>

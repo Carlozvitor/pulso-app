@@ -1,35 +1,29 @@
 import Link from "next/link";
 import type { ProjectSummary } from "@/types/project";
-import { dueLabel } from "@/lib/dates";
-import { cn } from "@/lib/utils";
-import { ProgressBar } from "./progress-bar";
+import { actionsCount, projectSince } from "@/lib/projects/labels";
+import { projectMonogram } from "@/lib/projects/organize";
 
-/** "Era pra 3 out · 3 de 8" — prazo e contagem, sem cor de alerta. */
-function projectMeta(project: ProjectSummary, today: string): string {
+/** Linha de projeto concluído ou arquivado: iniciais, nome, quando acabou e quantas ações. */
+export function ProjectRow({ project }: { project: ProjectSummary }) {
   const { done, total } = project.progress;
-  return [
-    project.dueDate ? dueLabel(project.dueDate, today) : null,
-    total === 0 ? "Sem tarefas" : `${done} de ${total}`,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-}
-
-export function ProjectRow({ project, today, quiet }: { project: ProjectSummary; today: string; quiet?: boolean }) {
   return (
     <Link
       href={`/projetos/${project.id}`}
-      className="-mx-4 flex min-h-16 flex-col justify-center gap-2 px-4 py-3 transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
+      className="-mx-4 flex min-h-16 items-center gap-3.5 px-4 py-3 transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
     >
-      <span className="flex items-baseline justify-between gap-4">
-        <span className={cn("truncate text-body", quiet ? "text-foreground-secondary" : "text-foreground")}>
-          {project.name}
-        </span>
-        <span className="tabular shrink-0 text-caption text-foreground-subtle">{projectMeta(project, today)}</span>
+      <span
+        aria-hidden
+        className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-plum-tile/60 text-xs font-semibold tracking-wide text-plum-ink"
+      >
+        {projectMonogram(project.name)}
       </span>
-      {!quiet && project.progress.total > 0 && (
-        <ProgressBar progress={project.progress} label={`Progresso de ${project.name}`} />
-      )}
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-body text-foreground">{project.name}</span>
+        <span className="block truncate text-caption text-foreground-subtle">
+          {[project.origin ?? "Sem origem", actionsCount(done, total)].join(" · ")}
+        </span>
+      </span>
+      <span className="tabular shrink-0 text-caption text-foreground-subtle">{projectSince(project)}</span>
     </Link>
   );
 }

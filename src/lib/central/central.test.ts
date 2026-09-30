@@ -42,7 +42,11 @@ function project(partial: Partial<ProjectSummary>): ProjectSummary {
     dueDate: null,
     createdAt: "2026-09-01T00:00:00Z",
     completedAt: null,
+    pausedAt: null,
     progress: { done: 1, total: 2, percent: 50 },
+    origin: null,
+    originModule: null,
+    next: null,
     ...partial,
   };
 }

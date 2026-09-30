@@ -100,7 +100,7 @@
   --duration-slow: 250ms;
 }
 
-/* Barra lateral recolhida (só ícones) — escolhida no botão do rodapé da barra. */
+/* Barra lateral recolhida (só ícones) — escolhida no botão do topo, ao lado do logo. */
 [data-sidebar="compacta"] {
   --sidebar-width: 4.25rem;
 }

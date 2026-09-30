@@ -1,25 +1,21 @@
 import { compareProjects, projectMonogram } from "@/lib/projects/organize";
 import { listProjects } from "@/lib/projects/queries";
 import { countInbox, countTodo } from "@/lib/tasks/queries";
-import { cookies } from "next/headers";
 import { getTodaySummary } from "@/lib/events/queries";
 import { getFaculdadeNav } from "@/lib/faculdade/pages";
 import { getModuleNav } from "@/lib/origins/queries";
-import { SIDEBAR_COMPACT, SIDEBAR_COOKIE } from "./sidebar-state";
 import { SidebarNav, type SidebarAgenda, type SidebarModule, type SidebarProject } from "./sidebar-nav";
 
 /** Barra lateral do PC: a navegação do Hub, fixa na altura da tela. */
 export async function Sidebar() {
-  const [{ groups }, workNav, schoolNav, agenda, inboxCount, todoCount, jar] = await Promise.all([
+  const [{ groups }, workNav, schoolNav, agenda, inboxCount, todoCount] = await Promise.all([
     listProjects(),
     getModuleNav("TRABALHO"),
     getFaculdadeNav(),
     getTodaySummary(),
     countInbox(),
     countTodo(),
-    cookies(),
   ]);
-  const compact = jar.get(SIDEBAR_COOKIE)?.value === SIDEBAR_COMPACT;
   const work: SidebarModule = { areas: workNav.areas, open: Object.fromEntries(workNav.counts) };
   const school: SidebarModule | null = schoolNav
     ? { areas: schoolNav.areas, open: Object.fromEntries(schoolNav.counts), attention: schoolNav.attention }
@@ -36,7 +32,7 @@ export async function Sidebar() {
     }));
 
   return (
-    <SidebarView projects={projects} work={work} school={school} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} compact={compact} />
+    <SidebarView projects={projects} work={work} school={school} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} />
   );
 }
 
@@ -47,7 +43,6 @@ export function SidebarView({
   agenda,
   inboxCount,
   todoCount,
-  compact,
 }: {
   projects: SidebarProject[];
   work: SidebarModule;
@@ -55,7 +50,6 @@ export function SidebarView({
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
-  compact: boolean;
 }) {
   return (
     <aside className="sticky top-topbar hidden h-[calc(100dvh-var(--topbar-height)-0.75rem)] lg:grid">
@@ -66,7 +60,6 @@ export function SidebarView({
         agenda={agenda}
         inboxCount={inboxCount}
         todoCount={todoCount}
-        initialCompact={compact}
       />
     </aside>
   );

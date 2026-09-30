@@ -5,7 +5,8 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar } from "@/components/layout/top-bar";
 import { cookies } from "next/headers";
 import { AppSync } from "@/components/sync/app-sync";
-import { SHELL_ID, SIDEBAR_COMPACT, SIDEBAR_COOKIE } from "@/components/layout/sidebar-state";
+import { SIDEBAR_COMPACT, SIDEBAR_COOKIE } from "@/components/layout/sidebar-state";
+import { SidebarShell } from "@/components/layout/sidebar-shell";
 
 /**
  * Celular: uma coluna + navegação embaixo.
@@ -14,8 +15,8 @@ import { SHELL_ID, SIDEBAR_COMPACT, SIDEBAR_COOKIE } from "@/components/layout/s
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const compact = (await cookies()).get(SIDEBAR_COOKIE)?.value === SIDEBAR_COMPACT;
   return (
-    // `data-sidebar` troca a largura da barra lateral (e de quem se alinha a ela) pelo CSS.
-    <div id={SHELL_ID} data-sidebar={compact ? SIDEBAR_COMPACT : "aberta"} className="contents">
+    // Barra lateral aberta ou recolhida: o botão fica no topo; a largura vem do CSS.
+    <SidebarShell initialCompact={compact}>
       {/* Faixa sob a status bar translúcida do iOS: o conteúdo rolado não passa por baixo do relógio. */}
       <div aria-hidden className="fixed inset-x-0 top-0 z-40 h-(--safe-top) bg-background lg:hidden" />
 
@@ -33,6 +34,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <CaptureDock />
       <AppSync />
       <Shortcuts />
-    </div>
+    </SidebarShell>
   );
 }

@@ -2,5 +2,5 @@
 export const SIDEBAR_COOKIE = "hub-barra";
 export const SIDEBAR_COMPACT = "compacta";
 
-/** Elemento que carrega `data-sidebar`; o CSS troca a largura da coluna a partir dele. */
-export const SHELL_ID = "hub-moldura";
+/** A navegação da barra lateral (alvo do botão de recolher/abrir no topo). */
+export const SIDEBAR_ID = "hub-barra-lateral";

@@ -61,7 +61,7 @@ export default async function FaculdadePage() {
           <section aria-labelledby="faculdade-proximas">
             <SectionHeading id="faculdade-proximas" title="Próximas avaliações" action={<span className="text-caption text-foreground-subtle">por data</span>} />
             <div className="tint tint-rose p-2 lg:p-2.5">
-              <UpcomingAssessments items={upcoming} today={today} names={names} linkedCount={linkedCount} />
+              <UpcomingAssessments items={upcoming} today={today} names={names} linkedCount={linkedCount} canAdd={subjects.length > 0} />
             </div>
           </section>
           {/* No celular a semana vem depois das disciplinas. */}

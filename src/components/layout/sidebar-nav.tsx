@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,8 +13,6 @@ import {
   GraduationCap,
   Inbox,
   ListTodo,
-  PanelLeftClose,
-  PanelLeftOpen,
   Rocket,
   Settings,
   Zap,
@@ -22,7 +20,8 @@ import {
 } from "lucide-react";
 import type { Area } from "@/types/project";
 import { cn } from "@/lib/utils";
-import { SHELL_ID, SIDEBAR_COMPACT, SIDEBAR_COOKIE } from "./sidebar-state";
+import { SIDEBAR_ID } from "./sidebar-state";
+import { useSidebar } from "./sidebar-shell";
 
 /** Recolhida: só os selos, com o nome como dica; subitens somem. */
 const CompactContext = createContext(false);
@@ -214,7 +213,6 @@ export function SidebarNav({
   agenda,
   inboxCount,
   todoCount,
-  initialCompact,
 }: {
   projects: SidebarProject[];
   work: SidebarModule;
@@ -222,25 +220,15 @@ export function SidebarNav({
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
-  initialCompact: boolean;
 }) {
   const pathname = usePathname();
   const is = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-  const [compact, setCompact] = useState(initialCompact);
+  const { compact } = useSidebar();
   const pulsoActive = ["/agora", "/sessao", "/a-fazer", "/feitas", "/inbox"].some(is);
-
-  function toggle() {
-    const next = !compact;
-    const value = next ? SIDEBAR_COMPACT : "aberta";
-    setCompact(next);
-    // A largura da coluna muda na hora (CSS); o cookie faz o servidor lembrar na próxima visita.
-    document.getElementById(SHELL_ID)?.setAttribute("data-sidebar", value);
-    document.cookie = `${SIDEBAR_COOKIE}=${value}; path=/; max-age=31536000; samesite=lax`;
-  }
 
   return (
     <CompactContext.Provider value={compact}>
-    <nav aria-label="Hub" className="panel flex min-h-0 flex-col overflow-hidden">
+    <nav id={SIDEBAR_ID} aria-label="Hub" className="panel flex min-h-0 flex-col overflow-hidden">
       <div className="min-h-0 flex-1 overflow-y-auto px-1.5 py-2.5 [scrollbar-width:thin]">
         <Item
           href="/central"
@@ -307,32 +295,14 @@ export function SidebarNav({
         </div>
       </div>
 
-      <div className={cn("flex gap-1 border-t border-border px-1.5 py-2", compact ? "flex-col" : "items-center")}>
-        <div className="min-w-0 flex-1">
-          <Item
-            href="/configuracoes"
-            title="Configurações"
-            subtitle="Origens, conta, sair"
-            active={is("/configuracoes") || is("/origens")}
-            tile={{ className: "bg-[#1d1d21] text-foreground-secondary", icon: Settings }}
-          />
-        </div>
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={compact ? "Abrir barra lateral" : "Recolher barra lateral"}
-          title={compact ? "Abrir barra lateral" : "Recolher barra lateral"}
-          className={cn(
-            "flex h-11 shrink-0 items-center justify-center rounded-lg text-foreground-subtle transition-colors duration-(--duration-fast) hover:bg-[#141417] hover:text-foreground",
-            compact ? "w-full" : "w-10",
-          )}
-        >
-          {compact ? (
-            <PanelLeftOpen aria-hidden className="size-[1.125rem]" strokeWidth={1.75} />
-          ) : (
-            <PanelLeftClose aria-hidden className="size-[1.125rem]" strokeWidth={1.75} />
-          )}
-        </button>
+      <div className="border-t border-border px-1.5 py-2">
+        <Item
+          href="/configuracoes"
+          title="Configurações"
+          subtitle="Origens, conta, sair"
+          active={is("/configuracoes") || is("/origens")}
+          tile={{ className: "bg-[#1d1d21] text-foreground-secondary", icon: Settings }}
+        />
       </div>
     </nav>
     </CompactContext.Provider>

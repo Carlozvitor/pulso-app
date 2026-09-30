@@ -5,6 +5,7 @@ import { countOpenTasks } from "@/lib/tasks/queries";
 import { getTodaySummary } from "@/lib/events/queries";
 import { greetingFor } from "@/lib/dates";
 import { CaptureButton } from "./capture-button";
+import { SidebarToggle } from "./sidebar-shell";
 
 function openLabel(count: number): string {
   if (count === 0) return "nada pendente";
@@ -14,7 +15,7 @@ function openLabel(count: number): string {
 const buttonClass =
   "inline-flex h-9 items-center gap-2 rounded-lg border border-border-strong bg-elevated px-3 text-[0.8125rem] font-medium text-foreground transition-colors duration-(--duration-fast) hover:bg-[#1d1d22]";
 
-/** Topo no PC: marca do Hub (volta para a Central), saudação com o resumo, e as ações de sempre. */
+/** Topo no PC: botão da barra lateral, marca do Hub (volta para a Central), saudação com o resumo, e as ações de sempre. */
 export async function TopBar() {
   const [open, agenda] = await Promise.all([countOpenTasks(), getTodaySummary()]);
   return <TopBarView open={open} eventsToday={agenda.count} greeting={greetingFor(new Date()).replace(/\.$/, "")} />;
@@ -28,18 +29,22 @@ function eventsLabel(count: number): string | null {
 export function TopBarView({ open, eventsToday, greeting }: { open: number; eventsToday: number; greeting: string }) {
   return (
     <header className="sticky top-0 z-30 hidden h-topbar grid-cols-[1fr_auto_1fr] items-center bg-background px-4 lg:grid">
-      <Link href="/central" className="flex items-center gap-2.5 justify-self-start">
-        <span
-          aria-hidden
-          className="flex size-[30px] items-center justify-center rounded-[9px] bg-linear-150 from-[#5d6bff] to-[#3340d6] text-[0.9375rem] font-bold text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]"
-        >
-          C
-        </span>
-        <span className="leading-tight">
-          <span className="block text-[0.65625rem] font-semibold tracking-[0.12em] text-foreground-subtle">CARLOS</span>
-          <span className="block text-base font-semibold tracking-tight">Hub do Carlos</span>
-        </span>
-      </Link>
+      <div className="flex items-center gap-2 justify-self-start">
+        {/* Alinhado com a coluna de ícones da barra recolhida. */}
+        <SidebarToggle className="ml-2" />
+        <Link href="/central" className="flex items-center gap-2.5">
+          <span
+            aria-hidden
+            className="flex size-[30px] items-center justify-center rounded-[9px] bg-linear-150 from-[#5d6bff] to-[#3340d6] text-[0.9375rem] font-bold text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]"
+          >
+            C
+          </span>
+          <span className="leading-tight">
+            <span className="block text-[0.65625rem] font-semibold tracking-[0.12em] text-foreground-subtle">CARLOS</span>
+            <span className="block text-base font-semibold tracking-tight">Hub do Carlos</span>
+          </span>
+        </Link>
+      </div>
 
       <p className="flex items-baseline gap-2">
         <span className="font-semibold">{greeting}</span>

@@ -37,54 +37,65 @@ export function UpcomingAssessments({
   today,
   names,
   linkedCount,
+  canAdd,
 }: {
   items: Assessment[];
   today: string;
   /** Nome de cada disciplina (pelo id da origem). */
   names: Record<string, string>;
   linkedCount: Record<string, number>;
+  /** Tem disciplina aberta: "Nova avaliação" fica no fim da lista. */
+  canAdd: boolean;
 }) {
   const { open } = useAssessmentSheet();
-  if (items.length === 0) {
-    return <p className="rounded-lg bg-black/20 px-3 py-3 text-sm text-white/60">Nenhuma avaliação pela frente. Quando marcarem uma, anote em “Nova avaliação”.</p>;
-  }
   return (
-    <ul className="grid gap-0.5">
-      {items.map((a) => {
-        const late = assessmentState(a, today) === "late";
-        const soon = a.dueDate !== null && a.dueDate <= today;
-        const meta = [names[a.areaId], a.location, actionsLabel(linkedCount[a.id] ?? 0), a.maxGrade !== null ? `vale ${formatGrade(a.maxGrade)}` : null]
-          .filter(Boolean)
-          .join(" · ");
-        return (
-          <li key={a.id}>
-            <button type="button" onClick={() => open(a.id)} className={cn(rowClass, "pl-2")}>
-              <span className={cn("w-11 shrink-0 text-center leading-tight", late && "opacity-50")}>
-                {a.dueDate ? (
-                  <>
-                    <span className="block text-[0.65625rem] font-semibold tracking-[0.08em] text-white/50 uppercase">{WEEKDAYS_SHORT[weekday(a.dueDate)]}</span>
-                    <span className="tabular block text-[1.25rem] font-semibold tracking-tight">{Number(a.dueDate.slice(8, 10))}</span>
-                  </>
-                ) : (
-                  <span className="block text-caption text-white/45">—</span>
-                )}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="flex min-w-0 items-center gap-2">
-                  <KindTag a={a} />
-                  <span className="truncate text-sm font-medium lg:text-[0.9375rem]">{a.title}</span>
-                </span>
-                {meta && <span className="mt-0.5 block truncate text-caption text-white/55">{meta}</span>}
-              </span>
-              <span className={cn("tabular shrink-0 text-right font-mono text-xs font-semibold", soon && !late ? "text-amber-ink" : "text-white/60")}>
-                {a.dueDate ? capitalize(dueLabel(a.dueDate, today)) : "Sem data"}
-                {a.dueTime && <span className="block font-sans text-[0.71875rem] font-medium text-white/45">{a.dueTime}</span>}
-              </span>
-            </button>
-          </li>
-        );
-      })}
-    </ul>
+    <div>
+      {items.length === 0 && (
+        <p className="rounded-lg bg-black/20 px-3 py-3 text-sm text-white/60">
+          {canAdd ? "Nenhuma avaliação pela frente." : "Nenhuma avaliação pela frente. Crie uma disciplina para anotar as avaliações dela."}
+        </p>
+      )}
+      {items.length > 0 && (
+        <ul className="grid gap-0.5">
+          {items.map((a) => {
+            const late = assessmentState(a, today) === "late";
+            const soon = a.dueDate !== null && a.dueDate <= today;
+            const meta = [names[a.areaId], a.location, actionsLabel(linkedCount[a.id] ?? 0), a.maxGrade !== null ? `vale ${formatGrade(a.maxGrade)}` : null]
+              .filter(Boolean)
+              .join(" · ");
+            return (
+              <li key={a.id}>
+                <button type="button" onClick={() => open(a.id)} className={cn(rowClass, "pl-2")}>
+                  <span className={cn("w-11 shrink-0 text-center leading-tight", late && "opacity-50")}>
+                    {a.dueDate ? (
+                      <>
+                        <span className="block text-[0.65625rem] font-semibold tracking-[0.08em] text-white/50 uppercase">{WEEKDAYS_SHORT[weekday(a.dueDate)]}</span>
+                        <span className="tabular block text-[1.25rem] font-semibold tracking-tight">{Number(a.dueDate.slice(8, 10))}</span>
+                      </>
+                    ) : (
+                      <span className="block text-caption text-white/45">—</span>
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <KindTag a={a} />
+                      <span className="truncate text-sm font-medium lg:text-[0.9375rem]">{a.title}</span>
+                    </span>
+                    {meta && <span className="mt-0.5 block truncate text-caption text-white/55">{meta}</span>}
+                  </span>
+                  <span className={cn("tabular shrink-0 text-right font-mono text-xs font-semibold", soon && !late ? "text-amber-ink" : "text-white/60")}>
+                    {a.dueDate ? capitalize(dueLabel(a.dueDate, today)) : "Sem data"}
+                    {a.dueTime && <span className="block font-sans text-[0.71875rem] font-medium text-white/45">{a.dueTime}</span>}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {canAdd && <NewAssessmentButton variant="row" />}
+    </div>
   );
 }
 

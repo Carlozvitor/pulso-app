@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H4 (avaliação)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  body { display: block; overflow: auto; background: repeating-linear-gradient(90deg, #0b0b0d 0 180px, #0f0f12 180px 190px); }
+  .stage { min-height: 100vh; background: rgb(0 0 0 / .6); display: flex; justify-content: center; align-items: flex-end; gap: 28px; padding: 30px 20px 0; }
+  .cap { color: var(--text-2); font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .sheet { width: 480px; background: var(--elev); border: 1px solid var(--line); border-bottom: 0; border-radius: 20px 20px 0 0; padding: 12px 18px 22px; }
+  .grab { width: 40px; height: 4px; border-radius: 99px; background: var(--line); margin: 0 auto 14px; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  h2 { font-size: 20px; font-weight: 600; }
+  .sheet-head .x { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; color: var(--text-3); }
+  .input { min-height: 48px; border-radius: 8px; border: 1px solid var(--line); background: #0f0f12; display: flex; align-items: center; padding: 0 14px; font-size: 16px; }
+  .input.focus { border-color: var(--accent-soft); }
+  .row { margin-top: 18px; }
+  .row h3 { font-size: 13.5px; font-weight: 500; color: var(--text-2); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .row h3 small { font-weight: 400; color: var(--text-3); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); background: #1a1a1e; display: inline-flex; align-items: center; gap: 7px; font-size: 14px; color: var(--text-2); }
+  .chip svg.lucide { width: 15px; height: 15px; }
+  .chip.on { background: var(--rose-tile); border-color: var(--rose-line); color: #fce7f3; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { height: 44px; border-radius: 8px; border: 1px solid var(--line); background: #0f0f12; display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 15px; }
+  .field svg.lucide { width: 16px; height: 16px; color: var(--text-3); }
+  .field.muted { color: var(--text-3); }
+  .field .suf { margin-left: auto; font-size: 12.5px; color: var(--text-3); }
+  .origin { display: flex; align-items: center; justify-content: space-between; height: 44px; font-size: 15px; }
+  .origin span { display: inline-flex; align-items: center; gap: 8px; }
+  .origin svg.lucide { color: #71717a; }
+  .origin .dot { width: 18px; height: 18px; border-radius: 5px; background: var(--rose-tile); color: var(--rose-ink); display: grid; place-items: center; }
+  .origin .dot svg.lucide { width: 11px; height: 11px; color: var(--rose-ink); }
+  .hint { font-size: 12.5px; color: var(--text-3); margin-top: 8px; }
+  .save { margin-top: 22px; height: 50px; border-radius: 10px; background: var(--accent); display: grid; place-items: center; font-weight: 600; font-size: 15px; }
+
+  .acts { border-radius: 10px; border: 1px solid var(--line); background: #0f0f12; padding: 6px; }
+  .act { display: flex; align-items: center; gap: 11px; padding: 9px 8px; border-radius: 7px; }
+  .act .check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #4b4b52; flex: none; }
+  .act b { font-weight: 500; font-size: 14px; display: block; }
+  .act small { font-size: 12px; color: var(--text-3); }
+  .act .r { margin-left: auto; font: 600 12px "Geist Mono"; color: var(--text-3); }
+  .act-add { display: flex; align-items: center; gap: 9px; height: 42px; margin-top: 4px; padding: 0 10px; border-radius: 8px; background: #0f1020; border: 1px solid #2f3461; color: #9aa0c8; font-size: 14px; }
+  .act-add svg.lucide { width: 15px; height: 15px; color: var(--accent-soft); }
+  .foot { display: flex; gap: 10px; margin-top: 22px; }
+  .foot .b { height: 48px; flex: 1; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14.5px; border: 1px solid var(--line-2); background: #1a1a1e; }
+  .foot .b svg.lucide { width: 16px; height: 16px; }
+  .foot .b.done { background: #0f2a20; border-color: #1f5b44; color: #bbf7d0; }
+  .foot .b.icon { flex: none; width: 48px; color: var(--text-3); }
+  .saved { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); }
+  .saved svg.lucide { width: 13px; height: 13px; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div>
+      <p class="cap">Nova avaliação (a partir da Faculdade ou da disciplina)</p>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sheet-head"><h2>Nova avaliação</h2><span class="x"><i data-lucide="x"></i></span></div>
+
+        <div class="chips" style="margin-bottom:12px">
+          <span class="chip"><i data-lucide="file-text"></i>Trabalho</span>
+          <span class="chip on"><i data-lucide="clipboard-check"></i>Prova</span>
+          <span class="chip"><i data-lucide="list-checks"></i>Atividade</span>
+        </div>
+        <div class="input focus">AV1</div>
+
+        <div class="row">
+          <h3>Disciplina</h3>
+          <div class="origin"><span><span class="dot"><i data-lucide="graduation-cap"></i></span>Comportamento do Consumidor</span><i data-lucide="chevron-right"></i></div>
+        </div>
+
+        <div class="row">
+          <h3>Quando</h3>
+          <div class="two">
+            <div class="field"><i data-lucide="calendar"></i>Qui, 1 out</div>
+            <div class="field"><i data-lucide="clock"></i>19:00</div>
+          </div>
+          <p class="hint">Aparece na semana de Compromissos e na Central. Horário é opcional.</p>
+        </div>
+
+        <div class="row">
+          <h3>Local <small>opcional</small></h3>
+          <div class="field"><i data-lucide="map-pin"></i>Bloco B, 110</div>
+        </div>
+
+        <div class="row">
+          <h3>Vale <small>opcional</small></h3>
+          <div class="field" style="width:50%"><i data-lucide="award"></i>10<span class="suf">pontos</span></div>
+        </div>
+
+        <div class="row">
+          <h3>Anotação</h3>
+          <div class="field muted" style="height:64px;align-items:flex-start;padding-top:10px">Capítulos 1 a 3. Sem consulta.</div>
+        </div>
+
+        <div class="save">Salvar avaliação</div>
+      </div>
+    </div>
+
+    <div>
+      <p class="cap">Avaliação aberta (tocar numa linha)</p>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sheet-head"><h2>Trabalho final</h2><span class="saved"><i data-lucide="check"></i>salvo</span></div>
+
+        <div class="chips" style="margin-bottom:12px">
+          <span class="chip on"><i data-lucide="file-text"></i>Trabalho</span>
+          <span class="chip"><i data-lucide="clipboard-check"></i>Prova</span>
+          <span class="chip"><i data-lucide="list-checks"></i>Atividade</span>
+        </div>
+
+        <div class="row" style="margin-top:4px">
+          <div class="origin"><span><span class="dot"><i data-lucide="graduation-cap"></i></span>Marketing Digital</span><i data-lucide="chevron-right"></i></div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <div class="two">
+            <div class="field"><i data-lucide="calendar"></i>Seg, 5 out</div>
+            <div class="field muted"><i data-lucide="clock"></i>Sem horário</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="two">
+            <div class="field"><i data-lucide="award"></i>4<span class="suf">vale</span></div>
+            <div class="field muted"><i data-lucide="star"></i>—<span class="suf">nota</span></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <h3>Anotação</h3>
+          <div class="field" style="height:64px;align-items:flex-start;padding-top:10px;font-size:14.5px">Em dupla com a Bia. ABNT, 10 a 15 páginas. Apresentação de 10 min.</div>
+        </div>
+
+        <div class="row">
+          <h3>Ações no PULSO <small>2 abertas</small></h3>
+          <div class="acts">
+            <div class="act"><span class="check"></span><div><b>Finalizar introdução do trabalho</b><small>45 min</small></div><span class="r">Amanhã</span></div>
+            <div class="act"><span class="check"></span><div><b>Montar slides da apresentação</b></div><span class="r">Sáb</span></div>
+            <div class="act-add"><i data-lucide="plus"></i>Nova ação para este trabalho…</div>
+          </div>
+        </div>
+
+        <div class="foot">
+          <span class="b done"><i data-lucide="check"></i>Marcar como entregue</span>
+          <span class="b icon"><i data-lucide="trash-2"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Só título e disciplina são obrigatórios. Sem data, a avaliação fica na disciplina mas não aparece na agenda.</li>
+      <li>Avaliação já criada salva sozinha, como a tarefa. A nova tem o botão Salvar, como o compromisso.</li>
+      <li>"Nova ação" cria a tarefa no PULSO já com a disciplina como origem e ligada a este trabalho.</li>
+      <li>Trabalho/Atividade: "Marcar como entregue/feita". Prova não tem botão: depois do dia ela vai sozinha para "Feitas" e o campo de nota fica pronto.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

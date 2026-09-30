@@ -6,7 +6,7 @@ import { doneRecently, openCounts, originActions, summarizeFronts } from "./summ
 const TODAY = "2026-09-29";
 
 function area(id: string, name: string, parentId: string | null, position = 0): Area {
-  return { id, name, parentId, module: "TRABALHO", position };
+  return { id, name, parentId, module: "TRABALHO", position, archivedAt: null };
 }
 
 const AREAS: Area[] = [
@@ -38,6 +38,7 @@ function task(partial: Partial<Task>): Task {
     completedAt: null,
     pausedAt: null,
     snoozedUntil: null,
+    assessmentId: null,
     ...partial,
   };
 }

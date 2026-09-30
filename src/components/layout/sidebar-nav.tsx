@@ -10,6 +10,7 @@ import {
   CircleCheck,
   CircleDot,
   CornerDownRight,
+  GraduationCap,
   Inbox,
   ListTodo,
   PanelLeftClose,
@@ -37,8 +38,11 @@ function agendaLabel({ count, next }: SidebarAgenda): string {
   return next?.time ? `${today} · próximo ${next.time}` : today;
 }
 
-/** Árvore do Trabalho para a barra lateral, com as abertas de cada item (subitens inclusos). */
-export type SidebarModule = { areas: Area[]; open: Record<string, number> };
+/**
+ * Árvore de um módulo para a barra lateral, com as abertas de cada item (subitens inclusos).
+ * `attention`: a próxima coisa do módulo que não é tarefa (Faculdade: "Prova amanhã · 19:00").
+ */
+export type SidebarModule = { areas: Area[]; open: Record<string, number>; attention?: string | null };
 
 type ItemProps = {
   href: string;
@@ -134,28 +138,43 @@ function openLabel(count: number): string {
 
 const byPosition = (a: Area, b: Area) => a.position - b.position || a.name.localeCompare(b.name, "pt-BR");
 
-/** Trabalho: frentes sempre visíveis; a frente onde você está abre até o item atual. */
-function WorkTree({ work, pathname }: { work: SidebarModule; pathname: string }) {
+/**
+ * Um módulo com árvore (Trabalho, Faculdade): o primeiro nível sempre visível; o item
+ * onde você está abre até ele.
+ */
+function ModuleTree({
+  nav,
+  base,
+  title,
+  tile,
+  pathname,
+}: {
+  nav: SidebarModule;
+  base: string;
+  title: string;
+  tile: ItemProps["tile"];
+  pathname: string;
+}) {
   const compact = useContext(CompactContext);
-  const root = work.areas.find((a) => a.parentId === null);
+  const root = nav.areas.find((a) => a.parentId === null);
   if (!root) return null;
-  const currentId = pathname.startsWith("/trabalho/") ? pathname.split("/")[2] : null;
+  const currentId = pathname.startsWith(`${base}/`) ? pathname.split("/")[2] : null;
   // Do item atual até o topo: esses ficam abertos.
   const openIds = new Set<string>();
-  for (let id = currentId; id; id = work.areas.find((a) => a.id === id)?.parentId ?? null) openIds.add(id);
+  for (let id = currentId; id; id = nav.areas.find((a) => a.id === id)?.parentId ?? null) openIds.add(id);
 
   const branch = (parentId: string, label: string): React.ReactNode => {
-    const children = work.areas.filter((a) => a.parentId === parentId).sort(byPosition);
+    const children = nav.areas.filter((a) => a.parentId === parentId).sort(byPosition);
     if (children.length === 0) return null;
     return (
       <Kids label={label}>
         {children.map((area) => (
           <li key={area.id}>
             <KidLink
-              href={`/trabalho/${area.id}`}
+              href={`${base}/${area.id}`}
               label={area.name}
               icon={CornerDownRight}
-              count={work.open[area.id]}
+              count={nav.open[area.id]}
               active={area.id === currentId}
             />
             {openIds.has(area.id) && branch(area.id, area.name)}
@@ -166,16 +185,16 @@ function WorkTree({ work, pathname }: { work: SidebarModule; pathname: string })
   };
 
   return (
-    <>
+    <div className="mt-1 first:mt-0">
       <Item
-        href="/trabalho"
-        title="Trabalho"
-        subtitle={openLabel(work.open[root.id] ?? 0)}
-        active={pathname === "/trabalho" || (compact && pathname.startsWith("/trabalho/"))}
-        tile={{ className: "bg-blue-tile text-blue-ink", icon: Briefcase }}
+        href={base}
+        title={title}
+        subtitle={nav.attention ?? openLabel(nav.open[root.id] ?? 0)}
+        active={pathname === base || (compact && pathname.startsWith(`${base}/`))}
+        tile={tile}
       />
-      {branch(root.id, "Trabalho")}
-    </>
+      {branch(root.id, title)}
+    </div>
   );
 }
 
@@ -191,6 +210,7 @@ function projectsLabel(count: number): string {
 export function SidebarNav({
   projects,
   work,
+  school,
   agenda,
   inboxCount,
   todoCount,
@@ -198,6 +218,7 @@ export function SidebarNav({
 }: {
   projects: SidebarProject[];
   work: SidebarModule;
+  school: SidebarModule | null;
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
@@ -247,7 +268,16 @@ export function SidebarNav({
           </p>
         )}
 
-        <WorkTree work={work} pathname={pathname} />
+        <ModuleTree nav={work} base="/trabalho" title="Trabalho" tile={{ className: "bg-blue-tile text-blue-ink", icon: Briefcase }} pathname={pathname} />
+        {school && (
+          <ModuleTree
+            nav={school}
+            base="/faculdade"
+            title="Faculdade"
+            tile={{ className: "bg-rose-tile text-rose-ink", icon: GraduationCap }}
+            pathname={pathname}
+          />
+        )}
 
         <div className="mt-1">
           <Item

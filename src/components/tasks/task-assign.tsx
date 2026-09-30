@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { Check, ChevronRight, GraduationCap } from "lucide-react";
 import type { Area, Project } from "@/types/project";
 import type { Task } from "@/types/task";
 import type { TaskPatch } from "@/lib/tasks/schemas";
+import type { AssessmentRef } from "@/lib/projects/queries";
+import { assessmentHref } from "@/lib/faculdade/assessments";
 import { groupProjects } from "@/lib/projects/organize";
 import { indexOrigins, originFullLabel } from "@/lib/origins/tree";
 import { OriginField } from "@/components/origins/origin-field";
@@ -12,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { AttributeRow } from "./attribute-row";
 
-export type AssignOptions = { areas: Area[]; projects: Project[] };
+export type AssignOptions = { areas: Area[]; projects: Project[]; assessments?: AssessmentRef[] };
 
 type TaskAssignProps = {
   task: Task;
@@ -27,30 +30,50 @@ type TaskAssignProps = {
 export function TaskAssign({ task, options, save }: TaskAssignProps) {
   const [projectId, setProjectId] = useState(task.projectId);
   const [areaId, setAreaId] = useState(task.areaId);
+  const [assessmentId, setAssessmentId] = useState(task.assessmentId);
   const [picking, setPicking] = useState(false);
 
   const project = options.projects.find((p) => p.id === projectId) ?? null;
+  const assessment = options.assessments?.find((a) => a.id === assessmentId) ?? null;
   const index = indexOrigins(options.areas);
+
+  // Mudou a origem para fora da disciplina da avaliação: a ligação sai (igual ao banco).
+  const keepsLink = (nextArea: string | null) => (assessment && assessment.areaId === nextArea ? assessment.id : null);
 
   function chooseProject(next: Project | null) {
     setPicking(false);
     if ((next?.id ?? null) === projectId) return;
-    const previous = { projectId, areaId };
+    const previous = { projectId, areaId, assessmentId };
     setProjectId(next?.id ?? null);
     // Com projeto a origem passa a ser a dele; sem projeto, fica a última (igual ao banco).
-    if (next) setAreaId(next.areaId);
+    if (next) {
+      setAreaId(next.areaId);
+      setAssessmentId(keepsLink(next.areaId));
+    }
     void save({ projectId: next?.id ?? null }).then((ok) => {
       if (ok) return;
       setProjectId(previous.projectId);
       setAreaId(previous.areaId);
+      setAssessmentId(previous.assessmentId);
     });
   }
 
   function chooseArea(next: string | null) {
-    const previous = areaId;
+    const previous = { areaId, assessmentId };
     setAreaId(next);
+    setAssessmentId(keepsLink(next));
     void save({ areaId: next }).then((ok) => {
-      if (!ok) setAreaId(previous);
+      if (ok) return;
+      setAreaId(previous.areaId);
+      setAssessmentId(previous.assessmentId);
+    });
+  }
+
+  function unlink() {
+    const previous = assessmentId;
+    setAssessmentId(null);
+    void save({ assessmentId: null }).then((ok) => {
+      if (!ok) setAssessmentId(previous);
     });
   }
 
@@ -92,6 +115,21 @@ export function TaskAssign({ task, options, save }: TaskAssignProps) {
             <OriginField labelId="origin-label" areas={options.areas} value={areaId} onChange={chooseArea} />
           </AttributeRow>
         )
+      )}
+
+      {assessment && (
+        <AttributeRow id="assessment-label" label="Serve para" hint="Avaliação da Faculdade" onClear={unlink}>
+          <Link
+            href={assessmentHref(assessment)}
+            className="-mx-4 -my-2 flex min-h-12 items-center justify-between gap-4 px-4 text-body transition-colors duration-(--duration-fast) hover:bg-elevated/60 active:bg-elevated"
+          >
+            <span className="flex min-w-0 items-center gap-2.5">
+              <GraduationCap aria-hidden className="size-4 shrink-0 text-rose-ink" strokeWidth={1.75} />
+              <span className="truncate">{assessment.title}</span>
+            </span>
+            <ChevronRight aria-hidden className="size-5 shrink-0 text-muted-ui" />
+          </Link>
+        </AttributeRow>
       )}
 
       <ProjectPicker

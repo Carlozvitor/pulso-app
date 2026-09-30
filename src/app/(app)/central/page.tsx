@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Briefcase, CalendarClock, CalendarDays, Eye, Leaf, Sun, Zap } from "lucide-react";
+import { Briefcase, CalendarClock, CalendarDays, Eye, GraduationCap, Leaf, Sun, Zap } from "lucide-react";
 import { NowCard } from "@/components/agora/now-card";
 import { TaskCard } from "@/components/agora/task-card";
 import { CardTile, SectionHeading } from "@/components/cards/card-parts";
@@ -130,9 +130,10 @@ export default async function CentralPage() {
               href={module.href}
               label={module.label}
               value={openActions(module.open)}
-              foot={module.next ? `Próxima: ${module.next.title}` : "Nada pedindo atenção"}
-              icon={Briefcase}
-              tone="blue"
+              // Na Faculdade, a prova/entrega que vem aí vale mais que a próxima tarefa.
+              foot={module.attention ?? (module.next ? `Próxima: ${module.next.title}` : "Nada pedindo atenção")}
+              icon={module.key === "FACULDADE" ? GraduationCap : Briefcase}
+              tone={module.key === "FACULDADE" ? "rose" : "blue"}
             />
           ))}
           <ModuleCard

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H4 (celular)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#050506; --line:#232327; --line-2:#2e2e33; --text:#f4f4f5; --text-2:#a1a1aa; --text-3:#8a8a93; --accent:#4c5bff; --accent-soft:#8b95ff; --teal-ink:#5eead4;
+    --amber-a:#4d260c; --amber-b:#1f1007; --amber-line:#8a4818; --amber-tile:#6d3510; --amber-ink:#fdba74;
+    --rose-a:#3d1030; --rose-b:#1a0814; --rose-line:#6e2757; --rose-tile:#5b1c47; --rose-ink:#f9a8d4;
+    --blue-tile:#143a63; --blue-ink:#93c5fd; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #1a1a1d; color: var(--text); font: 15px/1.45 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; }
+  .cap { color: #a1a1aa; font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .phone { width: 390px; height: 844px; border-radius: 44px; border: 10px solid #000; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 30px 80px rgb(0 0 0 / .6); }
+  .scroll { height: 100%; overflow: auto; padding: 54px 16px 110px; scrollbar-width: none; }
+  .status { position: absolute; top: 0; inset-inline: 0; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font-weight: 600; font-size: 14px; background: var(--bg); z-index: 3; }
+  .head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin: 0 -16px 14px; padding-inline: 16px; }
+  .seal { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+  .seal.rose { background: var(--rose-tile); color: var(--rose-ink); box-shadow: inset 0 0 0 1px var(--rose-line); }
+  .seal.amber { background: var(--amber-tile); color: var(--amber-ink); box-shadow: inset 0 0 0 1px var(--amber-line); }
+  .head h1 { font-size: 20px; font-weight: 600; }
+  .head p { font-size: 13px; color: var(--text-2); }
+  .head .add { margin-left: auto; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+  .head .add.rose { background: var(--rose-tile); border: 1px solid var(--rose-line); color: #fce7f3; }
+  .head .add.amber { background: var(--amber-tile); border: 1px solid var(--amber-line); color: #ffedd5; }
+  .lbl { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin: 18px 2px 8px; display: flex; justify-content: space-between; }
+  .lbl:first-of-type { margin-top: 4px; }
+  .lbl a { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-3); font-size: 12.5px; }
+
+  .card { border-radius: 12px; padding: 8px; border: 1px solid; }
+  .card.rose { background: linear-gradient(160deg, var(--rose-a), var(--rose-b)); border-color: var(--rose-line); }
+  .card.amber { background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border-color: var(--amber-line); padding: 16px; }
+  .card.neutral { background: linear-gradient(160deg, #141417, #0d0d0f); border-color: var(--line); }
+  .av { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; padding: 10px; border-radius: 8px; background: rgb(0 0 0 / .22); margin-bottom: 2px; }
+  .av .w { text-align: center; line-height: 1.1; }
+  .av .w small { display: block; font-size: 10px; font-weight: 600; letter-spacing: .08em; color: rgb(255 255 255 / .5); }
+  .av .w b { font-size: 18px; font-weight: 600; }
+  .av b.t { display: block; font-weight: 500; font-size: 14.5px; }
+  .av span.m { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgb(255 255 255 / .55); }
+  .av .r { font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .6); text-align: right; }
+  .av .r.hot { color: var(--amber-ink); }
+  .kind { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--rose-ink); }
+  .kind svg.lucide { width: 11px; height: 11px; }
+  .av.late .w { opacity: .5; }
+
+  .subj { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; border: 1px solid var(--rose-line); background: linear-gradient(160deg, var(--rose-a), var(--rose-b)); margin-bottom: 8px; }
+  .subj .mono { width: 38px; height: 38px; border-radius: 9px; background: var(--rose-tile); color: var(--rose-ink); display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: none; }
+  .subj b { display: block; font-size: 15.5px; font-weight: 600; }
+  .subj span { display: block; font-size: 12.5px; color: rgb(255 255 255 / .55); }
+  .subj .go { margin-left: auto; color: var(--rose-ink); opacity: .7; }
+  .closed { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px dashed var(--line-2); color: var(--text-3); font-size: 13.5px; }
+  .closed svg.lucide { width: 16px; height: 16px; }
+
+  /* compromissos · semana */
+  .tabs { display: flex; gap: 6px; overflow: auto; margin-bottom: 14px; }
+  .tab { height: 34px; display: inline-flex; align-items: center; padding: 0 13px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; white-space: nowrap; }
+  .tab.on { background: var(--amber-tile); border-color: var(--amber-line); color: #ffedd5; }
+  .day { margin-bottom: 14px; }
+  .day h2 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); margin: 0 2px 7px; }
+  .day.today h2 { color: var(--amber-ink); }
+  .ev { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; border-radius: 10px; padding: 10px 12px; background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border: 1px solid var(--amber-line); margin-bottom: 6px; }
+  .ev .t { font: 600 13px "Geist Mono"; color: var(--amber-ink); }
+  .ev b { display: block; font-size: 15px; font-weight: 600; }
+  .ev span { font-size: 12.5px; color: rgb(255 255 255 / .55); display: flex; align-items: center; gap: 4px; }
+  .ev span svg.lucide { width: 12px; height: 12px; }
+  .ev.past { opacity: .5; }
+  .ev.exam { background: linear-gradient(160deg, var(--rose-a), var(--rose-b)); border-color: var(--rose-line); }
+  .ev.exam .t { color: var(--rose-ink); }
+  .dl { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--text-2); padding: 7px 4px; }
+  .dl i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--teal-ink); display: block; flex: none; }
+  .dl i.rose { border-radius: 2px; border-color: var(--rose-ink); transform: rotate(45deg); }
+  .dl small { margin-left: auto; font-size: 12px; color: var(--text-3); }
+
+  /* central · próximas atenções */
+  .pa { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 11px 10px; border-radius: 8px; background: rgb(0 0 0 / .22); margin-bottom: 2px; }
+  .pa .ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; }
+  .pa .ic svg.lucide { width: 15px; height: 15px; }
+  .pa .ic.rose { background: var(--rose-tile); color: var(--rose-ink); }
+  .pa .ic.amber { background: var(--amber-tile); color: var(--amber-ink); }
+  .pa .ic.teal { background: #0f4e59; color: var(--teal-ink); }
+  .pa b { display: block; font-weight: 500; font-size: 14.5px; }
+  .pa small { font-size: 12px; color: rgb(255 255 255 / .5); }
+  .pa .r { font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .6); text-align: right; white-space: nowrap; }
+  .mod { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; border: 1px solid var(--rose-line); background: linear-gradient(160deg, var(--rose-a), var(--rose-b)); }
+  .mod .seal { width: 40px; height: 40px; }
+  .mod b { display: block; font-size: 17px; font-weight: 700; }
+  .mod span { display: block; font-size: 12.5px; color: rgb(255 255 255 / .6); }
+
+  .navbar { position: absolute; bottom: 0; inset-inline: 0; height: 86px; background: rgb(9 9 11 / .96); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding-top: 8px; z-index: 3; }
+  .nt { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--text-3); }
+  .nt.on { color: var(--text); } .nt.on svg.lucide { color: var(--accent-soft); }
+  .plus { justify-self: center; width: 52px; height: 52px; border-radius: 16px; background: var(--accent); display: grid; place-items: center; margin-top: -4px; }
+</style>
+</head>
+<body>
+  <div>
+    <p class="cap">Faculdade (Mais → Faculdade)</p>
+    <div class="phone">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <div class="head"><span class="seal rose"><i data-lucide="graduation-cap"></i></span><div><h1>Faculdade</h1><p>Prova amanhã · 19:00</p></div><span class="add rose"><i data-lucide="file-plus-2"></i></span></div>
+
+        <p class="lbl">Próximas avaliações</p>
+        <div class="card rose">
+          <div class="av late"><div class="w"><small>TER</small><b>29</b></div><div><b class="t">Lista 3 — probabilidade</b><span class="m"><span class="kind"><i data-lucide="list-checks"></i>Atividade</span>Estatística</span></div><span class="r">Era pra<br />ontem</span></div>
+          <div class="av"><div class="w"><small>QUI</small><b>1</b></div><div><b class="t">AV1</b><span class="m"><span class="kind"><i data-lucide="clipboard-check"></i>Prova</span>Comport. do Consumidor</span></div><span class="r hot">Amanhã<br />19:00</span></div>
+          <div class="av"><div class="w"><small>SEG</small><b>5</b></div><div><b class="t">Trabalho final</b><span class="m"><span class="kind"><i data-lucide="file-text"></i>Trabalho</span>Marketing Digital</span></div><span class="r">Segunda</span></div>
+        </div>
+
+        <p class="lbl">Disciplinas</p>
+        <div class="subj"><span class="mono">MD</span><div><b>Marketing Digital</b><span>Seg e qua · 19:00 · 3 ações</span></div><i data-lucide="chevron-right" class="go"></i></div>
+        <div class="subj"><span class="mono">ES</span><div><b>Estatística Aplicada</b><span>Ter · 19:00 · 1 ação</span></div><i data-lucide="chevron-right" class="go"></i></div>
+        <div class="subj"><span class="mono">CC</span><div><b>Comportamento do Consumidor</b><span>Qui · 19:00 · 1 ação</span></div><i data-lucide="chevron-right" class="go"></i></div>
+        <div class="subj"><span class="mono">CI</span><div><b>Comunicação Integrada</b><span>Sex · 19:00</span></div><i data-lucide="chevron-right" class="go"></i></div>
+        <div class="closed"><i data-lucide="archive"></i>Disciplinas encerradas · 4</div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+
+  <div>
+    <p class="cap">Compromissos · Semana (avaliações entram)</p>
+    <div class="phone">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <div class="head"><span class="seal amber"><i data-lucide="calendar-clock"></i></span><div><h1>Compromissos</h1><p>2 hoje · próximo 19:00</p></div><span class="add amber"><i data-lucide="plus"></i></span></div>
+        <div class="tabs"><span class="tab">Hoje</span><span class="tab on">Semana</span><span class="tab">Próximos</span><span class="tab">Concluídos</span></div>
+
+        <div class="day today">
+          <h2>Hoje · qua, 30</h2>
+          <div class="ev past"><span class="t">14:00</span><div><b>Reunião com cliente</b><span>Google Meet · 1 h</span></div></div>
+          <div class="ev"><span class="t">19:00</span><div><b>Aula de Marketing Digital</b><span><i data-lucide="repeat"></i>Bloco C, 204 · 3 h</span></div></div>
+          <div class="dl"><i></i>Revisar resumo dos capítulos 1 a 3<small>prazo</small></div>
+        </div>
+        <div class="day">
+          <h2>Qui, 1</h2>
+          <div class="ev exam"><span class="t">19:00</span><div><b>Prova · AV1</b><span><i data-lucide="graduation-cap"></i>Comport. do Consumidor · Bloco B</span></div></div>
+          <div class="dl"><i></i>Finalizar introdução do trabalho<small>prazo</small></div>
+        </div>
+        <div class="day">
+          <h2>Sex, 2</h2>
+          <div class="ev"><span class="t">19:00</span><div><b>Aula de Comunicação Integrada</b><span><i data-lucide="repeat"></i>Bloco C, 108 · 3 h</span></div></div>
+        </div>
+        <div class="day">
+          <h2>Seg, 5</h2>
+          <div class="ev"><span class="t">19:00</span><div><b>Aula de Marketing Digital</b><span><i data-lucide="repeat"></i>Bloco C, 204 · 3 h</span></div></div>
+          <div class="dl"><i class="rose"></i>Entrega: Trabalho final<small>Marketing Digital</small></div>
+        </div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+
+  <div>
+    <p class="cap">Central · Próximas atenções + card da Faculdade</p>
+    <div class="phone">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <p class="lbl">Próximas atenções</p>
+        <div class="card neutral">
+          <div class="pa"><span class="ic rose"><i data-lucide="clipboard-check"></i></span><div><b>Prova · AV1</b><small>Comportamento do Consumidor · Bloco B</small></div><span class="r">Amanhã<br />19:00</span></div>
+          <div class="pa"><span class="ic teal"><i data-lucide="circle-dot"></i></span><div><b>Finalizar introdução do trabalho</b><small>Marketing Digital · Trabalho final</small></div><span class="r">Amanhã</span></div>
+          <div class="pa"><span class="ic amber"><i data-lucide="calendar-clock"></i></span><div><b>Dentista</b><small>Aldeota</small></div><span class="r">Sex<br />09:00</span></div>
+          <div class="pa"><span class="ic rose"><i data-lucide="file-text"></i></span><div><b>Entrega · Trabalho final</b><small>Marketing Digital · 2 ações</small></div><span class="r">Segunda</span></div>
+        </div>
+
+        <p class="lbl">Minha vida</p>
+        <div class="mod"><span class="seal rose"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span>Aula hoje 19:00 · prova amanhã</span></div><i data-lucide="chevron-right" style="margin-left:auto;color:var(--rose-ink);opacity:.7"></i></div>
+        <p style="font-size:12.5px;color:#8a8a93;margin-top:12px;line-height:1.5">Hoje (card do topo) também mostra prova ou entrega marcada para hoje. Trabalho que passou do dia sem ser entregue aparece lá como "Era pra …", igual às tarefas.</p>
+      </div>
+      <nav class="navbar"><span class="nt on"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

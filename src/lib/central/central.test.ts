@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { Assessment } from "@/types/assessment";
 import type { CalendarEvent } from "@/types/event";
 import type { ProjectSummary } from "@/types/project";
 import type { Task } from "@/types/task";
@@ -25,6 +26,7 @@ function task(partial: Partial<Task>): Task {
     completedAt: null,
     pausedAt: null,
     snoozedUntil: null,
+    assessmentId: null,
     ...partial,
   };
 }
@@ -175,4 +177,76 @@ describe("buildCentral com compromissos", () => {
     const [first] = view.upcoming.items;
     expect(first.kind === "event" && first.context).toBe("Aldeota");
   });
+});
+
+describe("buildCentral com avaliações", () => {
+  const now = { date: TODAY, time: "15:00" };
+  const av = (partial: Partial<Assessment>): Assessment => ({
+    id: `av${(seq += 1)}`,
+    areaId: "mkt",
+    kind: "PROVA",
+    title: "AV",
+    dueDate: null,
+    dueTime: null,
+    location: null,
+    maxGrade: null,
+    grade: null,
+    notes: null,
+    doneAt: null,
+    createdAt: "2026-08-01T00:00:00Z",
+    ...partial,
+  });
+  const areaLabel = (id: string | null) => (id === "mkt" ? "Marketing Digital" : null);
+
+  it("Hoje: prova de hoje e trabalho que passou sem entregar; prova passada e entregue ficam de fora", () => {
+    const view = buildCentral([task({ title: "tarefa", dueDate: TODAY })], [], TODAY, undefined, {
+      now,
+      events: [],
+      areaLabel,
+      assessments: [
+        av({ title: "AV1", dueDate: TODAY, dueTime: "19:00", location: "Bloco B" }),
+        av({ kind: "ATIVIDADE", title: "Lista 3", dueDate: "2026-09-28" }),
+        av({ title: "Prova passada", dueDate: "2026-09-28" }),
+        av({ kind: "TRABALHO", title: "Entregue", dueDate: TODAY, doneAt: "2026-09-29T10:00:00Z" }),
+        av({ title: "Sem data" }),
+      ],
+    });
+    expect(view.todayList.items.map((i) => [i.kind, i.title])).toEqual([
+      ["assessment", "Atividade · Lista 3"],
+      ["assessment", "Prova · AV1"],
+      ["task", "tarefa"],
+    ]);
+    const prova = view.todayList.items[1];
+    expect(prova.kind === "assessment" && [prova.time, prova.context]).toEqual(["19:00", "Marketing Digital · Bloco B"]);
+  });
+
+  it("Próximas atenções: avaliação até 7 dias, depois dos compromissos do mesmo dia", () => {
+    const view = buildCentral([], [], TODAY, undefined, {
+      now,
+      events: [ev2({ title: "dentista", startDate: "2026-10-01", startTime: "09:00" })],
+      assessments: [
+        av({ kind: "TRABALHO", title: "Trabalho final", dueDate: "2026-10-01" }),
+        av({ title: "AV2", dueDate: "2026-10-01", dueTime: "08:00" }),
+        av({ title: "Longe", dueDate: "2026-10-20" }),
+      ],
+    });
+    expect(view.upcoming.items.map((i) => i.title)).toEqual(["dentista", "Prova · AV2", "Entrega · Trabalho final"]);
+  });
+
+  function ev2(partial: Partial<CalendarEvent>): CalendarEvent {
+    return {
+      id: `e${(seq += 1)}`,
+      title: "Compromisso",
+      description: null,
+      location: null,
+      areaId: null,
+      startDate: TODAY,
+      startTime: "10:00",
+      durationMinutes: 60,
+      repeatDays: [],
+      repeatUntil: null,
+      skippedDates: [],
+      ...partial,
+    };
+  }
 });

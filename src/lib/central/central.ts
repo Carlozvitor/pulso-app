@@ -1,7 +1,9 @@
+import type { Assessment } from "@/types/assessment";
 import type { CalendarEvent, Occurrence } from "@/types/event";
 import type { ProjectProgress, ProjectSummary } from "@/types/project";
 import type { AgoraView, Task } from "@/types/task";
 import { addDays } from "@/lib/dates";
+import { isPending, toAgendaAssessment } from "@/lib/faculdade/assessments";
 import { occurrencesBetween, type AreaLabel, type Now } from "@/lib/events/occurrences";
 import { buildAgoraView, type ContextOf } from "@/lib/priorities/agora";
 import { comparePriority } from "@/lib/priorities/score";
@@ -14,9 +16,10 @@ export const UPCOMING_DAYS = 7;
 
 const OPEN = new Set<Task["status"]>(["INBOX", "TODO", "IN_PROGRESS"]);
 
-/** Uma linha de Hoje ou de Próximas atenções: compromisso, prazo de tarefa ou de projeto. */
+/** Uma linha de Hoje ou de Próximas atenções: compromisso, avaliação, prazo de tarefa ou de projeto. */
 export type AttentionItem =
   | { kind: "event"; id: string; title: string; date: string; time: string | null; context: string | null }
+  | { kind: "assessment"; id: string; areaId: string; title: string; date: string; time: string | null; context: string | null }
   | { kind: "task"; id: string; title: string; context: string | null; date: string }
   | { kind: "project"; id: string; title: string; date: string; progress: ProjectProgress };
 
@@ -39,21 +42,27 @@ export type CentralView = {
   upcoming: AttentionList;
 };
 
-/** Agenda para a Central (opcional: sem ela, só prazos). */
-export type CentralAgenda = { events: CalendarEvent[]; now: Now; areaLabel?: AreaLabel };
+/**
+ * Agenda para a Central (opcional: sem ela, só prazos). Avaliações: só as das disciplinas
+ * valendo (as encerradas ficam de fora antes de chegar aqui).
+ */
+export type CentralAgenda = { events: CalendarEvent[]; now: Now; areaLabel?: AreaLabel; assessments?: Assessment[] };
 
-const KIND_ORDER: Record<AttentionItem["kind"], number> = { event: 0, task: 1, project: 2 };
+const KIND_ORDER: Record<AttentionItem["kind"], number> = { event: 0, assessment: 1, task: 2, project: 3 };
+
+const timeOf = (item: AttentionItem) => (item.kind === "event" || item.kind === "assessment" ? item.time : null);
 
 /**
- * Ordem das linhas: data mais cedo primeiro; no mesmo dia, compromissos (pelo horário),
- * depois tarefas (por prioridade), depois projetos (por nome).
+ * Ordem das linhas: data mais cedo primeiro; no mesmo dia, compromissos, depois avaliações
+ * (pelo horário, sem horário depois), depois tarefas (por prioridade), depois projetos (por nome).
  */
 function sortItems(items: AttentionItem[], taskRank: Map<string, number>): AttentionItem[] {
   return items.sort((a, b) => {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
     if (a.kind !== b.kind) return KIND_ORDER[a.kind] - KIND_ORDER[b.kind];
     if (a.kind === "task") return (taskRank.get(a.id) ?? 0) - (taskRank.get(b.id) ?? 0);
-    if (a.kind === "event" && b.kind === "event") return (a.time ?? "").localeCompare(b.time ?? "");
+    const [ta, tb] = [timeOf(a), timeOf(b)];
+    if (ta !== tb) return (ta ?? "99:99").localeCompare(tb ?? "99:99");
     return a.title.localeCompare(b.title, "pt-BR");
   });
 }
@@ -100,6 +109,21 @@ export function buildCentral(
         context: [o.location, o.context].filter(Boolean).join(" · ") || null,
       }),
     ),
+    // Avaliações pendentes: a data é a delas (a que passou sem entregar aparece em Hoje como "Era pra …").
+    ...(agenda?.assessments ?? [])
+      .filter((a): a is Assessment & { dueDate: string } => a.dueDate !== null && isPending(a, today))
+      .map((a): AttentionItem => {
+        const item = toAgendaAssessment(a, today, agenda?.areaLabel);
+        return {
+          kind: "assessment",
+          id: a.id,
+          areaId: a.areaId,
+          title: item.title,
+          date: a.dueDate,
+          time: a.dueTime,
+          context: [item.context, a.location].filter(Boolean).join(" · ") || null,
+        };
+      }),
   ];
   const sorted = sortItems(items, taskRank);
 

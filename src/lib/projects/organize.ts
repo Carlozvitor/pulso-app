@@ -46,19 +46,28 @@ export function groupProjects<P extends Project>(projects: P[], areas: Area[]): 
   return groups.filter((g) => g.projects.length > 0);
 }
 
-/** Nomes dos projetos e a árvore de origens — para rotular tarefas nas listas. */
+/** Nomes dos projetos, a árvore de origens e os títulos das avaliações — para rotular tarefas nas listas. */
 export type ContextLookup = {
   projects: Map<string, string>;
   origins: OriginIndex;
+  assessments: Map<string, string>;
 };
 
-/** "CRUMB CLUB" quando há projeto; senão o caminho da origem ("Valentine → Conteúdo"); senão nada. */
-export function contextLabel(task: Pick<Task, "projectId" | "areaId">, lookup: ContextLookup): string | null {
+type Labeled = Pick<Task, "projectId" | "areaId"> & Partial<Pick<Task, "assessmentId">>;
+
+/**
+ * "CRUMB CLUB" quando há projeto; senão o caminho da origem ("Valentine → Conteúdo"), com a
+ * avaliação quando a ação serve a uma ("Marketing Digital · Trabalho final"); senão nada.
+ * `from`: rótulo relativo a uma origem acima (na página dela, não repete o próprio caminho).
+ */
+export function contextLabel(task: Labeled, lookup: ContextLookup, from?: string): string | null {
   if (task.projectId) {
     const project = lookup.projects.get(task.projectId);
     if (project) return project;
   }
-  return task.areaId ? originLabel(task.areaId, lookup.origins) : null;
+  const origin = task.areaId ? originLabel(task.areaId, lookup.origins, from) : null;
+  const assessment = task.assessmentId ? lookup.assessments.get(task.assessmentId) : undefined;
+  return [origin, assessment].filter(Boolean).join(" · ") || null;
 }
 
 /** Iniciais para o selo do projeto: "CRUMB CLUB" → "CC", "PORTFÓLIO" → "PO". */

@@ -7,28 +7,52 @@ import type { AreaLink } from "@/types/project";
 import { addOriginLink, removeOriginLink, saveOriginNotes } from "@/lib/actions/client";
 import { cn } from "@/lib/utils";
 
+/** Cor do módulo e como ele chama os links (a Faculdade chama de "Materiais"). */
+const TONES = {
+  blue: {
+    card: "tint-blue",
+    text: "text-[#dbe7f5]",
+    notes: "Anote o que precisa ficar à mão: combinados, contatos, como funciona…",
+    links: "Links",
+    add: "Adicionar link",
+    example: "Nome (ex.: Calendário editorial)",
+  },
+  rose: {
+    card: "tint-rose",
+    text: "text-[#f5e1ec]",
+    notes: "Professor, contato, como a nota é calculada, combinados da turma…",
+    links: "Materiais",
+    add: "Adicionar material",
+    example: "Nome (ex.: Plano de ensino)",
+  },
+} as const;
+
+type Tone = keyof typeof TONES;
+
 /** Contexto de uma origem: anotação livre (salva ao sair do campo) e links. */
 export function OriginContext({
   id,
   notes,
   updatedLabel,
   links,
+  tone = "blue",
 }: {
   id: string;
   notes: string | null;
   /** "Atualizado ontem" — já formatado no servidor. */
   updatedLabel: string | null;
   links: AreaLink[];
+  tone?: Tone;
 }) {
   return (
-    <div className="tint tint-blue flex flex-col">
-      <NotesField id={id} initial={notes ?? ""} updatedLabel={updatedLabel} />
-      <LinkList areaId={id} links={links} />
+    <div className={cn("tint flex flex-col", TONES[tone].card)}>
+      <NotesField id={id} initial={notes ?? ""} updatedLabel={updatedLabel} tone={tone} />
+      <LinkList areaId={id} links={links} tone={tone} />
     </div>
   );
 }
 
-function NotesField({ id, initial, updatedLabel }: { id: string; initial: string; updatedLabel: string | null }) {
+function NotesField({ id, initial, updatedLabel, tone }: { id: string; initial: string; updatedLabel: string | null; tone: Tone }) {
   const [value, setValue] = useState(initial);
   const saved = useRef(initial);
   const [status, setStatus] = useState<"idle" | "saved">("idle");
@@ -57,8 +81,11 @@ function NotesField({ id, initial, updatedLabel }: { id: string; initial: string
         onBlur={save}
         maxLength={20000}
         rows={Math.min(14, Math.max(4, value.split("\n").length + 1))}
-        placeholder="Anote o que precisa ficar à mão: combinados, contatos, como funciona…"
-        className="block w-full resize-none bg-transparent text-body leading-relaxed text-[#dbe7f5] placeholder:text-white/40 focus-visible:outline-none lg:text-[0.9375rem]"
+        placeholder={TONES[tone].notes}
+        className={cn(
+          "block w-full resize-none bg-transparent text-body leading-relaxed placeholder:text-white/40 focus-visible:outline-none lg:text-[0.9375rem]",
+          TONES[tone].text,
+        )}
       />
       <p className="mt-2 flex min-h-5 items-center gap-1.5 text-caption text-white/45">
         {status === "saved" ? (
@@ -82,7 +109,7 @@ function hostOf(url: string): string {
   }
 }
 
-function LinkList({ areaId, links }: { areaId: string; links: AreaLink[] }) {
+function LinkList({ areaId, links, tone }: { areaId: string; links: AreaLink[]; tone: Tone }) {
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -110,16 +137,16 @@ function LinkList({ areaId, links }: { areaId: string; links: AreaLink[] }) {
   }
 
   const fieldClass =
-    "h-11 w-full min-w-0 rounded-md border border-white/12 bg-black/25 px-3 text-sm text-foreground placeholder:text-white/40 focus-visible:border-blue-ink/60 focus-visible:outline-none";
+    "h-11 w-full min-w-0 rounded-md border border-white/12 bg-black/25 px-3 text-sm text-foreground placeholder:text-white/40 focus-visible:border-(--tint-ink)/60 focus-visible:outline-none";
 
   return (
     <div className="p-2.5 lg:p-3">
-      <p className="px-2 pt-1 pb-1.5 text-[0.6875rem] font-semibold tracking-[0.1em] text-white/50 uppercase">Links</p>
+      <p className="px-2 pt-1 pb-1.5 text-[0.6875rem] font-semibold tracking-[0.1em] text-white/50 uppercase">{TONES[tone].links}</p>
       <ul className="grid gap-0.5">
         {links.map((link) => (
           <li key={link.id} className="group flex items-center rounded-lg transition-colors duration-(--duration-fast) hover:bg-black/20">
             <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex min-h-12 min-w-0 flex-1 items-center gap-3 px-2 py-1.5">
-              <span aria-hidden className="flex size-7 shrink-0 items-center justify-center rounded-[7px] bg-black/30 text-blue-ink">
+              <span aria-hidden className="flex size-7 shrink-0 items-center justify-center rounded-[7px] bg-black/30 text-(--tint-ink)">
                 <Link2 className="size-3.5" strokeWidth={1.75} />
               </span>
               <span className="min-w-0 flex-1">
@@ -143,7 +170,7 @@ function LinkList({ areaId, links }: { areaId: string; links: AreaLink[] }) {
 
       {adding ? (
         <form onSubmit={add} className="mt-1 grid gap-2 rounded-lg bg-black/20 p-2.5">
-          <input aria-label="Nome do link" autoFocus value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} placeholder="Nome (ex.: Calendário editorial)" className={fieldClass} />
+          <input aria-label="Nome do link" autoFocus value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} placeholder={TONES[tone].example} className={fieldClass} />
           <input aria-label="Endereço" value={url} onChange={(e) => setUrl(e.target.value)} maxLength={2000} inputMode="url" placeholder="Endereço (ex.: docs.google.com/…)" className={fieldClass} />
           <div className="flex justify-end gap-2">
             <button type="button" onClick={() => setAdding(false)} className="h-10 rounded-md px-3 text-sm text-white/60 hover:text-white">
@@ -152,7 +179,7 @@ function LinkList({ areaId, links }: { areaId: string; links: AreaLink[] }) {
             <button
               type="submit"
               disabled={pending || !title.trim() || !url.trim()}
-              className="h-10 rounded-md bg-blue-tile px-4 text-sm font-medium text-blue-ink transition-[filter] duration-(--duration-fast) hover:brightness-125 disabled:opacity-50"
+              className="h-10 rounded-md bg-(--tint-tile) px-4 text-sm font-medium text-(--tint-ink) transition-[filter] duration-(--duration-fast) hover:brightness-125 disabled:opacity-50"
             >
               Adicionar
             </button>
@@ -167,7 +194,7 @@ function LinkList({ areaId, links }: { areaId: string; links: AreaLink[] }) {
           <span aria-hidden className="flex size-7 shrink-0 items-center justify-center rounded-[7px] border border-dashed border-white/20">
             <Plus className="size-3.5" strokeWidth={1.75} />
           </span>
-          Adicionar link
+          {TONES[tone].add}
         </button>
       )}
     </div>

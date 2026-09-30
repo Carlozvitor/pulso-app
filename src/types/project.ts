@@ -14,6 +14,8 @@ export type Area = {
   parentId: string | null;
   module: ModuleKey;
   position: number;
+  /** Encerrado (disciplina de semestre passado): fica guardado, fora do seletor e da Central. */
+  archivedAt: string | null;
 };
 
 /** Contexto de uma origem: anotação livre e links. */

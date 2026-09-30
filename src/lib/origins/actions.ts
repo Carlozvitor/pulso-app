@@ -15,6 +15,9 @@ const HAS_CHILDREN = "23503";
 
 function failure(error: { code?: string; message: string }): { ok: false; error: string } {
   if (error.code === TREE_RULE) return { ok: false, error: error.message };
+  if (error.code === HAS_CHILDREN && error.message.includes("assessments_area_fk")) {
+    return { ok: false, error: "Tem avaliações aqui. Apague as avaliações antes, ou encerre a disciplina." };
+  }
   if (error.code === HAS_CHILDREN) return { ok: false, error: "Esvazie os subitens antes de apagar." };
   return { ok: false, error: GENERIC_ERROR };
 }

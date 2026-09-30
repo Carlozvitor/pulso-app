@@ -46,6 +46,8 @@ export const taskPatchSchema = z
     projectId: taskIdSchema.nullable(),
     /** Só vale para tarefa sem projeto. */
     areaId: taskIdSchema.nullable(),
+    /** Aqui só desliga da avaliação; ligar é pela gaveta da avaliação. */
+    assessmentId: z.null(),
   })
   .partial()
   .refine((patch) => Object.keys(patch).length > 0, "Nada para salvar.");
@@ -64,6 +66,7 @@ export function patchToRow(patch: z.output<typeof taskPatchSchema>) {
   if (patch.dueDate !== undefined) row.due_date = patch.dueDate;
   if (patch.projectId !== undefined) row.project_id = patch.projectId;
   if (patch.areaId !== undefined) row.area_id = patch.areaId;
+  if (patch.assessmentId !== undefined) row.assessment_id = patch.assessmentId;
   return row;
 }
 
@@ -93,6 +96,7 @@ export const taskRowSchema = z
     completed_at: z.string().nullable(),
     paused_at: z.string().nullable(),
     snoozed_until: z.string().nullable(),
+    assessment_id: z.string().nullable(),
   })
   .transform(
     (r): Task => ({
@@ -112,8 +116,9 @@ export const taskRowSchema = z
       completedAt: r.completed_at,
       pausedAt: r.paused_at,
       snoozedUntil: r.snoozed_until,
+      assessmentId: r.assessment_id,
     }),
   );
 
 export const TASK_COLUMNS =
-  "id, title, description, status, importance, urgency, energy, estimated_minutes, due_date, project_id, area_id, created_at, updated_at, completed_at, paused_at, snoozed_until";
+  "id, title, description, status, importance, urgency, energy, estimated_minutes, due_date, project_id, area_id, created_at, updated_at, completed_at, paused_at, snoozed_until, assessment_id";

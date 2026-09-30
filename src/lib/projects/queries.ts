@@ -14,6 +14,8 @@ const areaRows = z.array(areaRowSchema);
 const projectRows = z.array(projectRowSchema);
 const taskRows = z.array(taskRowSchema);
 const namedRows = z.array(z.object({ id: z.string(), name: z.string() }));
+const titledRows = z.array(z.object({ id: z.string(), title: z.string() }));
+const assessmentRefRows = z.array(z.object({ id: z.string(), title: z.string(), area_id: z.string() }));
 const statusRows = z.array(z.object({ project_id: z.string(), status: z.enum(TASK_STATUSES) }));
 
 export const listAreas = cache(async function listAreas(): Promise<Area[]> {
@@ -88,29 +90,41 @@ export async function getProject(id: string): Promise<ProjectDetail | null> {
   };
 }
 
+/** Avaliação a que uma tarefa pode estar ligada (só o que a tela da tarefa precisa). */
+export type AssessmentRef = { id: string; title: string; areaId: string };
+
 /** Para escolher projeto/área numa tarefa. Vêm todos: a tarefa pode estar num projeto já concluído. */
-export async function getAssignOptions(): Promise<{ areas: Area[]; projects: Project[] }> {
+export async function getAssignOptions(): Promise<{ areas: Area[]; projects: Project[]; assessments: AssessmentRef[] }> {
   const { supabase } = await requireUser();
-  const [areas, projects] = await Promise.all([
+  const [areas, projects, assessments] = await Promise.all([
     supabase.from("areas").select(AREA_COLUMNS).order("name"),
     supabase.from("projects").select(PROJECT_COLUMNS).order("name"),
+    supabase.from("assessments").select("id, title, area_id"),
   ]);
   if (areas.error) throw areas.error;
   if (projects.error) throw projects.error;
-  return { areas: areaRows.parse(areas.data), projects: projectRows.parse(projects.data) };
+  if (assessments.error) throw assessments.error;
+  return {
+    areas: areaRows.parse(areas.data),
+    projects: projectRows.parse(projects.data),
+    assessments: assessmentRefRows.parse(assessments.data).map((a) => ({ id: a.id, title: a.title, areaId: a.area_id })),
+  };
 }
 
-/** Nomes de todos os projetos e a árvore de origens — para rotular tarefas nas listas. */
+/** Nomes de todos os projetos, a árvore de origens e as avaliações — para rotular tarefas nas listas. */
 export const getContextLookup = cache(async function getContextLookup(): Promise<ContextLookup> {
   const { supabase } = await requireUser();
-  const [areas, projects] = await Promise.all([
+  const [areas, projects, assessments] = await Promise.all([
     supabase.from("areas").select(AREA_COLUMNS),
     supabase.from("projects").select("id, name"),
+    supabase.from("assessments").select("id, title"),
   ]);
   if (areas.error) throw areas.error;
   if (projects.error) throw projects.error;
+  if (assessments.error) throw assessments.error;
   return {
     origins: indexOrigins(areaRows.parse(areas.data)),
     projects: new Map(namedRows.parse(projects.data).map((p) => [p.id, p.name])),
+    assessments: new Map(titledRows.parse(assessments.data).map((a) => [a.id, a.title])),
   };
 });

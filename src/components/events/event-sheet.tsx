@@ -17,16 +17,19 @@ import { isRecurring, repeatLabel } from "@/lib/events/occurrences";
 import type { EventInput } from "@/lib/events/schemas";
 import { cn } from "@/lib/utils";
 
-type Target = { mode: "new"; date: string } | { mode: "edit"; event: CalendarEvent; date: string };
+/** Valores iniciais de um compromisso novo (ex.: "Novo horário" de uma disciplina). */
+export type EventPreset = { title?: string; areaId?: string | null; repeatWeekly?: boolean };
+
+type Target = { mode: "new"; date: string; preset?: EventPreset } | { mode: "edit"; event: CalendarEvent; date: string };
 
 type SheetApi = {
-  create: (date?: string) => void;
+  create: (date?: string, preset?: EventPreset) => void;
   edit: (eventId: string, date: string) => void;
 };
 
 const SheetContext = createContext<SheetApi | null>(null);
 
-function useEventSheet(): SheetApi {
+export function useEventSheet(): SheetApi {
   const api = useContext(SheetContext);
   if (!api) throw new Error("useEventSheet precisa de <EventSheetProvider>.");
   return api;
@@ -49,8 +52,8 @@ export function EventSheetProvider({
   const [key, setKey] = useState(0);
 
   const api: SheetApi = {
-    create: (date) => {
-      setTarget({ mode: "new", date: date ?? today });
+    create: (date, preset) => {
+      setTarget({ mode: "new", date: date ?? today, preset });
       setKey((k) => k + 1);
     },
     edit: (eventId, date) => {
@@ -144,17 +147,18 @@ type Step = "form" | "save-scope" | "delete-scope" | "delete-confirm";
 
 function EventForm({ target, areas, onDone }: { target: Target; areas: Area[]; onDone: () => void }) {
   const existing = target.mode === "edit" ? target.event : null;
+  const preset = target.mode === "new" ? target.preset : undefined;
   const recurring = existing ? isRecurring(existing) : false;
   // Num que se repete, o formulário mostra o dia que foi tocado.
-  const [title, setTitle] = useState(existing?.title ?? "");
+  const [title, setTitle] = useState(existing?.title ?? preset?.title ?? "");
   const [date, setDate] = useState(target.date);
   const [allDay, setAllDay] = useState(existing ? existing.startTime === null : false);
   const [time, setTime] = useState(existing?.startTime ?? "09:00");
   const [duration, setDuration] = useState<number | null>(existing ? existing.durationMinutes : 60);
-  const [repeatDays, setRepeatDays] = useState<number[]>(existing?.repeatDays ?? []);
+  const [repeatDays, setRepeatDays] = useState<number[]>(existing?.repeatDays ?? (preset?.repeatWeekly ? [weekday(target.date)] : []));
   const [repeatUntil, setRepeatUntil] = useState(existing?.repeatUntil ?? "");
   const [location, setLocation] = useState(existing?.location ?? "");
-  const [areaId, setAreaId] = useState<string | null>(existing?.areaId ?? null);
+  const [areaId, setAreaId] = useState<string | null>(existing?.areaId ?? preset?.areaId ?? null);
   const [description, setDescription] = useState(existing?.description ?? "");
   const [step, setStep] = useState<Step>("form");
   const [pending, startTransition] = useTransition();

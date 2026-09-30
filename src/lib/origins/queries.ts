@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { requireUser } from "@/lib/supabase/server";
 import { addDays, todayIn } from "@/lib/dates";
+import { contextLabel } from "@/lib/projects/organize";
 import { getContextLookup, listAreas } from "@/lib/projects/queries";
 import { areaLinkRowSchema, idSchema } from "@/lib/projects/schemas";
 import { TASK_COLUMNS, taskRowSchema } from "@/lib/tasks/schemas";
@@ -8,7 +9,7 @@ import { listOpenTasks } from "@/lib/tasks/queries";
 import type { Area, AreaLink, ModuleKey } from "@/types/project";
 import type { Task } from "@/types/task";
 import { doneRecently, openCounts, originActions, summarizeFronts, type FrontSummary, type OriginCount, type OriginTask } from "./summary";
-import { canDeleteOrigin, descendantIds, indexOrigins, moveTargets, originLabel, originPath } from "./tree";
+import { canDeleteOrigin, descendantIds, indexOrigins, moveTargets, originPath } from "./tree";
 
 const taskRows = z.array(taskRowSchema);
 const linkRows = z.array(areaLinkRowSchema);
@@ -31,9 +32,8 @@ export async function getModulePage(module: ModuleKey): Promise<ModulePage | nul
   const root = areas.find((a) => a.module === module && a.parentId === null);
   if (!root) return null;
   const today = todayIn();
-  const index = lookup.origins;
   // Dentro do módulo, o rótulo não repete o nome dele: "Valentine → Conteúdo".
-  const contextOf = (t: Task) => (t.projectId && lookup.projects.get(t.projectId)) || (t.areaId ? originLabel(t.areaId, index, root.id) : null);
+  const contextOf = (t: Task) => contextLabel(t, lookup, root.id);
   const actions = originActions(root.id, areas, tasks, today, contextOf);
   return {
     root,
@@ -84,7 +84,7 @@ export async function getOriginPage(id: string): Promise<OriginPage | null> {
   const index = indexOrigins(areas);
   const counts = openCounts(areas, open);
   // Na página do item, o rótulo mostra só o que está abaixo dele ("Instagram").
-  const contextOf = (t: Task) => (t.projectId && lookup.projects.get(t.projectId)) || (t.areaId ? originLabel(t.areaId, index, node.id) : null);
+  const contextOf = (t: Task) => contextLabel(t, lookup, node.id);
   const { notes: text, notes_updated_at } = notesRow.parse(notes.data);
   const ownSubtree = descendantIds(node.id, areas);
 

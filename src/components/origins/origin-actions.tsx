@@ -10,6 +10,14 @@ import { dueLabel } from "@/lib/dates";
 import { formatDuration } from "@/lib/tasks/format";
 import { cn } from "@/lib/utils";
 
+/** Onde a ação nova entra. `create` troca o destino (ex.: ligada a uma avaliação); sem ele, entra na origem `id`. */
+export type AddActionTarget = {
+  id: string;
+  name: string;
+  placeholder?: string;
+  create?: (title: string) => Promise<{ ok: true } | { ok: false; error: string }>;
+};
+
 /**
  * Ações de uma origem — as tarefas do PULSO que vêm daqui (não é uma lista paralela).
  * Com `addTo`, tem o campo para anotar uma ação nova já com essa origem.
@@ -22,7 +30,7 @@ export function OriginActions({
 }: {
   tasks: OriginTask[];
   today: string;
-  addTo?: { id: string; name: string };
+  addTo?: AddActionTarget;
   empty: string;
 }) {
   const [draft, setDraft] = useState("");
@@ -34,7 +42,7 @@ export function OriginActions({
     if (!addTo) return;
     startTransition(async () => {
       addOptimistic(title);
-      const result = await createOriginTask(addTo.id, title);
+      const result = addTo.create ? await addTo.create(title) : await createOriginTask(addTo.id, title);
       if (!result.ok) toast.error(result.error, { action: { label: "Tentar de novo", onClick: () => add(title) } });
     });
   }
@@ -57,7 +65,7 @@ export function OriginActions({
         >
           <Plus aria-hidden className="size-4 shrink-0 text-primary-soft" strokeWidth={1.75} />
           <label htmlFor={`nova-acao-${addTo.id}`} className="sr-only">
-            Nova ação em {addTo.name}
+            {addTo.placeholder ?? `Nova ação em ${addTo.name}`}
           </label>
           <input
             id={`nova-acao-${addTo.id}`}
@@ -67,7 +75,7 @@ export function OriginActions({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => e.key === "Escape" && e.currentTarget.blur()}
-            placeholder={`Nova ação em ${addTo.name}…`}
+            placeholder={addTo.placeholder ?? `Nova ação em ${addTo.name}…`}
             className="min-w-0 flex-1 bg-transparent text-body text-foreground placeholder:text-[#9aa0c8] focus-visible:outline-none lg:text-sm"
           />
           <span className="hidden shrink-0 items-center gap-1.5 rounded-md bg-[#1c1e33] px-2 py-0.5 text-xs text-foreground-secondary sm:inline-flex">

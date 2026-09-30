@@ -24,6 +24,7 @@ function task(partial: Partial<Task>): Task {
     completedAt: null,
     pausedAt: null,
     snoozedUntil: null,
+    assessmentId: null,
     ...partial,
   };
 }

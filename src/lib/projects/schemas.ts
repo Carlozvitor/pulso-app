@@ -66,7 +66,7 @@ export const projectRowSchema = z
 
 export const PROJECT_COLUMNS = "id, name, description, status, area_id, due_date, created_at, completed_at";
 
-export const AREA_COLUMNS = "id, name, parent_id, module, position";
+export const AREA_COLUMNS = "id, name, parent_id, module, position, archived_at";
 
 export const areaRowSchema = z
   .object({
@@ -75,8 +75,11 @@ export const areaRowSchema = z
     parent_id: z.string().nullable(),
     module: z.enum(MODULE_KEYS),
     position: z.number(),
+    archived_at: z.string().nullable(),
   })
-  .transform((r): Area => ({ id: r.id, name: r.name, parentId: r.parent_id, module: r.module, position: r.position }));
+  .transform(
+    (r): Area => ({ id: r.id, name: r.name, parentId: r.parent_id, module: r.module, position: r.position, archivedAt: r.archived_at }),
+  );
 
 export const areaLinkRowSchema = z
   .object({ id: z.string(), title: z.string(), url: z.string() })

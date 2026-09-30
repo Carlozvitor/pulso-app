@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H4 (Faculdade)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .top-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+
+  /* próximas avaliações */
+  .evals { padding: 10px; }
+  .evals ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .aval { display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: center; padding: 10px 12px 10px 8px; border-radius: 8px; background: rgb(0 0 0 / .22); }
+  .when { text-align: center; line-height: 1.1; }
+  .when small { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .08em; color: rgb(255 255 255 / .5); }
+  .when b { display: block; font: 600 20px "Geist"; letter-spacing: -0.02em; }
+  .what .line { display: flex; align-items: center; gap: 8px; }
+  .what b { font-weight: 500; font-size: 14.5px; }
+  .what .meta { display: block; font-size: 12.5px; color: rgb(255 255 255 / .55); margin-top: 2px; }
+  .aval .right { font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .6); white-space: nowrap; text-align: right; }
+  .aval .right.hot { color: var(--amber-ink); }
+  .aval .right small { display: block; font: 500 11.5px "Geist"; color: rgb(255 255 255 / .45); margin-top: 2px; }
+  .aval.late .when b, .aval.late .when small { color: rgb(255 255 255 / .45); }
+  .more { display: block; padding: 10px 12px 2px; font-size: 12.5px; color: rgb(255 255 255 / .5); }
+
+  /* aulas da semana */
+  .week { padding: 10px; }
+  .week ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .wd { display: grid; grid-template-columns: 58px 1fr auto; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 8px; }
+  .wd .d { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+  .wd b { font-weight: 500; font-size: 14px; }
+  .wd .t { font: 600 12px "Geist Mono"; color: var(--text-2); }
+  .wd.past { opacity: .45; }
+  .wd.today { background: rgb(255 255 255 / .05); box-shadow: inset 0 0 0 1px var(--line-2); }
+  .wd.today .d { color: var(--rose-ink); }
+  .wd .flag { display: inline-flex; margin-left: 8px; font-size: 11px; font-weight: 600; color: var(--rose-ink); background: rgb(249 168 212 / .1); border-radius: 5px; padding: 1px 6px; }
+  .week-foot { display: flex; justify-content: space-between; padding: 10px 10px 2px; font-size: 12.5px; color: var(--text-3); }
+
+  /* disciplinas */
+  .subjects { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .s-head { display: flex; align-items: center; gap: 14px; }
+  .s-head h3 { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+  .s-head p { font-size: 13px; color: rgb(255 255 255 / .6); }
+  .s-head .go { margin-left: auto; color: var(--rose-ink); opacity: .7; }
+  .mono-tile { font-weight: 700; font-size: 14px; letter-spacing: .02em; }
+  .facts { list-style: none; padding: 0; margin-top: 14px; display: grid; gap: 6px; }
+  .fact { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; background: rgb(0 0 0 / .22); font-size: 13.5px; }
+  .fact svg.lucide { width: 15px; height: 15px; color: var(--rose-ink); opacity: .85; }
+  .fact .n { margin-left: auto; font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .55); }
+  .s-foot { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgb(255 255 255 / .09); display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; color: rgb(255 255 255 / .55); }
+  .s-foot b { color: rgb(255 255 255 / .88); font-weight: 500; }
+  .closed { display: flex; align-items: center; gap: 10px; margin-top: 12px; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px dashed var(--line-2); color: var(--text-3); font-size: 13.5px; }
+  .closed svg.lucide { width: 16px; height: 16px; }
+  .closed .n { margin-left: auto; font: 600 12px "Geist Mono"; }
+  .actions-card .tasks { margin-top: 4px; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="corner-down-right"></i>Valentine<span class="count">5</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Clientes / Freelance<span class="count">2</span></li>
+        </ul>
+        <a class="item on"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova amanhã · 19:00</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="corner-down-right"></i>Marketing Digital<span class="count">3</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Estatística Aplicada<span class="count">1</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Comportamento do Consumidor<span class="count">1</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Comunicação Integrada</li>
+        </ul>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">2 hoje · próximo 14:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+        <ul class="kids">
+          <li class="kid"><span class="mono">CC</span>CRUMB CLUB<span class="count">5</span></li>
+          <li class="kid"><span class="mono">AC</span>AURA CAFÉ<span class="count">3</span></li>
+        </ul>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="main-head" style="padding-top:20px">
+        <span class="app-ico rose"><i data-lucide="graduation-cap"></i></span>
+        <div><h1>Faculdade</h1><p>Onde fica o contexto acadêmico. As ações ficam no PULSO.</p></div>
+        <div class="head-right">
+          <span class="chipbtn"><i data-lucide="plus"></i>Nova disciplina</span>
+          <span class="chipbtn"><i data-lucide="file-plus-2"></i>Nova avaliação</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="top-grid">
+          <section>
+            <div class="section"><h2>Próximas avaliações</h2><a>por data</a></div>
+            <article class="card rose evals">
+              <ul>
+                <li class="aval late">
+                  <div class="when"><small>TER</small><b>29</b></div>
+                  <div class="what"><div class="line"><span class="kind"><i data-lucide="list-checks"></i>Atividade</span><b>Lista 3 — probabilidade</b></div><span class="meta">Estatística Aplicada · 1 ação</span></div>
+                  <span class="right">Era pra ontem</span>
+                </li>
+                <li class="aval">
+                  <div class="when"><small>QUI</small><b>1</b></div>
+                  <div class="what"><div class="line"><span class="kind"><i data-lucide="clipboard-check"></i>Prova</span><b>AV1</b></div><span class="meta">Comportamento do Consumidor · Bloco B, 110</span></div>
+                  <span class="right hot">Amanhã<small>19:00</small></span>
+                </li>
+                <li class="aval">
+                  <div class="when"><small>SEG</small><b>5</b></div>
+                  <div class="what"><div class="line"><span class="kind"><i data-lucide="file-text"></i>Trabalho</span><b>Trabalho final — plano de marketing</b></div><span class="meta">Marketing Digital · 2 ações · vale 4</span></div>
+                  <span class="right">Segunda</span>
+                </li>
+                <li class="aval">
+                  <div class="when"><small>QUA</small><b>14</b></div>
+                  <div class="what"><div class="line"><span class="kind"><i data-lucide="list-checks"></i>Atividade</span><b>Resenha do capítulo 4</b></div><span class="meta">Comunicação Integrada</span></div>
+                  <span class="right">14 out</span>
+                </li>
+                <li class="aval">
+                  <div class="when"><small>SEG</small><b>23</b></div>
+                  <div class="what"><div class="line"><span class="kind"><i data-lucide="clipboard-check"></i>Prova</span><b>AV2</b></div><span class="meta">Marketing Digital · Bloco C, 204</span></div>
+                  <span class="right">23 nov<small>19:00</small></span>
+                </li>
+              </ul>
+            </article>
+          </section>
+
+          <section>
+            <div class="section"><h2>Aulas desta semana</h2><a>Ver em Compromissos</a></div>
+            <article class="card neutral week">
+              <ul>
+                <li class="wd past"><span class="d">Seg 28</span><b>Marketing Digital</b><span class="t">19:00</span></li>
+                <li class="wd past"><span class="d">Ter 29</span><b>Estatística Aplicada</b><span class="t">19:00</span></li>
+                <li class="wd today"><span class="d">Hoje</span><b>Marketing Digital</b><span class="t">19:00</span></li>
+                <li class="wd"><span class="d">Qui 1</span><b>Comportamento do Consumidor<span class="flag">AV1</span></b><span class="t">19:00</span></li>
+                <li class="wd"><span class="d">Sex 2</span><b>Comunicação Integrada</b><span class="t">19:00</span></li>
+                <li class="wd"><span class="d">Sáb 3</span><b style="color:var(--text-2)">Estudo — Estatística</b><span class="t">09:00</span></li>
+              </ul>
+              <div class="week-foot"><span>Aulas e horários de estudo são compromissos que se repetem.</span></div>
+            </article>
+          </section>
+        </div>
+
+        <div class="section"><h2>Disciplinas</h2></div>
+        <div class="subjects">
+          <article class="card rose">
+            <div class="s-head">
+              <span class="tile mono-tile">MD</span>
+              <div><h3>Marketing Digital</h3><p>3 ações abertas · 2 avaliações abertas</p></div>
+              <i data-lucide="arrow-up-right" class="go"></i>
+            </div>
+            <ul class="facts">
+              <li class="fact"><i data-lucide="calendar-clock"></i>Seg e qua · 19:00 · Bloco C, 204<span class="n">hoje</span></li>
+              <li class="fact"><i data-lucide="award"></i>Notas: AV1 8,5 de 10</li>
+            </ul>
+            <div class="s-foot"><span>Próxima avaliação</span><b>Trabalho final · seg, 5 out</b></div>
+          </article>
+
+          <article class="card rose">
+            <div class="s-head">
+              <span class="tile mono-tile">ES</span>
+              <div><h3>Estatística Aplicada</h3><p>1 ação aberta · 1 avaliação aberta</p></div>
+              <i data-lucide="arrow-up-right" class="go"></i>
+            </div>
+            <ul class="facts">
+              <li class="fact"><i data-lucide="calendar-clock"></i>Ter · 19:00 · Lab. 3</li>
+              <li class="fact"><i data-lucide="award"></i>Notas: Lista 1 1,0 de 1 · Lista 2 0,8 de 1</li>
+            </ul>
+            <div class="s-foot"><span>Próxima avaliação</span><b>Lista 3 · era pra ontem</b></div>
+          </article>
+
+          <article class="card rose">
+            <div class="s-head">
+              <span class="tile mono-tile">CC</span>
+              <div><h3>Comportamento do Consumidor</h3><p>1 ação aberta · 1 avaliação aberta</p></div>
+              <i data-lucide="arrow-up-right" class="go"></i>
+            </div>
+            <ul class="facts">
+              <li class="fact"><i data-lucide="calendar-clock"></i>Qui · 19:00 · Bloco B, 110</li>
+              <li class="fact" style="color:rgb(255 255 255 / .5)"><i data-lucide="award"></i>Nenhuma nota ainda</li>
+            </ul>
+            <div class="s-foot"><span>Próxima avaliação</span><b>AV1 · amanhã, 19:00</b></div>
+          </article>
+
+          <article class="card rose">
+            <div class="s-head">
+              <span class="tile mono-tile">CI</span>
+              <div><h3>Comunicação Integrada</h3><p>Nenhuma ação aberta · 1 avaliação aberta</p></div>
+              <i data-lucide="arrow-up-right" class="go"></i>
+            </div>
+            <ul class="facts">
+              <li class="fact"><i data-lucide="calendar-clock"></i>Sex · 19:00 · Bloco C, 108</li>
+              <li class="fact"><i data-lucide="award"></i>Notas: Seminário 2,0 de 2</li>
+            </ul>
+            <div class="s-foot"><span>Próxima avaliação</span><b>Resenha · qua, 14 out</b></div>
+          </article>
+        </div>
+        <div class="closed"><i data-lucide="archive"></i>Disciplinas encerradas<span class="n">4</span><i data-lucide="chevron-right"></i></div>
+
+        <div class="section"><h2>Ações em Faculdade</h2><a>Ver na Agora</a></div>
+        <article class="card neutral actions-card">
+          <ul class="tasks">
+            <li class="task"><span class="check"></span><div><b>Revisar resumo dos capítulos 1 a 3</b><span class="meta">Comportamento do Consumidor · <span class="ctx">AV1</span> · 40 min</span></div><span class="right hot">Hoje</span></li>
+            <li class="task"><span class="check"></span><div><b>Finalizar introdução do trabalho</b><span class="meta">Marketing Digital · <span class="ctx">Trabalho final</span> · 45 min</span></div><span class="right">Amanhã</span></li>
+            <li class="task"><span class="check"></span><div><b>Terminar a lista 3</b><span class="meta">Estatística Aplicada · <span class="ctx">Lista 3</span></span></div><span class="right">Era pra ontem</span></li>
+            <li class="task"><span class="check"></span><div><b>Montar slides da apresentação</b><span class="meta">Marketing Digital · <span class="ctx">Trabalho final</span></span></div><span class="right">Sábado</span></li>
+            <li class="task"><span class="check"></span><div><b>Ler capítulo 5 do Kotler</b><span class="meta">Marketing Digital · 30 min</span></div><span class="right">–</span></li>
+          </ul>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Rosa é a cor da Faculdade (cada módulo tem a sua).</li>
+      <li>"Próximas avaliações" são as abertas, por data. Prova sai sozinha depois do dia; trabalho e atividade ficam em "Era pra …" até você marcar como entregue.</li>
+      <li>"Aulas desta semana" são compromissos que se repetem, com origem na Faculdade. Não é uma agenda separada.</li>
+      <li>Nas ações, o rosa mostra a avaliação ligada (opcional).</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H4 (disciplina)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start; }
+  .col-head { display: flex; align-items: center; justify-content: space-between; margin: 26px 2px 12px; }
+  .col > .col-head:first-child { margin-top: 0; }
+  .col-head h2 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+  .col-head span, .col-head a { font-size: 12px; color: var(--text-3); }
+
+  /* avaliações */
+  .evals { padding: 10px; }
+  .evals ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .aval { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; background: rgb(0 0 0 / .22); }
+  .aval .what { min-width: 0; }
+  .aval .line { display: flex; align-items: center; gap: 8px; }
+  .aval b { font-weight: 500; font-size: 14.5px; }
+  .aval .meta { display: block; font-size: 12.5px; color: rgb(255 255 255 / .55); margin-top: 2px; }
+  .aval .right { margin-left: auto; font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .6); white-space: nowrap; text-align: right; }
+  .aval .grade { margin-left: auto; font: 600 14px "Geist Mono"; color: #fce7f3; white-space: nowrap; }
+  .aval .grade small { font: 500 12px "Geist"; color: rgb(255 255 255 / .45); }
+  .aval .grade.none { font: 500 12.5px "Geist"; color: rgb(255 255 255 / .45); }
+  .sub-lbl { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgb(255 255 255 / .45); padding: 12px 12px 6px; }
+  .row-add { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-top: 6px; border-radius: 8px; border: 1px dashed rgb(255 255 255 / .14); color: rgb(255 255 255 / .55); font-size: 13.5px; }
+  .row-add svg.lucide { width: 15px; height: 15px; }
+
+  /* aulas */
+  .classes { padding: 10px; }
+  .classes ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .cl { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; }
+  .cl .d { width: 44px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--amber-ink); }
+  .cl b { font-weight: 500; font-size: 14px; }
+  .cl span.meta { display: block; font-size: 12.5px; color: var(--text-3); }
+  .cl .rep { margin-left: auto; color: var(--text-3); }
+  .cl .rep svg.lucide { width: 14px; height: 14px; }
+
+  /* contexto */
+  .context { padding: 0; }
+  .note { padding: 18px 20px; font-size: 14.5px; line-height: 1.6; color: #f5e1ec; border-bottom: 1px solid rgb(255 255 255 / .08); }
+  .note p + p { margin-top: 10px; }
+  .note .saved { display: flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; color: rgb(255 255 255 / .45); }
+  .note .saved svg.lucide { width: 13px; height: 13px; }
+  .links { list-style: none; padding: 10px 10px 12px; display: grid; gap: 2px; }
+  .links .lbl { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgb(255 255 255 / .5); padding: 6px 10px; }
+  .link { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 8px; }
+  .fav { width: 28px; height: 28px; border-radius: 7px; background: rgb(0 0 0 / .28); display: grid; place-items: center; color: var(--rose-ink); flex: none; }
+  .fav svg.lucide { width: 14px; height: 14px; }
+  .link b { display: block; font-weight: 500; font-size: 14px; }
+  .link span { display: block; font-size: 12px; color: rgb(255 255 255 / .45); }
+  .link .ext { margin-left: auto; color: rgb(255 255 255 / .35); width: 15px; height: 15px; }
+  .link.add-link { color: rgb(255 255 255 / .55); font-size: 13.5px; }
+  .link.add-link .fav { background: transparent; border: 1px dashed rgb(255 255 255 / .18); color: rgb(255 255 255 / .5); }
+
+  .actions-card { padding: 16px; }
+  .actions-card .tasks { margin-top: 12px; }
+  .done-toggle { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding: 4px 4px 0; font-size: 12.5px; color: var(--text-3); }
+  .done-toggle svg.lucide { width: 14px; height: 14px; }
+
+  /* menu "…" aberto */
+  .menu { position: absolute; right: 24px; top: 118px; width: 250px; background: var(--elev); border: 1px solid var(--line-2); border-radius: 10px; padding: 6px; box-shadow: 0 12px 40px rgb(0 0 0 / .55); z-index: 5; }
+  .mi { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; font-size: 13.5px; }
+  .mi svg.lucide { width: 15px; height: 15px; color: var(--text-2); }
+  .mi small { display: block; font-size: 12px; color: var(--text-3); }
+  .mi.hl { background: #1f1f25; }
+  .mi.danger { color: #fca5a5; } .mi.danger svg.lucide { color: #fca5a5; }
+  .menu hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova amanhã · 19:00</span></div></a>
+        <ul class="kids">
+          <li class="kid on"><i data-lucide="corner-down-right"></i>Marketing Digital<span class="count">3</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Estatística Aplicada<span class="count">1</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Comportamento do Consumidor<span class="count">1</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Comunicação Integrada</li>
+        </ul>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">2 hoje · próximo 14:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="crumbs"><i data-lucide="graduation-cap"></i>Faculdade <i data-lucide="chevron-right"></i> <b>Marketing Digital</b></div>
+      <div class="main-head">
+        <span class="app-ico rose"><i data-lucide="book-open"></i></span>
+        <div><h1>Marketing Digital</h1><p>Seg e qua · 19:00 · 3 ações abertas</p></div>
+        <div class="head-right">
+          <span class="chipbtn"><i data-lucide="file-plus-2"></i>Nova avaliação</span>
+          <span class="chipbtn" style="width:38px;padding:0;justify-content:center;background:#1f1f25"><i data-lucide="ellipsis"></i></span>
+        </div>
+      </div>
+
+      <div class="menu">
+        <div class="mi"><i data-lucide="pencil"></i>Renomear</div>
+        <div class="mi hl"><i data-lucide="archive"></i><div>Encerrar disciplina<small>Fica guardada em "Encerradas", com as notas</small></div></div>
+        <hr />
+        <div class="mi danger"><i data-lucide="trash-2"></i>Apagar</div>
+      </div>
+
+      <div class="content">
+        <div class="cols">
+          <div class="col">
+            <div class="col-head"><h2>Avaliações</h2><span>por data</span></div>
+            <article class="card rose evals">
+              <ul>
+                <li class="aval"><div class="what"><div class="line"><span class="kind"><i data-lucide="file-text"></i>Trabalho</span><b>Trabalho final</b></div><span class="meta">Seg, 5 out · vale 4 · 2 ações</span></div><span class="right">Segunda</span></li>
+                <li class="aval"><div class="what"><div class="line"><span class="kind"><i data-lucide="clipboard-check"></i>Prova</span><b>AV2</b></div><span class="meta">Seg, 23 nov · 19:00 · vale 10</span></div><span class="right">23 nov</span></li>
+              </ul>
+              <p class="sub-lbl">Feitas</p>
+              <ul>
+                <li class="aval"><div class="what"><div class="line"><span class="kind"><i data-lucide="clipboard-check"></i>Prova</span><b>AV1</b></div><span class="meta">Seg, 14 set</span></div><span class="grade">8,5 <small>de 10</small></span></li>
+                <li class="aval"><div class="what"><div class="line"><span class="kind"><i data-lucide="list-checks"></i>Atividade</span><b>Estudo de caso — Nubank</b></div><span class="meta">Entregue · qua, 23 set</span></div><span class="grade none">sem nota ainda</span></li>
+              </ul>
+              <div class="row-add"><i data-lucide="plus"></i>Nova avaliação</div>
+            </article>
+
+            <div class="col-head"><h2>Aulas</h2><a>Ver em Compromissos</a></div>
+            <article class="card neutral classes">
+              <ul>
+                <li class="cl"><span class="d">Seg</span><div><b>19:00 – 22:00</b><span class="meta">Bloco C, 204</span></div><span class="rep"><i data-lucide="repeat"></i></span></li>
+                <li class="cl"><span class="d">Qua</span><div><b>19:00 – 22:00</b><span class="meta">Bloco C, 204 · hoje</span></div><span class="rep"><i data-lucide="repeat"></i></span></li>
+              </ul>
+              <div class="row-add" style="border-color:var(--line-2);color:var(--text-3)"><i data-lucide="plus"></i>Novo horário de aula ou estudo</div>
+            </article>
+
+            <div class="col-head"><h2>Contexto e materiais</h2><span>salva sozinho</span></div>
+            <article class="card rose context">
+              <div class="note">
+                <p>Profa. Renata · renata@email.com · atende depois da aula.</p>
+                <p>Nota final = (AV1 + AV2 + trabalho) ÷ 3. Trabalho em dupla com a Bia.</p>
+                <div class="saved"><i data-lucide="check"></i>Atualizado há 3 dias</div>
+              </div>
+              <ul class="links">
+                <li class="lbl">Materiais</li>
+                <li class="link"><span class="fav"><i data-lucide="file-text"></i></span><div><b>Plano de ensino</b><span>drive.google.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link"><span class="fav"><i data-lucide="folder"></i></span><div><b>Slides das aulas</b><span>drive.google.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link"><span class="fav"><i data-lucide="school"></i></span><div><b>Ambiente virtual</b><span>ava.faculdade.edu.br</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link add-link"><span class="fav"><i data-lucide="plus"></i></span>Adicionar material</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col">
+            <div class="col-head"><h2>Ações no PULSO</h2><span>por prioridade</span></div>
+            <article class="card neutral actions-card">
+              <div class="add"><i data-lucide="plus"></i><span class="ph">Nova ação em Marketing Digital…</span><span class="dest"><i data-lucide="activity"></i>A fazer</span></div>
+              <ul class="tasks">
+                <li class="task"><span class="check"></span><div><b>Finalizar introdução do trabalho</b><span class="meta"><span class="ctx">Trabalho final</span> · 45 min</span></div><span class="right">Amanhã</span></li>
+                <li class="task"><span class="check"></span><div><b>Montar slides da apresentação</b><span class="meta"><span class="ctx">Trabalho final</span></span></div><span class="right">Sábado</span></li>
+                <li class="task"><span class="check"></span><div><b>Ler capítulo 5 do Kotler</b><span class="meta">30 min</span></div><span class="right">–</span></li>
+              </ul>
+              <div class="done-toggle"><i data-lucide="chevron-right"></i>2 feitas nos últimos 7 dias</div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Avaliações: abertas em cima, "Feitas" embaixo com a nota. Sem média: a regra da nota fica na anotação.</li>
+      <li>Aulas vêm dos Compromissos com origem nesta disciplina. "Novo horário" abre a gaveta de compromisso já preenchida.</li>
+      <li>Contexto é o mesmo do Trabalho (anotação + links), com "Materiais" no lugar de "Links".</li>
+      <li>No "…": Renomear, Encerrar disciplina e Apagar (só apaga se não tiver avaliações).</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

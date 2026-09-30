@@ -27,6 +27,8 @@ export type Task = {
   pausedAt: string | null;
   /** "Agora não": fora da Agora até essa data (YYYY-MM-DD). */
   snoozedUntil: string | null;
+  /** Avaliação da Faculdade a que esta ação serve (opcional). A origem vem dela: a disciplina. */
+  assessmentId: string | null;
 };
 
 /** Tarefa com o nome do projeto (ou da área) já resolvido, para listas. */

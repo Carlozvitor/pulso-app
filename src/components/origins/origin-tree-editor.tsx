@@ -95,6 +95,11 @@ function Row({ node, depth, adding, setAdding, onDelete }: RowProps) {
     <li>
       <div className="flex items-center gap-1" style={{ paddingLeft: `${depth * 1.25}rem` }}>
         <OriginName node={node} />
+        {node.archivedAt && (
+          <span title="Encerrada: fica guardada, fora do seletor de origem" className="shrink-0 rounded-md bg-white/6 px-2 py-0.5 text-caption text-foreground-subtle">
+            encerrada
+          </span>
+        )}
         <button type="button" onClick={() => setAdding(node.id)} aria-label={`Novo subitem em ${node.name}`} title="Novo subitem" className={iconButton}>
           <Plus aria-hidden className="size-5" strokeWidth={1.75} />
         </button>

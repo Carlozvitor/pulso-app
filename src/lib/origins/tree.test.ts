@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { Area, ModuleKey } from "@/types/project";
 import {
+  activeOrigins,
   buildOriginTree,
   canDeleteOrigin,
   descendantIds,
   filterOriginTree,
   indexOrigins,
+  isArchived,
   moveTargets,
   originFullLabel,
   originHref,
@@ -14,7 +16,7 @@ import {
 } from "./tree";
 
 function area(id: string, name: string, parentId: string | null, module: ModuleKey = "TRABALHO", position = 0): Area {
-  return { id, name, parentId, module, position };
+  return { id, name, parentId, module, position, archivedAt: null };
 }
 
 const AREAS: Area[] = [
@@ -106,6 +108,32 @@ describe("originHref", () => {
   });
 
   it("módulo ainda sem página não tem link", () => {
-    expect(originHref(AREAS[0])).toBeNull();
+    expect(originHref(AREAS[7])).toBeNull();
+  });
+
+  it("Faculdade tem página (H4)", () => {
+    expect(originHref(AREAS[0])).toBe("/faculdade");
+  });
+});
+
+describe("encerrados", () => {
+  const list: Area[] = [
+    area("fac", "Faculdade", null, "FACULDADE"),
+    { ...area("mkt", "Marketing", "fac", "FACULDADE"), archivedAt: "2026-07-01T00:00:00Z" },
+    area("tf", "Trabalho final", "mkt", "FACULDADE"),
+    area("est", "Estatística", "fac", "FACULDADE"),
+  ];
+  const idx = indexOrigins(list);
+
+  it("encerrado vale para o item e tudo abaixo dele", () => {
+    expect(isArchived("mkt", idx)).toBe(true);
+    expect(isArchived("tf", idx)).toBe(true);
+    expect(isArchived("est", idx)).toBe(false);
+    expect(isArchived("fac", idx)).toBe(false);
+  });
+
+  it("origens valendo tiram os encerrados, menos a origem atual e o caminho dela", () => {
+    expect(activeOrigins(list).map((a) => a.id)).toEqual(["fac", "est"]);
+    expect(activeOrigins(list, "tf").map((a) => a.id)).toEqual(["fac", "mkt", "tf", "est"]);
   });
 });

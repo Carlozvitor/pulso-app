@@ -6,7 +6,7 @@ import { MODULE_KEYS, type Area, type ModuleKey } from "@/types/project";
  */
 export const MODULES: Record<ModuleKey, { label: string; href: string | null }> = {
   TRABALHO: { label: "Trabalho", href: "/trabalho" },
-  FACULDADE: { label: "Faculdade", href: null },
+  FACULDADE: { label: "Faculdade", href: "/faculdade" },
   DINHEIRO: { label: "Dinheiro", href: null },
   TREINO: { label: "Treino", href: null },
   VIDA_PESSOAL: { label: "Vida pessoal", href: null },
@@ -107,6 +107,18 @@ export function moveTargets(id: string, areas: Area[]): Area[] {
   if (!self || self.parentId === null) return [];
   const blocked = descendantIds(id, areas);
   return areas.filter((a) => a.module === self.module && !blocked.has(a.id) && a.id !== self.parentId);
+}
+
+/** Encerrado: o próprio item ou algum acima dele foi encerrado. */
+export function isArchived(id: string, index: OriginIndex): boolean {
+  return originPath(id, index).some((a) => a.archivedAt !== null);
+}
+
+/** Só o que está valendo: tira os encerrados e tudo abaixo deles. `keep` fica mesmo encerrado (a origem atual). */
+export function activeOrigins(areas: Area[], keep?: string | null): Area[] {
+  const index = indexOrigins(areas);
+  const kept = keep ? new Set(originPath(keep, index).map((a) => a.id)) : new Set<string>();
+  return areas.filter((a) => kept.has(a.id) || !isArchived(a.id, index));
 }
 
 /** Pode apagar: não é módulo e não tem subitens. */

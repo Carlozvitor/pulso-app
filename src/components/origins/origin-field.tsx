@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import type { Area } from "@/types/project";
-import { indexOrigins, originFullLabel } from "@/lib/origins/tree";
+import { activeOrigins, indexOrigins, originFullLabel } from "@/lib/origins/tree";
 import { cn } from "@/lib/utils";
 import { OriginPicker } from "./origin-picker";
 
@@ -40,7 +40,8 @@ export function OriginField({
       <OriginPicker
         open={open}
         onOpenChange={setOpen}
-        areas={areas}
+        // Disciplina encerrada não aparece para escolher (a atual continua, para não sumir).
+        areas={activeOrigins(areas, value)}
         selectedId={value}
         title={pickerTitle}
         onChoose={(id) => {

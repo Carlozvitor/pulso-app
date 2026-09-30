@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { Assessment } from "@/types/assessment";
 import type { CalendarEvent } from "@/types/event";
 import type { Task } from "@/types/task";
 import { addMinutesToTime, startOfWeek } from "@/lib/dates";
@@ -46,6 +47,7 @@ function task(partial: Partial<Task>): Task {
     completedAt: null,
     pausedAt: null,
     snoozedUntil: null,
+    assessmentId: null,
     ...partial,
   };
 }
@@ -158,5 +160,58 @@ describe("buildToday, buildUpcoming e buildDone", () => {
 
   it("concluídos: o que passou, mais recente primeiro", () => {
     expect(buildDone({ events, now: NOW }).flatMap((d) => d.occurrences.map((o) => o.title))).toEqual(["manhã", "ontem"]);
+  });
+});
+
+describe("avaliações na agenda", () => {
+  function assessment(partial: Partial<Assessment>): Assessment {
+    seq += 1;
+    return {
+      id: `av${seq}`,
+      areaId: "mkt",
+      kind: "PROVA",
+      title: `AV${seq}`,
+      dueDate: null,
+      dueTime: null,
+      location: null,
+      maxGrade: null,
+      grade: null,
+      notes: null,
+      doneAt: null,
+      createdAt: "2026-08-01T00:00:00Z",
+      ...partial,
+    };
+  }
+  const assessments = [
+    assessment({ title: "AV1", dueDate: "2026-10-01", dueTime: "19:00", location: "Bloco B" }),
+    assessment({ kind: "TRABALHO", title: "Trabalho final", dueDate: "2026-10-05" }),
+    assessment({ kind: "ATIVIDADE", title: "Lista 3", dueDate: "2026-09-29" }),
+    assessment({ title: "Prova passada", dueDate: "2026-09-28" }),
+    assessment({ kind: "TRABALHO", title: "Entregue", dueDate: "2026-09-25", doneAt: "2026-09-25T10:00:00Z" }),
+    assessment({ title: "Sem data" }),
+  ];
+  const areaLabel = (id: string | null) => (id === "mkt" ? "Marketing Digital" : null);
+
+  it("semana: prova no dia dela; trabalho que passou sem entregar vai para hoje", () => {
+    const week = buildWeek("2026-09-30", { events: [], tasks: [], assessments, now: NOW, areaLabel });
+    expect(week[0].assessments.map((a) => a.title)).toEqual(["Prova passada"]);
+    expect(week[1].assessments).toEqual([]);
+    expect(week[2].assessments.map((a) => [a.title, a.state])).toEqual([["Atividade · Lista 3", "late"]]);
+    expect(week[3].assessments[0]).toMatchObject({ title: "Prova · AV1", time: "19:00", location: "Bloco B", context: "Marketing Digital" });
+  });
+
+  it("hoje e próximos: só pendentes; concluídos: o que já foi", () => {
+    expect(buildToday({ events: [], tasks: [], assessments, now: NOW }).assessments.map((a) => a.title)).toEqual(["Atividade · Lista 3"]);
+    const upcoming = buildUpcoming({ events: [], assessments, now: NOW });
+    expect(upcoming.map((d) => d.date)).toEqual(["2026-09-30", "2026-10-01", "2026-10-05"]);
+    expect(upcoming.flatMap((d) => d.assessments.map((a) => a.title))).toEqual([
+      "Atividade · Lista 3",
+      "Prova · AV1",
+      "Entrega · Trabalho final",
+    ]);
+    expect(buildDone({ events: [], assessments, now: NOW }).flatMap((d) => d.assessments.map((a) => a.title))).toEqual([
+      "Prova passada",
+      "Entrega · Entregue",
+    ]);
   });
 });

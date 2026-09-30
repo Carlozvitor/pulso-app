@@ -2,7 +2,8 @@ import { cache } from "react";
 import { z } from "zod";
 import { requireUser } from "@/lib/supabase/server";
 import { nowIn } from "@/lib/dates";
-import { originLabel } from "@/lib/origins/tree";
+import { listAssessments } from "@/lib/faculdade/queries";
+import { isArchived, originLabel } from "@/lib/origins/tree";
 import { contextLabel } from "@/lib/projects/organize";
 import { getContextLookup } from "@/lib/projects/queries";
 import { listOpenTasks } from "@/lib/tasks/queries";
@@ -32,10 +33,12 @@ export type CompromissosPage = {
 };
 
 async function sources() {
-  const [events, tasks, lookup] = await Promise.all([listEvents(), listOpenTasks(), getContextLookup()]);
+  const [events, tasks, lookup, assessments] = await Promise.all([listEvents(), listOpenTasks(), getContextLookup(), listAssessments()]);
   const areaLabel: AreaLabel = (id) => (id ? originLabel(id, lookup.origins) : null);
   const contextOf = (t: Task) => contextLabel(t, lookup);
-  return { events, tasks, now: nowIn(), areaLabel, contextOf };
+  // Disciplina encerrada sai da agenda junto com as avaliações dela.
+  const live = assessments.filter((a) => !isArchived(a.areaId, lookup.origins));
+  return { events, tasks, assessments: live, now: nowIn(), areaLabel, contextOf };
 }
 
 /** `anyDay`: um dia da semana a mostrar (na visão Semana). */

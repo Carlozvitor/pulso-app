@@ -1,5 +1,6 @@
 import * as auth from "@/lib/auth/actions";
 import * as events from "@/lib/events/actions";
+import * as faculdade from "@/lib/faculdade/actions";
 import * as origins from "@/lib/origins/actions";
 import * as projects from "@/lib/projects/actions";
 import * as sessions from "@/lib/sessions/actions";
@@ -34,6 +35,13 @@ export const updateProject = resilient(projects.updateProject);
 export const finishProject = resilient(projects.finishProject);
 export const reopenProject = resilient(projects.reopenProject);
 export const createProjectTask = resilient(projects.createProjectTask);
+
+export const createAssessment = resilient(faculdade.createAssessment);
+export const updateAssessment = resilient(faculdade.updateAssessment);
+export const setAssessmentDone = resilient(faculdade.setAssessmentDone);
+export const deleteAssessment = resilient(faculdade.deleteAssessment);
+export const createAssessmentTask = resilient(faculdade.createAssessmentTask);
+export const setSubjectArchived = resilient(faculdade.setSubjectArchived);
 
 export const createEvent = resilient(events.createEvent);
 export const updateEvent = resilient(events.updateEvent);

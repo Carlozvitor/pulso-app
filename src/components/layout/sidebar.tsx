@@ -3,15 +3,17 @@ import { listProjects } from "@/lib/projects/queries";
 import { countInbox, countTodo } from "@/lib/tasks/queries";
 import { cookies } from "next/headers";
 import { getTodaySummary } from "@/lib/events/queries";
+import { getFaculdadeNav } from "@/lib/faculdade/pages";
 import { getModuleNav } from "@/lib/origins/queries";
 import { SIDEBAR_COMPACT, SIDEBAR_COOKIE } from "./sidebar-state";
 import { SidebarNav, type SidebarAgenda, type SidebarModule, type SidebarProject } from "./sidebar-nav";
 
 /** Barra lateral do PC: a navegação do Hub, fixa na altura da tela. */
 export async function Sidebar() {
-  const [{ groups }, workNav, agenda, inboxCount, todoCount, jar] = await Promise.all([
+  const [{ groups }, workNav, schoolNav, agenda, inboxCount, todoCount, jar] = await Promise.all([
     listProjects(),
     getModuleNav("TRABALHO"),
+    getFaculdadeNav(),
     getTodaySummary(),
     countInbox(),
     countTodo(),
@@ -19,6 +21,9 @@ export async function Sidebar() {
   ]);
   const compact = jar.get(SIDEBAR_COOKIE)?.value === SIDEBAR_COMPACT;
   const work: SidebarModule = { areas: workNav.areas, open: Object.fromEntries(workNav.counts) };
+  const school: SidebarModule | null = schoolNav
+    ? { areas: schoolNav.areas, open: Object.fromEntries(schoolNav.counts), attention: schoolNav.attention }
+    : null;
 
   const projects: SidebarProject[] = groups
     .flatMap((group) => group.projects)
@@ -30,12 +35,15 @@ export async function Sidebar() {
       open: project.progress.total - project.progress.done,
     }));
 
-  return <SidebarView projects={projects} work={work} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} compact={compact} />;
+  return (
+    <SidebarView projects={projects} work={work} school={school} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} compact={compact} />
+  );
 }
 
 export function SidebarView({
   projects,
   work,
+  school,
   agenda,
   inboxCount,
   todoCount,
@@ -43,6 +51,7 @@ export function SidebarView({
 }: {
   projects: SidebarProject[];
   work: SidebarModule;
+  school: SidebarModule | null;
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
@@ -50,7 +59,15 @@ export function SidebarView({
 }) {
   return (
     <aside className="sticky top-topbar hidden h-[calc(100dvh-var(--topbar-height)-0.75rem)] lg:grid">
-      <SidebarNav projects={projects} work={work} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} initialCompact={compact} />
+      <SidebarNav
+        projects={projects}
+        work={work}
+        school={school}
+        agenda={agenda}
+        inboxCount={inboxCount}
+        todoCount={todoCount}
+        initialCompact={compact}
+      />
     </aside>
   );
 }

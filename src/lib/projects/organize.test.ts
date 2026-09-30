@@ -32,10 +32,10 @@ describe("projectProgress", () => {
 
 describe("groupProjects", () => {
   const areas: Area[] = [
-    { id: "a-trab", name: "Trabalho", parentId: null, module: "TRABALHO", position: 0 },
-    { id: "a-val", name: "Valentine", parentId: "a-trab", module: "TRABALHO", position: 0 },
-    { id: "a-fac", name: "Faculdade", parentId: null, module: "FACULDADE", position: 0 },
-    { id: "a-fin", name: "Dinheiro", parentId: null, module: "DINHEIRO", position: 0 },
+    { id: "a-trab", name: "Trabalho", parentId: null, module: "TRABALHO", position: 0, archivedAt: null },
+    { id: "a-val", name: "Valentine", parentId: "a-trab", module: "TRABALHO", position: 0, archivedAt: null },
+    { id: "a-fac", name: "Faculdade", parentId: null, module: "FACULDADE", position: 0, archivedAt: null },
+    { id: "a-fin", name: "Dinheiro", parentId: null, module: "DINHEIRO", position: 0, archivedAt: null },
   ];
 
   it("agrupa por origem em ordem alfabética, sem origem no fim, e esconde origens vazias", () => {
@@ -72,9 +72,12 @@ describe("contextLabel", () => {
   const lookup: ContextLookup = {
     projects: new Map([["p1", "CRUMB CLUB"]]),
     origins: indexOrigins([
-      { id: "a1", name: "Trabalho", parentId: null, module: "TRABALHO", position: 0 },
-      { id: "a2", name: "Valentine", parentId: "a1", module: "TRABALHO", position: 0 },
+      { id: "a1", name: "Trabalho", parentId: null, module: "TRABALHO", position: 0, archivedAt: null },
+      { id: "a2", name: "Valentine", parentId: "a1", module: "TRABALHO", position: 0, archivedAt: null },
+      { id: "f1", name: "Faculdade", parentId: null, module: "FACULDADE", position: 0, archivedAt: null },
+      { id: "f2", name: "Marketing Digital", parentId: "f1", module: "FACULDADE", position: 0, archivedAt: null },
     ]),
+    assessments: new Map([["av1", "Trabalho final"]]),
   };
 
   it("projeto vence a origem; sem projeto usa o caminho da origem; sem nada é null", () => {
@@ -86,6 +89,11 @@ describe("contextLabel", () => {
 
   it("id desconhecido cai para a origem", () => {
     expect(contextLabel({ projectId: "sumiu", areaId: "a1" }, lookup)).toBe("Trabalho");
+  });
+
+  it("ação ligada a uma avaliação mostra a disciplina e a avaliação", () => {
+    expect(contextLabel({ projectId: null, areaId: "f2", assessmentId: "av1" }, lookup)).toBe("Marketing Digital · Trabalho final");
+    expect(contextLabel({ projectId: null, areaId: "f2", assessmentId: "sumiu" }, lookup)).toBe("Marketing Digital");
   });
 });
 

@@ -4,12 +4,13 @@ import { CardTile } from "@/components/cards/card-parts";
 import type { AttentionItem, AttentionList } from "@/lib/central/central";
 import type { Occurrence } from "@/types/event";
 import { dueLabel } from "@/lib/dates";
+import { assessmentHref } from "@/lib/faculdade/assessments";
 import { cn } from "@/lib/utils";
 
 function when(item: AttentionItem, today: string): string {
   const label = dueLabel(item.date, today);
   const day = label.charAt(0).toUpperCase() + label.slice(1);
-  return item.kind === "event" && item.time ? `${day} · ${item.time}` : day;
+  return (item.kind === "event" || item.kind === "assessment") && item.time ? `${day} · ${item.time}` : day;
 }
 
 function origin(item: AttentionItem): string | null {
@@ -20,8 +21,12 @@ function origin(item: AttentionItem): string | null {
 function hrefOf(item: AttentionItem): string {
   if (item.kind === "task") return `/tarefas/${item.id}`;
   if (item.kind === "project") return `/projetos/${item.id}`;
+  if (item.kind === "assessment") return assessmentHref({ id: item.id, areaId: item.areaId });
   return `/compromissos?dia=${item.date}`;
 }
+
+/** Cor da linha de baixo: projeto em roxo, avaliação em rosa (a família do módulo). */
+const ORIGIN_TONE: Partial<Record<AttentionItem["kind"], string>> = { project: "text-plum-ink", assessment: "text-rose-ink" };
 
 const rowClass =
   "flex min-h-12 items-center gap-3 rounded-lg bg-black/20 px-3 py-2 transition-colors duration-(--duration-fast) hover:bg-black/35";
@@ -104,7 +109,7 @@ export function AttentionCard({
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{item.title}</span>
                       {sub && (
-                        <span className={cn("block truncate text-caption", item.kind === "project" ? "text-plum-ink" : "text-white/50")}>
+                        <span className={cn("block truncate text-caption", ORIGIN_TONE[item.kind] ?? "text-white/50")}>
                           {sub}
                         </span>
                       )}
@@ -112,7 +117,7 @@ export function AttentionCard({
                     <span
                       className={cn(
                         "tabular shrink-0 text-caption font-semibold",
-                        tone === "amber" || item.kind === "event" ? "text-amber-ink" : "text-white/60",
+                        tone === "amber" || item.kind === "event" || item.kind === "assessment" ? "text-amber-ink" : "text-white/60",
                       )}
                     >
                       {when(item, today)}

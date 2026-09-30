@@ -18,14 +18,14 @@ export function ModuleCard({
   value: string;
   foot: string;
   icon: LucideIcon;
-  tone: "blue" | "amber";
+  tone: "blue" | "amber" | "rose";
 }) {
   return (
     <Link
       href={href}
       className={cn(
         "tint group flex min-h-40 flex-col p-4 transition-[filter] duration-(--duration-fast) hover:brightness-115 lg:min-h-52 lg:p-5 lg:px-6",
-        tone === "blue" ? "tint-blue" : "tint-amber",
+        `tint-${tone}`,
       )}
     >
       <span className="flex items-start justify-between">

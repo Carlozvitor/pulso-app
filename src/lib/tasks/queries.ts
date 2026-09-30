@@ -7,7 +7,6 @@ import { contextLabel } from "@/lib/projects/organize";
 import { descendantIds } from "@/lib/origins/tree";
 import { getContextLookup } from "@/lib/projects/queries";
 import type { AgoraView, Task, TaskWithContext } from "@/types/task";
-import { agendaDays, type DayGroup } from "./agenda";
 import { groupDoneByDay, type DoneDay } from "./done";
 import { todoSections, type TodoSections } from "./todo";
 import { searchTerm } from "./format";
@@ -57,17 +56,6 @@ export async function getAgoraView(areaId?: string | null): Promise<AgoraView> {
     todayIn(),
     (t: Task) => contextLabel(t, lookup),
   );
-}
-
-/** Agenda: tudo que está aberto e tem prazo, por dia. */
-export async function listAgenda(): Promise<DayGroup[]> {
-  const { supabase } = await requireUser();
-  const [{ data, error }, lookup] = await Promise.all([
-    supabase.from("tasks").select(TASK_COLUMNS).in("status", OPEN_STATUSES).not("due_date", "is", null),
-    getContextLookup(),
-  ]);
-  if (error) throw error;
-  return agendaDays(taskRows.parse(data), todayIn(), (t) => contextLabel(t, lookup));
 }
 
 /** Busca no título e na descrição. Arquivadas ficam de fora; abertas antes das concluídas. */

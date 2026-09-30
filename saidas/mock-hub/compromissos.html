@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H3 (Compromissos, semana)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .app-ico.amber { background: var(--amber-tile); color: var(--amber-ink); box-shadow: inset 0 0 0 1px var(--amber-line); }
+  .tabs { display: flex; gap: 6px; }
+  .tab { height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; }
+  .tab.on { background: var(--amber-tile); border-color: var(--amber-line); color: #ffedd5; }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .weeknav { display: flex; align-items: center; gap: 8px; }
+  .weeknav b { font-size: 16px; font-weight: 600; margin: 0 6px; }
+  .iconbtn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--elev); display: grid; place-items: center; }
+  .iconbtn svg.lucide { width: 16px; height: 16px; }
+  .today-btn { height: 34px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--elev); display: inline-flex; align-items: center; font-size: 13px; }
+
+  .week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+  .day { border-radius: 12px; border: 1px solid var(--line); background: #0b0b0d; display: flex; flex-direction: column; min-height: 520px; overflow: hidden; }
+  .day.today { border-color: var(--amber-line); background: linear-gradient(180deg, #1c1008, #0b0b0d 60%); }
+  .day-head { padding: 12px 12px 10px; border-bottom: 1px solid var(--line); }
+  .day-head small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
+  .day-head b { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .day.today .day-head small { color: var(--amber-ink); }
+  .day.today .day-head b::after { content: "hoje"; font: 600 11px "Geist"; color: #1f1007; background: var(--amber-ink); border-radius: 999px; padding: 2px 7px; margin-left: 8px; vertical-align: 4px; }
+  .events { padding: 8px; display: grid; gap: 6px; align-content: start; flex: 1; }
+  .ev { border-radius: 8px; padding: 8px 9px; background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border: 1px solid var(--amber-line); }
+  .ev .t { font: 600 11.5px "Geist Mono"; color: var(--amber-ink); display: flex; align-items: center; gap: 5px; }
+  .ev .t svg.lucide { width: 12px; height: 12px; opacity: .8; }
+  .ev b { display: block; font-size: 13px; font-weight: 600; line-height: 1.3; margin-top: 2px; }
+  .ev span { display: block; font-size: 11.5px; color: rgb(255 255 255 / .55); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev.allday { background: #2a1709; border-style: dashed; }
+  .ev.past { opacity: .5; }
+  .free { font-size: 12.5px; color: var(--text-3); padding: 6px 4px; }
+  .deadlines { border-top: 1px solid var(--line); padding: 8px 8px 10px; }
+  .deadlines small { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); padding: 0 2px 5px; }
+  .dl { display: flex; align-items: center; gap: 7px; font-size: 12.5px; padding: 4px 2px; color: var(--text-2); }
+  .dl i.dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--teal-ink); flex: none; display: block; }
+  .dl span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Bom dia, Carlos</b><span>· 11 pendências · 3 compromissos hoje</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item on"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">3 hoje · próximo 14:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="main-head" style="padding-top:20px">
+        <span class="app-ico amber"><i data-lucide="calendar-clock"></i></span>
+        <div><h1>Compromissos</h1><p>Quando as coisas acontecem. O que fazer fica no PULSO.</p></div>
+        <div class="head-right">
+          <span class="chipbtn" style="background:var(--amber-tile);border-color:var(--amber-line);color:#ffedd5"><i data-lucide="plus" style="color:#ffedd5"></i>Compromisso</span>
+        </div>
+      </div>
+
+      <div class="content" style="max-width:none">
+        <div class="toolbar">
+          <div class="tabs"><span class="tab">Hoje</span><span class="tab on">Semana</span><span class="tab">Próximos</span><span class="tab">Concluídos</span></div>
+          <div class="weeknav"><span class="iconbtn"><i data-lucide="chevron-left"></i></span><b>28 set – 4 out</b><span class="iconbtn"><i data-lucide="chevron-right"></i></span><span class="today-btn">Esta semana</span></div>
+        </div>
+
+        <div class="week">
+          <section class="day">
+            <div class="day-head"><small>Seg</small><b>28</b></div>
+            <div class="events">
+              <div class="ev past"><div class="t"><i data-lucide="repeat"></i>06:30 · 1 h</div><b>Academia</b><span>Treino</span></div>
+              <div class="ev past"><div class="t"><i data-lucide="repeat"></i>19:00 · 3 h</div><b>Aula de Marketing Digital</b><span>Faculdade · Bloco C</span></div>
+            </div>
+          </section>
+
+          <section class="day">
+            <div class="day-head"><small>Ter</small><b>29</b></div>
+            <div class="events">
+              <div class="ev past"><div class="t">10:00 · 45 min</div><b>Reunião de pauta</b><span>Valentine → Conteúdo</span></div>
+            </div>
+            <div class="deadlines"><small>Prazos</small><div class="dl"><i class="dot"></i><span>Revisar capítulo 4</span></div></div>
+          </section>
+
+          <section class="day today">
+            <div class="day-head"><small>Qua</small><b>30</b></div>
+            <div class="events">
+              <div class="ev past"><div class="t"><i data-lucide="repeat"></i>06:30 · 1 h</div><b>Academia</b><span>Treino</span></div>
+              <div class="ev"><div class="t">14:00 · 1 h</div><b>Reunião com cliente — clínica</b><span>Google Meet · Clientes / Freelance</span></div>
+              <div class="ev"><div class="t"><i data-lucide="repeat"></i>19:00 · 3 h</div><b>Aula de Marketing Digital</b><span>Faculdade · Bloco C</span></div>
+            </div>
+            <div class="deadlines"><small>Prazos</small><div class="dl"><i class="dot"></i><span>Pagar fatura do cartão</span></div><div class="dl"><i class="dot"></i><span>Mandar post do Reels</span></div></div>
+          </section>
+
+          <section class="day">
+            <div class="day-head"><small>Qui</small><b>1</b></div>
+            <div class="events">
+              <div class="ev"><div class="t">09:00 · 1 h</div><b>Dentista</b><span>Aldeota · Vida pessoal</span></div>
+            </div>
+            <div class="deadlines"><small>Prazos</small><div class="dl"><i class="dot"></i><span>Entregar trabalho de Marketing</span></div></div>
+          </section>
+
+          <section class="day">
+            <div class="day-head"><small>Sex</small><b>2</b></div>
+            <div class="events">
+              <div class="ev"><div class="t"><i data-lucide="repeat"></i>06:30 · 1 h</div><b>Academia</b><span>Treino</span></div>
+            </div>
+          </section>
+
+          <section class="day">
+            <div class="day-head"><small>Sáb</small><b>3</b></div>
+            <div class="events">
+              <div class="ev allday"><div class="t">Dia todo</div><b>Aniversário da mãe</b><span>Vida pessoal</span></div>
+            </div>
+            <div class="deadlines"><small>Prazos</small><div class="dl"><i class="dot"></i><span>Fotos do cardápio</span></div></div>
+          </section>
+
+          <section class="day">
+            <div class="day-head"><small>Dom</small><b>4</b></div>
+            <div class="events"><div class="free">Livre</div></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Cada dia lista os compromissos por horário. Embaixo ficam os <b style="display:inline">prazos das tarefas</b> daquele dia (círculo verde = tarefa do PULSO).</li>
+      <li>O ícone ↻ indica compromisso que se repete. O que já passou fica apagado.</li>
+      <li>"Agenda" sai do PULSO. O endereço antigo abre esta semana.</li>
+      <li>Hoje, Próximos (30 dias) e Concluídos são listas simples do mesmo conteúdo.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

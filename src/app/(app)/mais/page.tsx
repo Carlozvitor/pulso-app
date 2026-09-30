@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Briefcase, CalendarDays, ChevronRight, CircleCheck, Ellipsis, Inbox, Rocket, Search, Settings } from "lucide-react";
+import { Briefcase, CalendarClock, ChevronRight, CircleCheck, Ellipsis, Inbox, Rocket, Search, Settings } from "lucide-react";
 import { ListPanel, Page } from "@/components/layout/page";
 
 export const metadata = { title: "Mais" };
 
 const LINKS = [
   { href: "/trabalho", label: "Trabalho", icon: Briefcase },
-  { href: "/agenda", label: "Agenda", icon: CalendarDays },
+  { href: "/compromissos", label: "Compromissos", icon: CalendarClock },
   { href: "/projetos", label: "Projetos", icon: Rocket },
   { href: "/feitas", label: "Feitas", icon: CircleCheck },
   { href: "/busca", label: "Buscar", icon: Search },

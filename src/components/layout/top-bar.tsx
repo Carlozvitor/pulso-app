@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogOut, Timer } from "lucide-react";
 import { signOut } from "@/lib/auth/actions";
 import { countOpenTasks } from "@/lib/tasks/queries";
+import { getTodaySummary } from "@/lib/events/queries";
 import { greetingFor } from "@/lib/dates";
 import { CaptureButton } from "./capture-button";
 
@@ -15,11 +16,16 @@ const buttonClass =
 
 /** Topo no PC: marca do Hub (volta para a Central), saudação com o resumo, e as ações de sempre. */
 export async function TopBar() {
-  const open = await countOpenTasks();
-  return <TopBarView open={open} greeting={greetingFor(new Date()).replace(/\.$/, "")} />;
+  const [open, agenda] = await Promise.all([countOpenTasks(), getTodaySummary()]);
+  return <TopBarView open={open} eventsToday={agenda.count} greeting={greetingFor(new Date()).replace(/\.$/, "")} />;
 }
 
-export function TopBarView({ open, greeting }: { open: number; greeting: string }) {
+function eventsLabel(count: number): string | null {
+  if (count === 0) return null;
+  return count === 1 ? "1 compromisso hoje" : `${count} compromissos hoje`;
+}
+
+export function TopBarView({ open, eventsToday, greeting }: { open: number; eventsToday: number; greeting: string }) {
   return (
     <header className="sticky top-0 z-30 hidden h-topbar grid-cols-[1fr_auto_1fr] items-center bg-background px-4 lg:grid">
       <Link href="/central" className="flex items-center gap-2.5 justify-self-start">
@@ -37,7 +43,9 @@ export function TopBarView({ open, greeting }: { open: number; greeting: string 
 
       <p className="flex items-baseline gap-2">
         <span className="font-semibold">{greeting}</span>
-        <span className="tabular text-caption text-foreground-subtle">· {openLabel(open)}</span>
+        <span className="tabular text-caption text-foreground-subtle">
+          · {[openLabel(open), eventsLabel(eventsToday)].filter(Boolean).join(" · ")}
+        </span>
       </p>
 
       <div className="flex items-center gap-2 justify-self-end">

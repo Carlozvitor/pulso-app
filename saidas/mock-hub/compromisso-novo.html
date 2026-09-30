@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H3 (novo compromisso)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  body { display: block; overflow: hidden; }
+  .backdrop { position: fixed; inset: 0; background: repeating-linear-gradient(90deg, #0b0b0d 0 180px, #0f0f12 180px 190px); }
+  .scrim { position: fixed; inset: 0; background: rgb(0 0 0 / .6); }
+  .sheet { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 512px; max-height: 94vh; overflow: auto; background: var(--elev); border: 1px solid var(--line); border-bottom: 0; border-radius: 20px 20px 0 0; padding: 12px 18px 22px; }
+  .grab { width: 40px; height: 4px; border-radius: 99px; background: var(--line); margin: 0 auto 14px; }
+  h2 { font-size: 20px; font-weight: 600; margin-bottom: 14px; }
+  .input { height: 48px; border-radius: 8px; border: 1px solid var(--line); background: #0f0f12; display: flex; align-items: center; padding: 0 14px; font-size: 16px; }
+  .input.ph { color: var(--text-3); }
+  .input.focus { border-color: var(--accent-soft); }
+  .row { margin-top: 18px; }
+  .row h3 { font-size: 13.5px; font-weight: 500; color: var(--text-2); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .row h3 small { font-weight: 400; color: var(--text-3); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); background: #1a1a1e; display: inline-flex; align-items: center; font-size: 14px; color: var(--text-2); }
+  .chip.on { background: var(--amber-tile); border-color: var(--amber-line); color: #ffedd5; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .days .chip { justify-content: center; padding: 0; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { height: 44px; border-radius: 8px; border: 1px solid var(--line); background: #0f0f12; display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 15px; }
+  .field svg.lucide { width: 16px; height: 16px; color: var(--text-3); }
+  .field.muted { color: var(--text-3); }
+  .origin { display: flex; align-items: center; justify-content: space-between; height: 44px; font-size: 15px; }
+  .origin svg.lucide { color: #71717a; }
+  .switch { width: 40px; height: 24px; border-radius: 99px; background: #2a2a2f; position: relative; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #a1a1aa; }
+  .save { margin-top: 22px; height: 50px; border-radius: 10px; background: var(--accent); display: grid; place-items: center; font-weight: 600; font-size: 15px; }
+  .hint { font-size: 12.5px; color: var(--text-3); margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="backdrop"></div>
+  <div class="scrim"></div>
+
+  <div class="sheet">
+    <div class="grab"></div>
+    <h2>Novo compromisso</h2>
+    <div class="input focus">Aula de Marketing Digital</div>
+
+    <div class="row">
+      <h3>Quando</h3>
+      <div class="two">
+        <div class="field"><i data-lucide="calendar"></i>Seg, 28 set</div>
+        <div class="field"><i data-lucide="clock"></i>19:00</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:14px;color:var(--text-2)">Dia todo <span class="switch"></span></div>
+    </div>
+
+    <div class="row">
+      <h3>Duração</h3>
+      <div class="chips"><span class="chip">30 min</span><span class="chip">1 h</span><span class="chip">1h30</span><span class="chip">2 h</span><span class="chip on">3 h</span></div>
+    </div>
+
+    <div class="row">
+      <h3>Repetir <small>termina 22:00</small></h3>
+      <div class="chips" style="margin-bottom:10px"><span class="chip">Não</span><span class="chip on">Toda semana</span></div>
+      <div class="days"><span class="chip on">S</span><span class="chip">T</span><span class="chip on">Q</span><span class="chip">Q</span><span class="chip">S</span><span class="chip">S</span><span class="chip">D</span></div>
+      <div class="two" style="margin-top:10px">
+        <div class="field muted" style="grid-column:span 2"><i data-lucide="calendar-x"></i>Até 12 dez <span style="margin-left:auto;font-size:12.5px">opcional</span></div>
+      </div>
+      <p class="hint">Toda segunda e quarta, até 12 de dezembro.</p>
+    </div>
+
+    <div class="row">
+      <h3>Local</h3>
+      <div class="field"><i data-lucide="map-pin"></i>Bloco C, sala 204</div>
+    </div>
+
+    <div class="row">
+      <h3>Origem</h3>
+      <div class="origin">Faculdade <i data-lucide="chevron-right"></i></div>
+    </div>
+
+    <div class="row">
+      <h3>Descrição</h3>
+      <div class="field muted" style="height:64px;align-items:flex-start;padding-top:10px">Opcional</div>
+    </div>
+
+    <div class="save">Salvar compromisso</div>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Só o título é obrigatório. Sem horário = "dia todo".</li>
+      <li>Repetir: toda semana nos dias marcados, com fim opcional.</li>
+      <li>Ao abrir um compromisso que se repete, dá para editar "só este" ou "todos". Apagar tem as mesmas duas opções.</li>
+      <li>No celular é a mesma gaveta, ocupando a largura da tela.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

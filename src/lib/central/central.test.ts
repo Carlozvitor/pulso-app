@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { CalendarEvent } from "@/types/event";
 import type { ProjectSummary } from "@/types/project";
 import type { Task } from "@/types/task";
 import { CENTRAL_LIMITS, buildCentral } from "./central";
@@ -130,5 +131,48 @@ describe("buildCentral", () => {
     const view = buildCentral([task({ dueDate: TODAY, areaId: "a1" })], [], TODAY, (t) => (t.areaId ? "Faculdade" : null));
     const [item] = view.todayList.items;
     expect(item.kind === "task" && item.context).toBe("Faculdade");
+  });
+});
+
+describe("buildCentral com compromissos", () => {
+  const now = { date: TODAY, time: "15:00" };
+  const ev = (partial: Partial<CalendarEvent>): CalendarEvent => ({
+    id: `e${(seq += 1)}`,
+    title: "Compromisso",
+    description: null,
+    location: null,
+    areaId: null,
+    startDate: TODAY,
+    startTime: "10:00",
+    durationMinutes: 60,
+    repeatDays: [],
+    repeatUntil: null,
+    skippedDates: [],
+    ...partial,
+  });
+
+  it("Hoje: só os compromissos que ainda não passaram, por horário", () => {
+    const view = buildCentral([], [], TODAY, undefined, {
+      now,
+      events: [ev({ title: "19h", startTime: "19:00" }), ev({ title: "manhã", startTime: "08:00" }), ev({ title: "16h", startTime: "16:00" })],
+    });
+    expect(view.todayEvents.map((o) => o.title)).toEqual(["16h", "19h"]);
+    expect(view.todayList.items).toEqual([]);
+  });
+
+  it("Próximas atenções: compromisso avulso entra antes das tarefas do mesmo dia; rotina que se repete não", () => {
+    const view = buildCentral([task({ title: "tarefa", dueDate: "2026-09-30" })], [], TODAY, undefined, {
+      now,
+      events: [
+        ev({ title: "dentista", startDate: "2026-09-30", startTime: "09:00", location: "Aldeota" }),
+        ev({ title: "academia", startDate: "2026-09-28", repeatDays: [1, 3, 5] }),
+      ],
+    });
+    expect(view.upcoming.items.map((i) => [i.kind, i.title])).toEqual([
+      ["event", "dentista"],
+      ["task", "tarefa"],
+    ]);
+    const [first] = view.upcoming.items;
+    expect(first.kind === "event" && first.context).toBe("Aldeota");
   });
 });

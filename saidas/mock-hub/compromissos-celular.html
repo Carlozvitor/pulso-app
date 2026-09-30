@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H3 (celular)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#050506; --line:#232327; --line-2:#2e2e33; --text:#f4f4f5; --text-2:#a1a1aa; --text-3:#8a8a93; --accent:#4c5bff; --accent-soft:#8b95ff; --teal-ink:#5eead4;
+    --amber-a:#4d260c; --amber-b:#1f1007; --amber-line:#8a4818; --amber-tile:#6d3510; --amber-ink:#fdba74; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #1a1a1d; color: var(--text); font: 15px/1.45 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; }
+  .cap { color: #a1a1aa; font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .phone { width: 390px; height: 844px; border-radius: 44px; border: 10px solid #000; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 30px 80px rgb(0 0 0 / .6); }
+  .scroll { height: 100%; overflow: auto; padding: 54px 16px 110px; scrollbar-width: none; }
+  .status { position: absolute; top: 0; inset-inline: 0; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font-weight: 600; font-size: 14px; background: var(--bg); z-index: 3; }
+  .head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin: 0 -16px 14px; padding-inline: 16px; }
+  .seal { width: 40px; height: 40px; border-radius: 10px; background: var(--amber-tile); color: var(--amber-ink); display: grid; place-items: center; box-shadow: inset 0 0 0 1px var(--amber-line); }
+  .head h1 { font-size: 20px; font-weight: 600; }
+  .head p { font-size: 13px; color: var(--text-2); }
+  .head .add { margin-left: auto; width: 40px; height: 40px; border-radius: 10px; background: var(--amber-tile); border: 1px solid var(--amber-line); display: grid; place-items: center; color: #ffedd5; }
+  .tabs { display: flex; gap: 6px; overflow: auto; margin-bottom: 14px; }
+  .tab { height: 34px; display: inline-flex; align-items: center; padding: 0 13px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; white-space: nowrap; }
+  .tab.on { background: var(--amber-tile); border-color: var(--amber-line); color: #ffedd5; }
+  .weeknav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-weight: 600; }
+  .weeknav span { width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--line-2); display: grid; place-items: center; }
+  .day { margin-bottom: 14px; }
+  .day h2 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); margin: 0 2px 7px; }
+  .day.today h2 { color: var(--amber-ink); }
+  .ev { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; border-radius: 10px; padding: 10px 12px; background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border: 1px solid var(--amber-line); margin-bottom: 6px; }
+  .ev .t { font: 600 13px "Geist Mono"; color: var(--amber-ink); }
+  .ev b { display: block; font-size: 15px; font-weight: 600; }
+  .ev span { font-size: 12.5px; color: rgb(255 255 255 / .55); display: flex; align-items: center; gap: 4px; }
+  .ev span svg.lucide { width: 12px; height: 12px; }
+  .ev.past { opacity: .5; }
+  .dl { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--text-2); padding: 7px 4px; }
+  .dl i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--teal-ink); display: block; }
+  .dl small { margin-left: auto; font-size: 12px; color: var(--text-3); }
+
+  /* Central · Hoje */
+  .card { border-radius: 12px; padding: 16px; background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border: 1px solid var(--amber-line); }
+  .card-head { display: flex; align-items: center; gap: 12px; }
+  .tile { width: 40px; height: 40px; border-radius: 9px; background: var(--amber-tile); color: var(--amber-ink); display: grid; place-items: center; }
+  .card-head b { display: block; font-size: 19px; font-weight: 700; }
+  .card-head span { font-size: 12.5px; color: rgb(255 255 255 / .6); }
+  .rows { list-style: none; padding: 0; margin-top: 12px; display: grid; gap: 2px; }
+  .r { display: grid; grid-template-columns: 50px 1fr; gap: 10px; align-items: center; padding: 10px; border-radius: 8px; background: rgb(0 0 0 / .22); }
+  .r .t { font: 600 12.5px "Geist Mono"; color: var(--amber-ink); }
+  .r b { font-weight: 500; font-size: 14.5px; display: block; }
+  .r small { font-size: 12px; color: rgb(255 255 255 / .5); }
+  .r.task .t { color: rgb(255 255 255 / .45); font-family: "Geist"; font-weight: 500; font-size: 11.5px; }
+  .sub { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgb(255 255 255 / .45); margin: 12px 2px 6px; }
+
+  .navbar { position: absolute; bottom: 0; inset-inline: 0; height: 86px; background: rgb(9 9 11 / .96); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding-top: 8px; z-index: 3; }
+  .nt { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--text-3); }
+  .nt.on { color: var(--text); } .nt.on svg.lucide { color: var(--accent-soft); }
+  .plus { justify-self: center; width: 52px; height: 52px; border-radius: 16px; background: var(--accent); display: grid; place-items: center; margin-top: -4px; }
+</style>
+</head>
+<body>
+  <div>
+    <p class="cap">Compromissos · Semana</p>
+    <div class="phone">
+      <div class="status"><span>08:12</span><span>●●●</span></div>
+      <div class="scroll">
+        <div class="head"><span class="seal"><i data-lucide="calendar-clock"></i></span><div><h1>Compromissos</h1><p>3 hoje · próximo 14:00</p></div><span class="add"><i data-lucide="plus"></i></span></div>
+        <div class="tabs"><span class="tab">Hoje</span><span class="tab on">Semana</span><span class="tab">Próximos</span><span class="tab">Concluídos</span></div>
+        <div class="weeknav"><span><i data-lucide="chevron-left"></i></span>28 set – 4 out<span><i data-lucide="chevron-right"></i></span></div>
+
+        <div class="day today">
+          <h2>Hoje · qua, 30</h2>
+          <div class="ev past"><span class="t">06:30</span><div><b>Academia</b><span><i data-lucide="repeat"></i>Treino · 1 h</span></div></div>
+          <div class="ev"><span class="t">14:00</span><div><b>Reunião com cliente</b><span>Google Meet · 1 h</span></div></div>
+          <div class="ev"><span class="t">19:00</span><div><b>Aula de Marketing</b><span><i data-lucide="repeat"></i>Bloco C · 3 h</span></div></div>
+          <div class="dl"><i></i>Pagar fatura do cartão<small>prazo</small></div>
+        </div>
+        <div class="day">
+          <h2>Qui, 1</h2>
+          <div class="ev"><span class="t">09:00</span><div><b>Dentista</b><span>Aldeota · 1 h</span></div></div>
+          <div class="dl"><i></i>Entregar trabalho de Marketing<small>prazo</small></div>
+        </div>
+        <div class="day">
+          <h2>Sex, 2</h2>
+          <div class="ev"><span class="t">06:30</span><div><b>Academia</b><span><i data-lucide="repeat"></i>Treino · 1 h</span></div></div>
+        </div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+
+  <div>
+    <p class="cap">Central · card "Hoje" (novo)</p>
+    <div class="phone">
+      <div class="status"><span>08:12</span><span>●●●</span></div>
+      <div class="scroll">
+        <p style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#a1a1aa;margin:6px 2px 10px">Hoje</p>
+        <article class="card">
+          <div class="card-head"><span class="tile"><i data-lucide="sun"></i></span><div><b>Hoje</b><span>Qua, 30 set · 3 compromissos · 2 prazos</span></div></div>
+          <ul class="rows">
+            <li class="r"><span class="t">14:00</span><div><b>Reunião com cliente — clínica</b><small>Google Meet</small></div></li>
+            <li class="r"><span class="t">19:00</span><div><b>Aula de Marketing Digital</b><small>Faculdade · Bloco C</small></div></li>
+          </ul>
+          <p class="sub">Prazos</p>
+          <ul class="rows">
+            <li class="r task"><span class="t">Hoje</span><div><b>Pagar fatura do cartão</b><small>Dinheiro</small></div></li>
+            <li class="r task"><span class="t">Hoje</span><div><b>Mandar post do Reels</b><small>Valentine → Conteúdo</small></div></li>
+          </ul>
+        </article>
+        <p style="font-size:12.5px;color:#8a8a93;margin-top:12px;line-height:1.5">Compromissos que já passaram hoje (Academia 06:30) saem do card. Em "Próximas atenções" entram também os compromissos dos próximos 7 dias.</p>
+      </div>
+      <nav class="navbar"><span class="nt on"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

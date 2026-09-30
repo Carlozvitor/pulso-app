@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, Eye, Leaf, Sun, Zap } from "lucide-react";
+import { Briefcase, CalendarClock, CalendarDays, Eye, Leaf, Sun, Zap } from "lucide-react";
 import { NowCard } from "@/components/agora/now-card";
 import { TaskCard } from "@/components/agora/task-card";
 import { CardTile, SectionHeading } from "@/components/cards/card-parts";
@@ -23,10 +23,20 @@ function deadlines(count: number, more: number): string {
   return total === 1 ? "1 prazo" : `${total} prazos`;
 }
 
+function eventsLabel(count: number): string | null {
+  if (count === 0) return null;
+  return count === 1 ? "1 compromisso" : `${count} compromissos`;
+}
+
+function openActions(n: number): string {
+  if (n === 0) return "Nada aberto";
+  return n === 1 ? "1 ação" : `${n} ações`;
+}
+
 /** Central: a porta de entrada do Hub — o que fazer agora, o que vence hoje e o que vem aí. */
 export default async function CentralPage() {
-  const [{ view, modules, projects }, session] = await Promise.all([getCentralPage(), getActiveSession()]);
-  const { todayList, upcoming } = view;
+  const [{ view, modules, agenda, projects }, session] = await Promise.all([getCentralPage(), getActiveSession()]);
+  const { todayList, upcoming, todayEvents } = view;
 
   return (
     <Page
@@ -83,10 +93,13 @@ export default async function CentralPage() {
           tone="amber"
           icon={Sun}
           title="Hoje"
-          subtitle={`${datePill(view.today)} · ${deadlines(todayList.items.length, todayList.more)}`}
+          subtitle={[datePill(view.today), eventsLabel(todayEvents.length), deadlines(todayList.items.length, todayList.more)]
+            .filter(Boolean)
+            .join(" · ")}
           list={todayList}
+          events={todayEvents}
           today={view.today}
-          empty="Nada com prazo para hoje."
+          empty="Nada marcado nem com prazo para hoje."
         />
         <AttentionCard
           id="central-proximas"
@@ -96,31 +109,45 @@ export default async function CentralPage() {
           subtitle="Ainda não é hora, mas vem aí"
           list={upcoming}
           today={view.today}
-          empty={`Nada com prazo nos próximos ${UPCOMING_DAYS} dias.`}
+          empty={`Nada marcado nem com prazo nos próximos ${UPCOMING_DAYS} dias.`}
         />
       </div>
 
-      {(modules.length > 0 || projects.length > 0) && (
-        <section aria-labelledby="central-vida" className="mt-8 lg:mt-9">
-          <SectionHeading
-            id="central-vida"
-            title="Minha vida"
-            action={
-              <Link href="/projetos" className={linkClass}>
-                Todos os projetos
-              </Link>
-            }
+      <section aria-labelledby="central-vida" className="mt-8 lg:mt-9">
+        <SectionHeading
+          id="central-vida"
+          title="Minha vida"
+          action={
+            <Link href="/projetos" className={linkClass}>
+              Todos os projetos
+            </Link>
+          }
+        />
+        <div className="grid grid-cols-2 gap-3 lg:gap-5 xl:grid-cols-4">
+          {modules.map((module) => (
+            <ModuleCard
+              key={module.key}
+              href={module.href}
+              label={module.label}
+              value={openActions(module.open)}
+              foot={module.next ? `Próxima: ${module.next.title}` : "Nada pedindo atenção"}
+              icon={Briefcase}
+              tone="blue"
+            />
+          ))}
+          <ModuleCard
+            href="/compromissos"
+            label="Compromissos"
+            value={agenda.count === 0 ? "Nada hoje" : `${agenda.count} hoje`}
+            foot={agenda.next ? `Próximo: ${agenda.next.time ?? "dia todo"} · ${agenda.next.title}` : "Nada mais marcado hoje"}
+            icon={CalendarClock}
+            tone="amber"
           />
-          <div className="grid grid-cols-2 gap-3 lg:gap-5 xl:grid-cols-4">
-            {modules.map((module) => (
-              <ModuleCard key={module.key} module={module} />
-            ))}
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} today={view.today} compact />
-            ))}
-          </div>
-        </section>
-      )}
+          {projects.map((project) => (
+            <ProjectCard key={project.id} project={project} today={view.today} compact />
+          ))}
+        </div>
+      </section>
     </Page>
   );
 }

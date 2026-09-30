@@ -87,12 +87,17 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --bottom-nav-height: 4rem;
   --topbar-height: 3.75rem;
-  --sidebar-width: 20rem;
+  --sidebar-width: 18rem;
 
   /* Movimento */
   --duration-fast: 150ms;
   --duration-base: 200ms;
   --duration-slow: 250ms;
+}
+
+/* Barra lateral recolhida (só ícones) — escolhida no botão do rodapé da barra. */
+[data-sidebar="compacta"] {
+  --sidebar-width: 4.25rem;
 }
 
 @media (min-width: 64rem) {
@@ -134,6 +139,7 @@
   --color-plum-ink: var(--plum-ink);
   --color-amber-tile: var(--amber-tile);
   --color-amber-ink: var(--amber-ink);
+  --color-amber-line: var(--amber-line);
   --color-blue-tile: var(--blue-tile);
   --color-blue-ink: var(--blue-ink);
   --color-input: var(--input);

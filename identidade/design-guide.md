@@ -22,7 +22,7 @@
 |---|---|---|---|---|---|
 | **teal** | Agora (próxima ação, depois) | `#0C3A42` / `#081B20` | `#1D5C66` | `#0F4E59` | `#5EEAD4` |
 | **plum** | Projetos | `#37195A` / `#180D28` | `#5A2F8C` | `#4A2478` | `#C9A7FF` |
-| **amber** | Prazos / Agenda | `#4D260C` / `#1F1007` | `#8A4818` | `#6D3510` | `#FDBA74` |
+| **amber** | Compromissos (módulo) e prazos | `#4D260C` / `#1F1007` | `#8A4818` | `#6D3510` | `#FDBA74` |
 | **blue** | Trabalho (módulo) | `#0D2742` / `#08131F` | `#1F4B78` | `#143A63` | `#93C5FD` |
 | **neutral** | "Mais tarde", estados vazios | `#141417` / `#0D0D0F` | `#232327` | `#222227` | `#A1A1AA` |
 
@@ -43,7 +43,7 @@ Classes em `globals.css`: `.tint .tint-teal|plum|amber|blue|neutral`, `.tint-til
 
 ## Layout
 
-- **PC (≥ 1024px):** topo (marca · saudação + pendências · "Tenho alguns minutos" · "Capturar N") + barra lateral fixa de 320px (painel "Organização" com abas) + painel principal com moldura + **barra de captura flutuante** no centro, embaixo do painel principal (Enter adiciona à Inbox; N foca).
+- **PC (≥ 1024px):** topo (marca · saudação + pendências · "Tenho alguns minutos" · "Capturar N") + barra lateral fixa de 288px, recolhível para só ícones (68px) no botão do rodapé — Central, PULSO, Minha vida (módulos), Configurações + painel principal com moldura + **barra de captura flutuante** no centro, embaixo do painel principal (Enter adiciona à Inbox; N foca).
 - **Cabeçalho de toda tela:** selo branco com ícone + título + subtítulo; pílulas à direita (data, "Sessão até…", "Em andamento" em verde).
 - **Grades:** 4 colunas em telas largas (≥ 1280px), 2 abaixo disso; a próxima ação ocupa 2 colunas.
 - **Celular:** mesma linguagem, cards empilhados (1 coluna para tarefas, 2 para projetos e dias) e navegação embaixo.

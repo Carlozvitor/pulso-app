@@ -1,4 +1,5 @@
 import * as auth from "@/lib/auth/actions";
+import * as events from "@/lib/events/actions";
 import * as origins from "@/lib/origins/actions";
 import * as projects from "@/lib/projects/actions";
 import * as sessions from "@/lib/sessions/actions";
@@ -33,6 +34,10 @@ export const updateProject = resilient(projects.updateProject);
 export const finishProject = resilient(projects.finishProject);
 export const reopenProject = resilient(projects.reopenProject);
 export const createProjectTask = resilient(projects.createProjectTask);
+
+export const createEvent = resilient(events.createEvent);
+export const updateEvent = resilient(events.updateEvent);
+export const deleteEvent = resilient(events.deleteEvent);
 
 export const startSession = resilient(sessions.startSession);
 export const endSession = resilient(sessions.endSession);

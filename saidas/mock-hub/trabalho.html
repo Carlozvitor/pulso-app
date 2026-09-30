@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H2 (Trabalho)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .fronts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .front-head { display: flex; align-items: center; gap: 14px; }
+  .front-head h3 { font-size: 21px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+  .front-head p { font-size: 13px; color: rgb(255 255 255 / .6); }
+  .front-head .go { margin-left: auto; color: var(--blue-ink); opacity: .7; }
+  .subs { list-style: none; padding: 0; margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .sub { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; background: rgb(0 0 0 / .22); font-size: 14px; }
+  .sub svg.lucide { width: 15px; height: 15px; color: var(--blue-ink); opacity: .8; }
+  .sub .n { margin-left: auto; font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .55); }
+  .sub.add-sub { background: transparent; border: 1px dashed rgb(255 255 255 / .14); color: rgb(255 255 255 / .55); }
+  .front-foot { margin-top: 16px; padding-top: 12px; border-top: 1px solid rgb(255 255 255 / .09); display: flex; justify-content: space-between; font-size: 12.5px; color: rgb(255 255 255 / .55); }
+  .front-foot b { color: rgb(255 255 255 / .85); font-weight: 500; }
+  .actions-card .tasks { margin-top: 4px; }
+  .mono-tile { font-weight: 700; font-size: 14px; letter-spacing: .02em; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="calendar-days"></i>Agenda</li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item on"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="corner-down-right"></i>Valentine<span class="count">5</span></li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Clientes / Freelance<span class="count">2</span></li>
+        </ul>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+        <ul class="kids">
+          <li class="kid"><span class="mono">CC</span>CRUMB CLUB<span class="count">5</span></li>
+          <li class="kid"><span class="mono">AC</span>AURA CAFÉ<span class="count">3</span></li>
+          <li class="kid"><span class="mono">PO</span>PORTFÓLIO<span class="count">2</span></li>
+          <li class="kid"><span class="mono">PU</span>PULSO<span class="count">4</span></li>
+        </ul>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="main-head" style="padding-top:20px">
+        <span class="app-ico blue"><i data-lucide="briefcase"></i></span>
+        <div><h1>Trabalho</h1><p>Onde fica o contexto profissional. As ações ficam no PULSO.</p></div>
+        <div class="head-right">
+          <span class="chipbtn"><i data-lucide="plus"></i>Nova frente</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="section"><h2>Frentes</h2></div>
+        <div class="fronts">
+          <article class="card blue">
+            <div class="front-head">
+              <span class="tile mono-tile">VA</span>
+              <div><h3>Valentine</h3><p>4 subitens · 5 ações abertas</p></div>
+              <i data-lucide="arrow-up-right" class="go"></i>
+            </div>
+            <ul class="subs">
+              <li class="sub"><i data-lucide="corner-down-right"></i>Conteúdo<span class="n">3</span></li>
+              <li class="sub"><i data-lucide="corner-down-right"></i>Administrativo<span class="n">1</span></li>
+              <li class="sub"><i data-lucide="corner-down-right"></i>Demandas da empresa<span class="n">1</span></li>
+              <li class="sub"><i data-lucide="corner-down-right"></i>Outros<span class="n">–</span></li>
+            </ul>
+            <div class="front-foot"><span>Próxima ação</span><b>Mandar post do Reels · hoje</b></div>
+          </article>
+
+          <article class="card blue">
+            <div class="front-head">
+              <span class="tile mono-tile">CF</span>
+              <div><h3>Clientes / Freelance</h3><p>4 subitens · 2 ações abertas</p></div>
+              <i data-lucide="arrow-up-right" class="go"></i>
+            </div>
+            <ul class="subs">
+              <li class="sub"><i data-lucide="corner-down-right"></i>Clientes<span class="n">–</span></li>
+              <li class="sub"><i data-lucide="corner-down-right"></i>Propostas<span class="n">1</span></li>
+              <li class="sub"><i data-lucide="corner-down-right"></i>Entregas<span class="n">1</span></li>
+              <li class="sub"><i data-lucide="corner-down-right"></i>Follow-ups<span class="n">–</span></li>
+            </ul>
+            <div class="front-foot"><span>Próxima ação</span><b>Enviar proposta da clínica · qui</b></div>
+          </article>
+        </div>
+
+        <div class="section"><h2>Ações em Trabalho</h2><a>Ver na Agora</a></div>
+        <article class="card neutral actions-card">
+          <ul class="tasks">
+            <li class="task doing"><span class="check"></span><div><b>Mandar post do Reels</b><span class="meta">Valentine → Conteúdo → Instagram · em andamento</span></div><span class="right hot">Hoje</span></li>
+            <li class="task"><span class="check"></span><div><b>Criar legenda do carrossel de outubro</b><span class="meta">Valentine → Conteúdo</span></div><span class="right">Amanhã</span></li>
+            <li class="task"><span class="check"></span><div><b>Enviar proposta da clínica</b><span class="meta">Clientes / Freelance → Propostas</span></div><span class="right">Quinta</span></li>
+            <li class="task"><span class="check"></span><div><b>Conferir notas fiscais de setembro</b><span class="meta">Valentine → Administrativo</span></div><span class="right">–</span></li>
+            <li class="task"><span class="check"></span><div><b>Revisar pedido da diretoria sobre o evento</b><span class="meta">Valentine → Demandas da empresa</span></div><span class="right">–</span></li>
+          </ul>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>"Frentes" são o primeiro nível dentro do módulo. Clicar abre a página da frente, com os subitens.</li>
+      <li>"Ações em Trabalho" são as tarefas do PULSO com origem no Trabalho, na ordem de prioridade. Não é uma lista separada.</li>
+      <li>Azul é a cor nova do Trabalho. Cada módulo ganha a sua.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

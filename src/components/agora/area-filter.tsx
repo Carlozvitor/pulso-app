@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { Filter } from "lucide-react";
-import type { Area } from "@/types/project";
 import { cn } from "@/lib/utils";
 
-/** Filtro da Agora por área. Vai na URL (?area=) — dá para voltar e compartilhar o estado. */
-export function AreaFilter({ areas, selected }: { areas: Area[]; selected: string | null }) {
+/**
+ * Filtro da Agora por módulo (inclui tudo abaixo dele). Vai na URL (?area=) — dá para voltar
+ * e compartilhar o estado. Chega um item mais fundo (ex.: "Ver na Agora" de Valentine)? Ele vira um chip também.
+ */
+export function AreaFilter({ options: areas, selected }: { options: { id: string; name: string }[]; selected: string | null }) {
   if (areas.length === 0) return null;
   const options = [{ id: null, name: "Tudo" }, ...areas];
   return (
-    <nav aria-label="Filtrar por área" className="-mx-4 flex items-center gap-2.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:mx-0 lg:px-0">
+    <nav aria-label="Filtrar por módulo" className="-mx-4 flex items-center gap-2.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:mx-0 lg:px-0">
       <span className="inline-flex shrink-0 items-center gap-1.5 text-sm text-foreground-secondary">
         <Filter aria-hidden className="size-4" strokeWidth={1.75} />
         Filtro:

@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
+  Briefcase,
   CalendarDays,
   CircleCheck,
   CircleDot,
+  CornerDownRight,
   Inbox,
   ListTodo,
   Rocket,
@@ -14,9 +16,13 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import type { Area } from "@/types/project";
 import { cn } from "@/lib/utils";
 
 export type SidebarProject = { id: string; name: string; monogram: string; open: number };
+
+/** Árvore do Trabalho para a barra lateral, com as abertas de cada item (subitens inclusos). */
+export type SidebarModule = { areas: Area[]; open: Record<string, number> };
 
 type ItemProps = {
   href: string;
@@ -59,10 +65,17 @@ type KidProps = {
 };
 
 /** Subitem, pendurado no item de cima por uma linha. */
-function Kid({ href, label, active, icon: Icon, monogram, count }: KidProps) {
+function Kid(props: KidProps) {
   return (
     <li>
-      <Link
+      <KidLink {...props} />
+    </li>
+  );
+}
+
+function KidLink({ href, label, active, icon: Icon, monogram, count }: KidProps) {
+  return (
+    <Link
         href={href}
         aria-current={active ? "page" : undefined}
         className={cn(
@@ -80,7 +93,6 @@ function Kid({ href, label, active, icon: Icon, monogram, count }: KidProps) {
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {count !== undefined && count > 0 && <span className="tabular font-mono text-[0.6875rem] text-foreground-subtle">{count}</span>}
       </Link>
-    </li>
   );
 }
 
@@ -89,6 +101,57 @@ function Kids({ label, children }: { label: string; children: React.ReactNode })
     <ul aria-label={label} className="mt-0.5 mb-1.5 ml-[1.5625rem] grid gap-px border-l border-border pl-2.5">
       {children}
     </ul>
+  );
+}
+
+function openLabel(count: number): string {
+  if (count === 0) return "Nada aberto";
+  return count === 1 ? "1 ação aberta" : `${count} ações abertas`;
+}
+
+const byPosition = (a: Area, b: Area) => a.position - b.position || a.name.localeCompare(b.name, "pt-BR");
+
+/** Trabalho: frentes sempre visíveis; a frente onde você está abre até o item atual. */
+function WorkTree({ work, pathname }: { work: SidebarModule; pathname: string }) {
+  const root = work.areas.find((a) => a.parentId === null);
+  if (!root) return null;
+  const currentId = pathname.startsWith("/trabalho/") ? pathname.split("/")[2] : null;
+  // Do item atual até o topo: esses ficam abertos.
+  const openIds = new Set<string>();
+  for (let id = currentId; id; id = work.areas.find((a) => a.id === id)?.parentId ?? null) openIds.add(id);
+
+  const branch = (parentId: string, label: string): React.ReactNode => {
+    const children = work.areas.filter((a) => a.parentId === parentId).sort(byPosition);
+    if (children.length === 0) return null;
+    return (
+      <Kids label={label}>
+        {children.map((area) => (
+          <li key={area.id}>
+            <KidLink
+              href={`/trabalho/${area.id}`}
+              label={area.name}
+              icon={CornerDownRight}
+              count={work.open[area.id]}
+              active={area.id === currentId}
+            />
+            {openIds.has(area.id) && branch(area.id, area.name)}
+          </li>
+        ))}
+      </Kids>
+    );
+  };
+
+  return (
+    <>
+      <Item
+        href="/trabalho"
+        title="Trabalho"
+        subtitle={openLabel(work.open[root.id] ?? 0)}
+        active={pathname === "/trabalho"}
+        tile={{ className: "bg-blue-tile text-blue-ink", icon: Briefcase }}
+      />
+      {branch(root.id, "Trabalho")}
+    </>
   );
 }
 
@@ -103,10 +166,12 @@ function projectsLabel(count: number): string {
  */
 export function SidebarNav({
   projects,
+  work,
   inboxCount,
   todoCount,
 }: {
   projects: SidebarProject[];
+  work: SidebarModule;
   inboxCount: number;
   todoCount: number;
 }) {
@@ -139,28 +204,32 @@ export function SidebarNav({
           Minha vida
         </p>
 
-        <Item
-          href="/projetos"
-          title="Projetos"
-          subtitle={projectsLabel(projects.length)}
-          active={pathname === "/projetos"}
-          tile={{ className: "bg-plum-tile text-plum-ink", icon: Rocket }}
-        />
-        {projects.length > 0 && (
-          <Kids label="Projetos em andamento">
-            {projects.map((p) => (
-              <Kid key={p.id} href={`/projetos/${p.id}`} label={p.name} monogram={p.monogram} count={p.open} active={pathname === `/projetos/${p.id}`} />
-            ))}
-          </Kids>
-        )}
+        <WorkTree work={work} pathname={pathname} />
+
+        <div className="mt-1">
+          <Item
+            href="/projetos"
+            title="Projetos"
+            subtitle={projectsLabel(projects.length)}
+            active={pathname === "/projetos"}
+            tile={{ className: "bg-plum-tile text-plum-ink", icon: Rocket }}
+          />
+          {projects.length > 0 && (
+            <Kids label="Projetos em andamento">
+              {projects.map((p) => (
+                <Kid key={p.id} href={`/projetos/${p.id}`} label={p.name} monogram={p.monogram} count={p.open} active={pathname === `/projetos/${p.id}`} />
+              ))}
+            </Kids>
+          )}
+        </div>
       </div>
 
       <div className="border-t border-border px-1.5 py-2">
         <Item
           href="/configuracoes"
           title="Configurações"
-          subtitle="Áreas, conta, sair"
-          active={is("/configuracoes") || is("/areas")}
+          subtitle="Origens, conta, sair"
+          active={is("/configuracoes") || is("/origens")}
           tile={{ className: "bg-[#1d1d21] text-foreground-secondary", icon: Settings }}
         />
       </div>

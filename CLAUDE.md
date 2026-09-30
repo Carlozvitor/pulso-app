@@ -16,12 +16,13 @@ como dev principal, pensando também em UX e produto.
 - `_memoria/hub-mestre.md` — documento mestre do Hub do Carlos (fonte de verdade de produto; o PULSO é o módulo de execução)
 - `_memoria/contexto-mestre.md` — documento mestre do PULSO (ler antes de qualquer funcionalidade)
 - `identidade/design-guide.md` — tokens de cor, tipografia, raios, movimento
-- `src/app/(app)/` — rotas do app: central (página inicial do Hub), configuracoes, agora, a-fazer, inbox, agenda, feitas, busca, mais, projetos, projetos/[id], areas, sessao, tarefas/[id]
+- `src/app/(app)/` — rotas do app: central (página inicial do Hub), trabalho, trabalho/[id], origens, configuracoes, agora, a-fazer, inbox, agenda, feitas, busca, mais, projetos, projetos/[id], areas, sessao, tarefas/[id]
 - `src/app/login/` — autenticação (e-mail + senha)
 - `src/components/ui/` — primitivos shadcn (base-nova / Base UI). Editar só tema/tokens
 - `src/components/layout/` — moldura do app: topo e barra lateral (PC), `Page` (cabeçalho de tela), atalhos de teclado
 - `src/components/cards/` — peças dos cards coloridos (selo, anel de progresso, rodapé)
 - `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, sync, feedback, pwa
+- `src/lib/origins/` — árvore de origens (áreas por módulo), resumos por módulo/item, ações e consultas (TS puro com testes em tree/summary)
 - `src/lib/central/` — síntese da Central (Agora + Hoje + Próximas atenções), TS puro com testes
 - `src/lib/priorities/` — motor de prioridade e seleção de sessão (TS puro, com testes)
 - `src/lib/{tasks,projects,sessions}/` — queries, server actions e schemas Zod

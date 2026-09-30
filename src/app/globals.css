@@ -33,7 +33,7 @@
 
   /*
    * Famílias de cor por seção (cards com leve degradê e borda da mesma cor):
-   * teal = Agora · plum = Projetos · amber = Prazos/Agenda
+   * teal = Agora · plum = Projetos · amber = Prazos/Agenda · blue = Trabalho
    */
   --teal-a: #0c3a42;
   --teal-b: #081b20;
@@ -50,6 +50,11 @@
   --amber-line: #8a4818;
   --amber-tile: #6d3510;
   --amber-ink: #fdba74;
+  --blue-a: #0d2742;
+  --blue-b: #08131f;
+  --blue-line: #1f4b78;
+  --blue-tile: #143a63;
+  --blue-ink: #93c5fd;
 
   /* Mapeamento para os nomes que o shadcn espera */
   --card: var(--surface);
@@ -129,6 +134,8 @@
   --color-plum-ink: var(--plum-ink);
   --color-amber-tile: var(--amber-tile);
   --color-amber-ink: var(--amber-ink);
+  --color-blue-tile: var(--blue-tile);
+  --color-blue-ink: var(--blue-ink);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -267,6 +274,13 @@
     --tint-line: var(--amber-line);
     --tint-tile: var(--amber-tile);
     --tint-ink: var(--amber-ink);
+  }
+  .tint-blue {
+    --tint-a: var(--blue-a);
+    --tint-b: var(--blue-b);
+    --tint-line: var(--blue-line);
+    --tint-tile: var(--blue-tile);
+    --tint-ink: var(--blue-ink);
   }
   /* Sem família: mesma forma, sem cor (itens "mais tarde", estados vazios) */
   .tint-neutral {

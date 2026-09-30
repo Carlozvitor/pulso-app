@@ -19,7 +19,7 @@ Decisões aprovadas (2026-09-29):
 
 Fases do Hub (uma por vez, com aprovação):
 - **H1. Casca + Central** — nome "Hub do Carlos", barra lateral nova, Central (Agora, Hoje, Próximas atenções, Captura). Sem banco novo. Código pronto em 2026-09-29 (Central em /central e página inicial; lógica em src/lib/central; Configurações em /configuracoes; Agora ficou só com tarefas; celular: Central · Agora · + · A fazer · Mais). Testada e aprovada pelo Carlos em 2026-09-29. ✔
-- **H2. Origem + Trabalho** — árvore de origens por módulo; tarefa mostra a origem; módulo Trabalho. ← próxima (plano em discussão)
+- **H2. Origem + Trabalho** — código pronto em 2026-09-30, falta o Carlos aplicar `supabase/migrations/20260930120000_origens.sql` no SQL Editor, testar e aprovar. Decisões: áreas viraram origens (tabela `areas` com `parent_id`, `module`, `notes`, `position`; ids mantidos); módulos = raízes fixas (não apagam, não renomeiam); subitem herda o módulo; mover só dentro do módulo; item com subitens não apaga; links em `area_links`. Trabalho tem cor própria (azul). Telas: /trabalho (frentes + ações), /trabalho/[id] (contexto: anotação + links; ações do PULSO com campo de nova ação), /origens (editor da árvore, em Configurações; /areas redireciona). Campo "Origem" (árvore com busca) na tarefa, no projeto e em novo projeto. Filtro da Agora por módulo (inclui subitens). Central: card do Trabalho em "Minha vida". Migration testada em PGlite (24 verificações).
 - **H3. Compromissos** — tabela própria (Agenda ≠ Tarefa), visão semanal, horários no "Hoje".
 - **H4. Faculdade** · **H5. Dinheiro** · **H6. Projetos** (Pausado, objetivo, links) · **H7. Treino** · **H8. Vida pessoal**.
 

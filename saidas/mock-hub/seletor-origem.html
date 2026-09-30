@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H2 (seletor de origem)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .editor { max-width: 720px; }
+  .title-in { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; padding: 4px 0 14px; }
+  .attrs { border-top: 1px solid var(--line); }
+  .attr { display: grid; grid-template-columns: 150px 1fr; align-items: center; min-height: 54px; border-bottom: 1px solid var(--line); }
+  .attr .k { font-size: 13px; color: var(--text-3); }
+  .attr .v { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+  .attr .v .muted { color: var(--text-3); }
+  .attr .v svg.chev { margin-left: auto; color: #71717a; width: 18px; height: 18px; }
+  .attr.focus { background: rgb(76 91 255 / .07); box-shadow: inset 2px 0 0 var(--accent); padding-left: 10px; margin-left: -10px; }
+  .chips { display: flex; gap: 6px; }
+  .chip { height: 32px; padding: 0 12px; border-radius: 999px; background: #1a1a1e; border: 1px solid var(--line-2); display: inline-flex; align-items: center; font-size: 13px; color: var(--text-2); }
+  .chip.on { background: #1a1b24; border-color: #3b3e55; color: #c7cbf0; }
+  .path { display: inline-flex; align-items: center; gap: 6px; }
+  .path svg.lucide { width: 14px; height: 14px; color: var(--text-3); }
+  .path .dot { width: 8px; height: 8px; border-radius: 2px; background: var(--blue-ink); }
+
+  /* diálogo */
+  .scrim { position: absolute; inset: 0; background: rgb(0 0 0 / .55); display: grid; place-items: center; }
+  .dialog { width: 460px; max-height: 84%; display: flex; flex-direction: column; background: var(--elev); border: 1px solid var(--line-2); border-radius: 16px; box-shadow: 0 24px 80px rgb(0 0 0 / .6); overflow: hidden; }
+  .dialog header { padding: 18px 18px 12px; }
+  .dialog h2 { font-size: 18px; font-weight: 600; }
+  .dialog p { font-size: 13px; color: var(--text-3); margin-top: 2px; }
+  .search { margin: 0 18px 10px; height: 42px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 10px; background: #0f0f12; border: 1px solid var(--line); color: var(--text-3); font-size: 14px; }
+  .search svg.lucide { width: 16px; height: 16px; }
+  .tree { overflow: auto; padding: 4px 10px 12px; scrollbar-width: thin; }
+  .mod { display: flex; align-items: center; gap: 10px; padding: 12px 8px 6px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
+  .mod i.sw { width: 10px; height: 10px; border-radius: 3px; display: block; }
+  .opt { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 10px; border-radius: 8px; font-size: 14px; color: var(--text); }
+  .opt:hover { background: #1d1d22; }
+  .opt.l1 { padding-left: 10px; }
+  .opt.l2 { padding-left: 30px; }
+  .opt.l3 { padding-left: 50px; }
+  .opt .tw { color: var(--text-3); width: 14px; height: 14px; }
+  .opt .n { margin-left: auto; font: 500 11.5px "Geist Mono"; color: var(--text-3); }
+  .opt.sel { background: #1b1c2e; box-shadow: inset 0 0 0 1px #3b3e6b; }
+  .opt.sel .ok { margin-left: auto; color: var(--accent-soft); width: 16px; height: 16px; }
+  .opt.none { color: var(--text-2); margin-top: 6px; border-top: 1px solid var(--line); border-radius: 0; padding-top: 6px; }
+  .opt.mod-opt { font-weight: 500; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid on"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="calendar-days"></i>Agenda</li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="main-head" style="padding-top:20px">
+        <span class="app-ico"><i data-lucide="square-check"></i></span>
+        <div><h1>Tarefa</h1><p>Trabalho → Valentine → Conteúdo</p></div>
+      </div>
+
+      <div class="content editor">
+        <div class="title-in">Criar legenda do carrossel de outubro</div>
+        <div class="attrs">
+          <div class="attr"><span class="k">Status</span><div class="v chips"><span class="chip on">A fazer</span><span class="chip">Em andamento</span><span class="chip">Feita</span></div></div>
+          <div class="attr"><span class="k">Prazo</span><div class="v">Amanhã <span class="muted">· qua, 30 set</span></div></div>
+          <div class="attr"><span class="k">Duração</span><div class="v">30 min</div></div>
+          <div class="attr"><span class="k">Projeto</span><div class="v"><span class="muted">Nenhum</span><i data-lucide="chevron-right" class="chev"></i></div></div>
+          <div class="attr focus"><span class="k">Origem</span><div class="v"><span class="path"><span class="dot"></span>Trabalho <i data-lucide="chevron-right"></i> Valentine <i data-lucide="chevron-right"></i> Conteúdo</span><i data-lucide="chevron-right" class="chev"></i></div></div>
+        </div>
+      </div>
+
+      <div class="scrim">
+        <div class="dialog" role="dialog">
+          <header><h2>De onde vem essa tarefa?</h2><p>Escolha o lugar mais específico que fizer sentido.</p></header>
+          <div class="search"><i data-lucide="search"></i>Buscar origem…</div>
+          <div class="tree">
+            <div class="mod"><i class="sw" style="background:var(--blue-ink)"></i>Trabalho</div>
+            <div class="opt l1 mod-opt">Trabalho (geral)</div>
+            <div class="opt l1"><i data-lucide="chevron-down" class="tw"></i>Valentine<span class="n">5</span></div>
+            <div class="opt l2 sel">Conteúdo<i data-lucide="check" class="ok"></i></div>
+            <div class="opt l3">Instagram<span class="n">2</span></div>
+            <div class="opt l3">TikTok</div>
+            <div class="opt l2">Administrativo<span class="n">1</span></div>
+            <div class="opt l2">Demandas da empresa<span class="n">1</span></div>
+            <div class="opt l2">Outros</div>
+            <div class="opt l1"><i data-lucide="chevron-right" class="tw"></i>Clientes / Freelance<span class="n">2</span></div>
+
+            <div class="mod"><i class="sw" style="background:#a1a1aa"></i>Outros módulos</div>
+            <div class="opt l1 mod-opt">Faculdade<span class="n">3</span></div>
+            <div class="opt l1 mod-opt">Dinheiro<span class="n">1</span></div>
+            <div class="opt l1 mod-opt">Treino</div>
+            <div class="opt l1 mod-opt">Vida pessoal<span class="n">4</span></div>
+
+            <div class="opt none">Sem origem</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>No celular, o mesmo conteúdo abre como gaveta de baixo (igual à escolha de projeto hoje).</li>
+      <li>Faculdade, Dinheiro etc. já aparecem como origem, mesmo antes de o módulo ter página. Suas tarefas atuais continuam onde estão.</li>
+      <li>Com projeto escolhido, a origem vem do projeto (como a área hoje).</li>
+      <li>A busca filtra pelo nome em qualquer nível.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

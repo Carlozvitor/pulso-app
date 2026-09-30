@@ -6,10 +6,11 @@ import type { Area, Project } from "@/types/project";
 import type { Task } from "@/types/task";
 import type { TaskPatch } from "@/lib/tasks/schemas";
 import { groupProjects } from "@/lib/projects/organize";
+import { indexOrigins, originFullLabel } from "@/lib/origins/tree";
+import { OriginField } from "@/components/origins/origin-field";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { AttributeRow } from "./attribute-row";
-import { ChipGroup } from "./chip-group";
 
 export type AssignOptions = { areas: Area[]; projects: Project[] };
 
@@ -20,8 +21,8 @@ type TaskAssignProps = {
 };
 
 /**
- * Projeto e área. Com projeto, a área vem dele (só leitura).
- * Sem projeto, a área é escolhida direto.
+ * Projeto e origem. Com projeto, a origem vem dele (só leitura).
+ * Sem projeto, a origem é escolhida na árvore.
  */
 export function TaskAssign({ task, options, save }: TaskAssignProps) {
   const [projectId, setProjectId] = useState(task.projectId);
@@ -29,14 +30,14 @@ export function TaskAssign({ task, options, save }: TaskAssignProps) {
   const [picking, setPicking] = useState(false);
 
   const project = options.projects.find((p) => p.id === projectId) ?? null;
-  const areaName = (id: string | null) => options.areas.find((a) => a.id === id)?.name ?? null;
+  const index = indexOrigins(options.areas);
 
   function chooseProject(next: Project | null) {
     setPicking(false);
     if ((next?.id ?? null) === projectId) return;
     const previous = { projectId, areaId };
     setProjectId(next?.id ?? null);
-    // Com projeto a área passa a ser a dele; sem projeto, fica a última (igual ao banco).
+    // Com projeto a origem passa a ser a dele; sem projeto, fica a última (igual ao banco).
     if (next) setAreaId(next.areaId);
     void save({ projectId: next?.id ?? null }).then((ok) => {
       if (ok) return;
@@ -81,19 +82,14 @@ export function TaskAssign({ task, options, save }: TaskAssignProps) {
 
       {project ? (
         project.areaId && (
-          <AttributeRow id="area-label" label="Área" hint="Vem do projeto">
-            <p className="text-body text-foreground-secondary">{areaName(project.areaId)}</p>
+          <AttributeRow id="origin-label" label="Origem" hint="Vem do projeto">
+            <p className="text-body text-foreground-secondary">{originFullLabel(project.areaId, index)}</p>
           </AttributeRow>
         )
       ) : (
         options.areas.length > 0 && (
-          <AttributeRow id="area-label" label="Área" onClear={areaId ? () => chooseArea(null) : undefined}>
-            <ChipGroup
-              labelId="area-label"
-              options={options.areas.map((a) => ({ value: a.id, label: a.name }))}
-              value={areaId}
-              onChange={chooseArea}
-            />
+          <AttributeRow id="origin-label" label="Origem">
+            <OriginField labelId="origin-label" areas={options.areas} value={areaId} onChange={chooseArea} />
           </AttributeRow>
         )
       )}
@@ -133,9 +129,9 @@ function ProjectPicker({ open, onOpenChange, areas, projects, selectedId, onChoo
           <div className="mt-2 min-h-0 overflow-y-auto">
             <PickerOption label="Nenhum" selected={selectedId === null} onClick={() => onChoose(null)} />
             {groups.map((group) => (
-              <div key={group.area?.id ?? "sem-area"} className="mt-4">
+              <div key={group.area?.id ?? "sem-origem"} className="mt-4">
                 <p className="text-caption font-semibold tracking-[0.08em] text-foreground-subtle uppercase">
-                  {group.area?.name ?? "Sem área"}
+                  {group.label}
                 </p>
                 {group.projects.map((p) => (
                   <PickerOption

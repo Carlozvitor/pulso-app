@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { CalendarDays, ChevronRight, CircleCheck, Ellipsis, Inbox, Rocket, Search, Settings } from "lucide-react";
+import { Briefcase, CalendarDays, ChevronRight, CircleCheck, Ellipsis, Inbox, Rocket, Search, Settings } from "lucide-react";
 import { ListPanel, Page } from "@/components/layout/page";
 
 export const metadata = { title: "Mais" };
 
 const LINKS = [
+  { href: "/trabalho", label: "Trabalho", icon: Briefcase },
   { href: "/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/projetos", label: "Projetos", icon: Rocket },
   { href: "/feitas", label: "Feitas", icon: CircleCheck },

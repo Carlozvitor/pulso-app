@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { ChevronRight, Layers, LogOut, Settings, UserRound } from "lucide-react";
+import { ChevronRight, GitFork, LogOut, Settings, UserRound } from "lucide-react";
 import { SectionHeading } from "@/components/cards/card-parts";
 import { ListPanel, Page } from "@/components/layout/page";
 import { signOut } from "@/lib/auth/actions";
 import { listAreas } from "@/lib/projects/queries";
+import { MODULES } from "@/lib/origins/tree";
+import { MODULE_KEYS } from "@/types/project";
 import { requireUser } from "@/lib/supabase/server";
 
 export const metadata = { title: "Configurações" };
@@ -15,18 +17,19 @@ export default async function ConfiguracoesPage() {
   const { supabase } = await requireUser();
   const [{ data }, areas] = await Promise.all([supabase.auth.getClaims(), listAreas()]);
   const email = typeof data?.claims?.email === "string" ? data.claims.email : null;
-  const areaNames = areas.length === 0 ? "Nenhuma ainda" : areas.map((a) => a.name).join(", ");
+  const itemCount = areas.filter((a) => a.parentId !== null).length;
+  const originSummary = `${MODULE_KEYS.map((m) => MODULES[m].label).join(", ")}${itemCount > 0 ? ` · ${itemCount} ${itemCount === 1 ? "item" : "itens"}` : ""}`;
 
   return (
     <Page icon={Settings} title="Configurações" description="Como o Hub se organiza">
       <section aria-labelledby="config-organizacao">
         <SectionHeading id="config-organizacao" title="Organização" />
         <ListPanel>
-          <Link href="/areas" className={rowClass}>
-            <Layers aria-hidden className="size-5 text-foreground-subtle" strokeWidth={1.75} />
+          <Link href="/origens" className={rowClass}>
+            <GitFork aria-hidden className="size-5 text-foreground-subtle" strokeWidth={1.75} />
             <span className="min-w-0 flex-1">
-              <span className="block text-body">Áreas</span>
-              <span className="block truncate text-caption text-foreground-subtle">{areaNames}</span>
+              <span className="block text-body">Origens</span>
+              <span className="block truncate text-caption text-foreground-subtle">{originSummary}</span>
             </span>
             <ChevronRight aria-hidden className="size-5 text-muted-ui" />
           </Link>

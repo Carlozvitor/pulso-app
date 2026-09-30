@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import { BackButton } from "@/components/navigation/back-button";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,10 @@ type PageProps = {
   back?: boolean;
   /** Grades de cards usam a largura toda; listas e formulários ficam estreitos. */
   wide?: boolean;
+  /** Trilha acima do título (Trabalho › Valentine › Conteúdo). */
+  crumbs?: { label: string; href?: string }[];
+  /** Selo com a cor do módulo; sem isso, selo branco. */
+  iconClassName?: string;
   children: React.ReactNode;
 };
 
@@ -19,7 +23,7 @@ type PageProps = {
  * Moldura de toda tela: cabeçalho (selo + título + ações) e o conteúdo.
  * No PC fica dentro do painel principal; no celular ocupa a coluna.
  */
-export function Page({ icon: Icon, title, description, actions, back, wide, children }: PageProps) {
+export function Page({ icon: Icon, title, description, actions, back, wide, crumbs, iconClassName, children }: PageProps) {
   return (
     <>
       <header className="-mx-4 flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-border px-4 pt-3 pb-4 lg:mx-0 lg:px-6 lg:py-5">
@@ -28,9 +32,32 @@ export function Page({ icon: Icon, title, description, actions, back, wide, chil
             <BackButton />
           </div>
         )}
+        {crumbs && crumbs.length > 0 && (
+          <nav aria-label="Caminho" className="-mb-1 basis-full">
+            <ol className="flex flex-wrap items-center gap-x-1.5 text-caption text-foreground-subtle">
+              {crumbs.map((crumb, i) => (
+                <li key={`${crumb.label}-${i}`} className="flex items-center gap-1.5">
+                  {i > 0 && <ChevronRight aria-hidden className="size-3.5" strokeWidth={1.75} />}
+                  {crumb.href ? (
+                    <Link href={crumb.href} className="transition-colors duration-(--duration-fast) hover:text-foreground">
+                      {crumb.label}
+                    </Link>
+                  ) : (
+                    <span aria-current="page" className="font-medium text-foreground-secondary">
+                      {crumb.label}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
         <span
           aria-hidden
-          className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-foreground text-background lg:size-12"
+          className={cn(
+            "flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-foreground text-background lg:size-12",
+            iconClassName,
+          )}
         >
           <Icon className="size-5 lg:size-6" strokeWidth={2} />
         </span>
@@ -78,7 +105,7 @@ export function Pill({ icon: Icon, tone = "default", href, children }: PillProps
   );
 }
 
-/** Lista dentro de um painel (Inbox, Áreas, busca…). Linhas com -mx-4 continuam alinhadas. */
+/** Lista dentro de um painel (Inbox, Origens, busca…). Linhas com -mx-4 continuam alinhadas. */
 export function ListPanel({ children, className }: { children: React.ReactNode; className?: string }) {
   return <div className={cn("panel px-4", className)}>{children}</div>;
 }

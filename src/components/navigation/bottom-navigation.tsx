@@ -27,7 +27,7 @@ const RIGHT: NavItem[] = [
     href: "/mais",
     label: "Mais",
     icon: Ellipsis,
-    match: ["/agenda", "/projetos", "/areas", "/feitas", "/busca", "/inbox", "/configuracoes"],
+    match: ["/trabalho", "/agenda", "/projetos", "/origens", "/feitas", "/busca", "/inbox", "/configuracoes"],
   },
 ];
 

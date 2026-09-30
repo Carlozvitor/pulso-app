@@ -1,5 +1,6 @@
 import type { Area, Project, ProjectGroup, ProjectProgress } from "@/types/project";
 import type { Task, TaskStatus } from "@/types/task";
+import { indexOrigins, originLabel, type OriginIndex } from "@/lib/origins/tree";
 
 /** Concluídas ÷ total. Arquivadas não contam — saíram do escopo do projeto. */
 export function projectProgress(statuses: TaskStatus[]): ProjectProgress {
@@ -21,35 +22,43 @@ export function compareProjects(a: Project, b: Project): number {
   return byName(a, b);
 }
 
+/** Rótulo do grupo de projetos sem origem. */
+export const NO_ORIGIN_LABEL = "Sem origem";
+
 /**
- * Agrupa por área (ordem alfabética, "Sem área" no fim). Áreas sem projeto não aparecem.
+ * Agrupa por origem (rótulo do caminho, em ordem alfabética; "Sem origem" no fim).
+ * Origens sem projeto não aparecem.
  */
 export function groupProjects<P extends Project>(projects: P[], areas: Area[]): ProjectGroup<P>[] {
-  const known = new Set(areas.map((a) => a.id));
-  const groups: ProjectGroup<P>[] = [...areas].sort(byName).map((area) => ({
-    area,
-    projects: projects.filter((p) => p.areaId === area.id).sort(compareProjects),
-  }));
+  const index = indexOrigins(areas);
+  const groups: ProjectGroup<P>[] = areas
+    .map((area) => ({
+      area,
+      label: originLabel(area.id, index) ?? area.name,
+      projects: projects.filter((p) => p.areaId === area.id).sort(compareProjects),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
   groups.push({
     area: null,
-    projects: projects.filter((p) => !p.areaId || !known.has(p.areaId)).sort(compareProjects),
+    label: NO_ORIGIN_LABEL,
+    projects: projects.filter((p) => !p.areaId || !index.has(p.areaId)).sort(compareProjects),
   });
   return groups.filter((g) => g.projects.length > 0);
 }
 
-/** Nomes de projetos e áreas por id — para rotular tarefas nas listas. */
+/** Nomes dos projetos e a árvore de origens — para rotular tarefas nas listas. */
 export type ContextLookup = {
   projects: Map<string, string>;
-  areas: Map<string, string>;
+  origins: OriginIndex;
 };
 
-/** "CRUMB CLUB" quando há projeto; senão o nome da área; senão nada. */
+/** "CRUMB CLUB" quando há projeto; senão o caminho da origem ("Valentine → Conteúdo"); senão nada. */
 export function contextLabel(task: Pick<Task, "projectId" | "areaId">, lookup: ContextLookup): string | null {
   if (task.projectId) {
     const project = lookup.projects.get(task.projectId);
     if (project) return project;
   }
-  return (task.areaId && lookup.areas.get(task.areaId)) || null;
+  return task.areaId ? originLabel(task.areaId, lookup.origins) : null;
 }
 
 /** Iniciais para o selo do projeto: "CRUMB CLUB" → "CC", "PORTFÓLIO" → "PO". */

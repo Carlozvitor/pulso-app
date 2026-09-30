@@ -1,4 +1,5 @@
 import * as auth from "@/lib/auth/actions";
+import * as origins from "@/lib/origins/actions";
 import * as projects from "@/lib/projects/actions";
 import * as sessions from "@/lib/sessions/actions";
 import * as tasks from "@/lib/tasks/actions";
@@ -18,9 +19,15 @@ export const updateTask = resilient(tasks.updateTask);
 export const pauseTask = resilient(tasks.pauseTask);
 export const snoozeTask = resilient(tasks.snoozeTask);
 
-export const createArea = resilient(projects.createArea);
-export const renameArea = resilient(projects.renameArea);
-export const deleteArea = resilient(projects.deleteArea);
+export const createOrigin = resilient(origins.createOrigin);
+export const renameOrigin = resilient(origins.renameOrigin);
+export const moveOrigin = resilient(origins.moveOrigin);
+export const deleteOrigin = resilient(origins.deleteOrigin);
+export const saveOriginNotes = resilient(origins.saveOriginNotes);
+export const addOriginLink = resilient(origins.addOriginLink);
+export const removeOriginLink = resilient(origins.removeOriginLink);
+export const createOriginTask = resilient(origins.createOriginTask);
+
 export const createProject = resilient(projects.createProject);
 export const updateProject = resilient(projects.updateProject);
 export const finishProject = resilient(projects.finishProject);

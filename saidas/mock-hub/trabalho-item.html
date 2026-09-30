@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H2 (item do Trabalho)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .subrow { display: flex; flex-wrap: wrap; gap: 8px; }
+  .subchip { height: 36px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; border-radius: 999px; background: var(--blue-tile); border: 1px solid var(--blue-line); color: #dbeafe; font-weight: 500; }
+  .subchip small { font: 600 11px "Geist Mono"; color: var(--blue-ink); }
+  .subchip.ghost { background: transparent; border-style: dashed; border-color: var(--line-2); color: var(--text-3); }
+  .subchip svg.lucide { width: 14px; height: 14px; }
+
+  .cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start; margin-top: 26px; }
+  .col-head { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 12px; }
+  .col-head h2 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+  .col-head span { font-size: 12px; color: var(--text-3); }
+
+  .context { padding: 0; }
+  .note { padding: 18px 20px; font-size: 14.5px; line-height: 1.6; color: #dbe7f5; border-bottom: 1px solid rgb(255 255 255 / .08); }
+  .note p + p { margin-top: 10px; }
+  .note .saved { display: flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; color: rgb(255 255 255 / .45); }
+  .note .saved svg.lucide { width: 13px; height: 13px; }
+  .links { list-style: none; padding: 10px 10px 12px; display: grid; gap: 2px; }
+  .links .lbl { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgb(255 255 255 / .5); padding: 6px 10px 6px; }
+  .link { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 8px; }
+  .link:hover { background: rgb(0 0 0 / .2); }
+  .fav { width: 28px; height: 28px; border-radius: 7px; background: rgb(0 0 0 / .28); display: grid; place-items: center; color: var(--blue-ink); flex: none; }
+  .fav svg.lucide { width: 14px; height: 14px; }
+  .link b { display: block; font-weight: 500; font-size: 14px; }
+  .link span { display: block; font-size: 12px; color: rgb(255 255 255 / .45); }
+  .link .ext { margin-left: auto; color: rgb(255 255 255 / .35); width: 15px; height: 15px; }
+  .link.add-link { color: rgb(255 255 255 / .55); font-size: 13.5px; }
+  .link.add-link .fav { background: transparent; border: 1px dashed rgb(255 255 255 / .18); color: rgb(255 255 255 / .5); }
+
+  .actions-card { padding: 16px; }
+  .actions-card .tasks { margin-top: 12px; }
+  .done-toggle { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding: 4px 4px 0; font-size: 12.5px; color: var(--text-3); }
+  .done-toggle svg.lucide { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="calendar-days"></i>Agenda</li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="corner-down-right"></i>Valentine<span class="count">5</span></li>
+          <li>
+            <ul class="kids">
+              <li class="kid on"><i data-lucide="corner-down-right"></i>Conteúdo<span class="count">3</span></li>
+              <li class="kid"><i data-lucide="corner-down-right"></i>Administrativo<span class="count">1</span></li>
+              <li class="kid"><i data-lucide="corner-down-right"></i>Demandas da empresa<span class="count">1</span></li>
+              <li class="kid"><i data-lucide="corner-down-right"></i>Outros</li>
+            </ul>
+          </li>
+          <li class="kid"><i data-lucide="corner-down-right"></i>Clientes / Freelance<span class="count">2</span></li>
+        </ul>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="crumbs"><i data-lucide="briefcase"></i>Trabalho <i data-lucide="chevron-right"></i> Valentine <i data-lucide="chevron-right"></i> <b>Conteúdo</b></div>
+      <div class="main-head">
+        <span class="app-ico blue"><i data-lucide="folder-open"></i></span>
+        <div><h1>Conteúdo</h1><p>Valentine · 3 ações abertas</p></div>
+        <div class="head-right">
+          <span class="chipbtn"><i data-lucide="pencil"></i>Renomear</span>
+          <span class="chipbtn" style="width:38px;padding:0;justify-content:center"><i data-lucide="ellipsis"></i></span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="subrow">
+          <span class="subchip"><i data-lucide="corner-down-right"></i>Instagram <small>2</small></span>
+          <span class="subchip"><i data-lucide="corner-down-right"></i>TikTok <small>–</small></span>
+          <span class="subchip ghost"><i data-lucide="plus"></i>Subitem</span>
+        </div>
+
+        <div class="cols">
+          <section>
+            <div class="col-head"><h2>Contexto</h2><span>salva sozinho</span></div>
+            <article class="card blue context">
+              <div class="note">
+                <p>Posts de ter, qui e sáb. Aprovação com a Ana até 12h do dia anterior.</p>
+                <p>Tom: próximo, sem gíria. Sempre marcar a loja do centro nos stories.</p>
+                <p>Contato da agência de fotos: Júlia · (85) 9 9999-0000</p>
+                <div class="saved"><i data-lucide="check"></i>Atualizado ontem</div>
+              </div>
+              <ul class="links">
+                <li class="lbl">Links</li>
+                <li class="link"><span class="fav"><i data-lucide="calendar-range"></i></span><div><b>Calendário editorial</b><span>docs.google.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link"><span class="fav"><i data-lucide="image"></i></span><div><b>Pasta de artes</b><span>canva.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link"><span class="fav"><i data-lucide="link"></i></span><div><b>Instagram da Valentine</b><span>instagram.com</span></div><i data-lucide="external-link" class="ext"></i></li>
+                <li class="link add-link"><span class="fav"><i data-lucide="plus"></i></span>Adicionar link</li>
+              </ul>
+            </article>
+          </section>
+
+          <section>
+            <div class="col-head"><h2>Ações no PULSO</h2><span>por prioridade</span></div>
+            <article class="card neutral actions-card">
+              <div class="add"><i data-lucide="plus"></i><span class="ph">Nova ação em Conteúdo…</span><span class="dest"><i data-lucide="activity"></i>A fazer</span></div>
+              <ul class="tasks">
+                <li class="task doing"><span class="check"></span><div><b>Mandar post do Reels</b><span class="meta">Instagram · em andamento · 20 min</span></div><span class="right hot">Hoje</span></li>
+                <li class="task"><span class="check"></span><div><b>Criar legenda do carrossel de outubro</b><span class="meta">Conteúdo · 30 min</span></div><span class="right">Amanhã</span></li>
+                <li class="task"><span class="check"></span><div><b>Separar fotos da coleção nova</b><span class="meta">Instagram</span></div><span class="right">–</span></li>
+              </ul>
+              <div class="done-toggle"><i data-lucide="chevron-right"></i>4 feitas nos últimos 7 dias</div>
+            </article>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Contexto = anotação livre + links. Contatos entram na anotação por enquanto.</li>
+      <li>"Ações no PULSO" mostra as tarefas deste item e dos subitens (Instagram, TikTok). A origem aparece em cada linha.</li>
+      <li>"Nova ação" cria a tarefa já com a origem Trabalho → Valentine → Conteúdo.</li>
+      <li>Em "…": mover para outra frente e apagar (só apaga se estiver vazio de subitens).</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

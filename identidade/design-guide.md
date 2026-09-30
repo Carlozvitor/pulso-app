@@ -23,9 +23,10 @@
 | **teal** | Agora (próxima ação, depois) | `#0C3A42` / `#081B20` | `#1D5C66` | `#0F4E59` | `#5EEAD4` |
 | **plum** | Projetos | `#37195A` / `#180D28` | `#5A2F8C` | `#4A2478` | `#C9A7FF` |
 | **amber** | Prazos / Agenda | `#4D260C` / `#1F1007` | `#8A4818` | `#6D3510` | `#FDBA74` |
+| **blue** | Trabalho (módulo) | `#0D2742` / `#08131F` | `#1F4B78` | `#143A63` | `#93C5FD` |
 | **neutral** | "Mais tarde", estados vazios | `#141417` / `#0D0D0F` | `#232327` | `#222227` | `#A1A1AA` |
 
-Classes em `globals.css`: `.tint .tint-teal|plum|amber|neutral`, `.tint-tile`, utilitário `panel`.
+Classes em `globals.css`: `.tint .tint-teal|plum|amber|blue|neutral`, `.tint-tile`, utilitário `panel`.
 
 **Nunca:** vermelho de "atraso" (prazo vencido é "Era pra …", neutro), neon, glassmorphism.
 

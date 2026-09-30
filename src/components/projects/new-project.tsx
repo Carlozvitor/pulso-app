@@ -9,7 +9,7 @@ import type { Area } from "@/types/project";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { AttributeRow } from "@/components/tasks/attribute-row";
-import { ChipGroup } from "@/components/tasks/chip-group";
+import { OriginField } from "@/components/origins/origin-field";
 import { DueField } from "@/components/tasks/due-field";
 import { createProject } from "@/lib/actions/client";
 
@@ -23,7 +23,6 @@ export function NewProject({ areas, today, inline }: { areas: Area[]; today: str
   const [pending, startTransition] = useTransition();
   const router = useRouter();
   const titleId = useId();
-  const areaOptions = areas.map((a) => ({ value: a.id, label: a.name }));
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -64,7 +63,7 @@ export function NewProject({ areas, today, inline }: { areas: Area[]; today: str
                   Novo projeto
                 </DrawerTitle>
                 <DrawerDescription className="sr-only">
-                  Dê um nome. Área e prazo são opcionais.
+                  Dê um nome. Origem e prazo são opcionais.
                 </DrawerDescription>
                 <input
                   aria-labelledby={titleId}
@@ -80,8 +79,8 @@ export function NewProject({ areas, today, inline }: { areas: Area[]; today: str
               </div>
 
               {areas.length > 0 && (
-                <AttributeRow id="new-project-area" label="Área">
-                  <ChipGroup labelId="new-project-area" options={areaOptions} value={areaId} onChange={setAreaId} />
+                <AttributeRow id="new-project-area" label="Origem">
+                  <OriginField labelId="new-project-area" areas={areas} value={areaId} onChange={setAreaId} pickerTitle="De onde vem esse projeto?" />
                 </AttributeRow>
               )}
               <DueField today={today} value={dueDate} onChange={setDueDate} />

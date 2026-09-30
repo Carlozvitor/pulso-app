@@ -1,8 +1,10 @@
+import { cache } from "react";
 import { z } from "zod";
 import { requireUser } from "@/lib/supabase/server";
 import { buildAgoraView } from "@/lib/priorities/agora";
 import { todayIn } from "@/lib/dates";
 import { contextLabel } from "@/lib/projects/organize";
+import { descendantIds } from "@/lib/origins/tree";
 import { getContextLookup } from "@/lib/projects/queries";
 import type { AgoraView, Task, TaskWithContext } from "@/types/task";
 import { agendaDays, type DayGroup } from "./agenda";
@@ -32,19 +34,26 @@ export async function getTask(id: string): Promise<Task | null> {
   return data ? taskRowSchema.parse(data) : null;
 }
 
-/** Tudo que está aberto — volume pessoal, o ranking é feito em memória. */
-export async function listOpenTasks(): Promise<Task[]> {
+/**
+ * Tudo que está aberto — volume pessoal, o ranking é feito em memória.
+ * Em cache por requisição: barra lateral, Central e módulos leem a mesma lista.
+ */
+export const listOpenTasks = cache(async function listOpenTasks(): Promise<Task[]> {
   const { supabase } = await requireUser();
   const { data, error } = await supabase.from("tasks").select(TASK_COLUMNS).in("status", OPEN_STATUSES);
   if (error) throw error;
   return taskRows.parse(data);
-}
+});
 
-/** `areaId`: filtro por área (a área da tarefa já vem do projeto, pelo banco). */
+/**
+ * `areaId`: filtro por origem — o item e tudo abaixo dele (Trabalho inclui Valentine → Conteúdo).
+ * A origem da tarefa já vem do projeto, pelo banco.
+ */
 export async function getAgoraView(areaId?: string | null): Promise<AgoraView> {
   const [tasks, lookup] = await Promise.all([listOpenTasks(), getContextLookup()]);
+  const inside = areaId ? descendantIds(areaId, [...lookup.origins.values()]) : null;
   return buildAgoraView(
-    tasks.filter((t) => !areaId || t.areaId === areaId),
+    tasks.filter((t) => !inside || (t.areaId !== null && inside.has(t.areaId))),
     todayIn(),
     (t: Task) => contextLabel(t, lookup),
   );

@@ -19,7 +19,7 @@ export default async function ProjetosPage() {
       wide
       icon={FolderOpen}
       title="Projetos"
-      description="Objetivos com começo e fim, agrupados por área."
+      description="Objetivos com começo e fim, agrupados por origem."
       actions={<NewProject areas={areas} today={today} inline />}
     >
       {groups.length === 0 ? (
@@ -31,10 +31,10 @@ export default async function ProjetosPage() {
       ) : (
         <div className="flex flex-col gap-8 lg:gap-9">
           {groups.map((group) => {
-            const id = `area-${group.area?.id ?? "sem-area"}`;
+            const id = `origem-${group.area?.id ?? "sem-origem"}`;
             return (
               <section key={id} aria-labelledby={id}>
-                <SectionHeading id={id} title={group.area?.name ?? "Sem área"} />
+                <SectionHeading id={id} title={group.label} />
                 <div className="grid grid-cols-2 gap-3 lg:gap-5 xl:grid-cols-4">
                   {group.projects.map((project) => (
                     <ProjectCard key={project.id} project={project} today={today} compact />

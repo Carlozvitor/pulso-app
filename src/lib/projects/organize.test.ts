@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Area, Project } from "@/types/project";
+import { indexOrigins } from "@/lib/origins/tree";
 import { contextLabel, groupProjects, projectMonogram, projectProgress, type ContextLookup } from "./organize";
 
 let seq = 0;
@@ -31,23 +32,26 @@ describe("projectProgress", () => {
 
 describe("groupProjects", () => {
   const areas: Area[] = [
-    { id: "a-trab", name: "Trabalho" },
-    { id: "a-fac", name: "Faculdade" },
-    { id: "a-fin", name: "Finanças" },
+    { id: "a-trab", name: "Trabalho", parentId: null, module: "TRABALHO", position: 0 },
+    { id: "a-val", name: "Valentine", parentId: "a-trab", module: "TRABALHO", position: 0 },
+    { id: "a-fac", name: "Faculdade", parentId: null, module: "FACULDADE", position: 0 },
+    { id: "a-fin", name: "Dinheiro", parentId: null, module: "DINHEIRO", position: 0 },
   ];
 
-  it("agrupa por área em ordem alfabética, sem área no fim, e esconde áreas vazias", () => {
+  it("agrupa por origem em ordem alfabética, sem origem no fim, e esconde origens vazias", () => {
     const groups = groupProjects(
       [
         project({ name: "Solto" }),
         project({ name: "TCC", areaId: "a-fac" }),
         project({ name: "CRUMB", areaId: "a-trab" }),
         project({ name: "Área apagada", areaId: "a-sumiu" }),
+        project({ name: "Post", areaId: "a-val" }),
       ],
       areas,
     );
-    expect(groups.map((g) => g.area?.name ?? null)).toEqual(["Faculdade", "Trabalho", null]);
-    expect(groups[2].projects.map((p) => p.name)).toEqual(["Área apagada", "Solto"]);
+    expect(groups.map((g) => g.label)).toEqual(["Faculdade", "Trabalho", "Valentine", "Sem origem"]);
+    expect(groups[3].area).toBeNull();
+    expect(groups[3].projects.map((p) => p.name)).toEqual(["Área apagada", "Solto"]);
   });
 
   it("dentro da área: prazo mais cedo primeiro, sem prazo depois, empate pelo nome", () => {
@@ -67,16 +71,20 @@ describe("groupProjects", () => {
 describe("contextLabel", () => {
   const lookup: ContextLookup = {
     projects: new Map([["p1", "CRUMB CLUB"]]),
-    areas: new Map([["a1", "Trabalho"]]),
+    origins: indexOrigins([
+      { id: "a1", name: "Trabalho", parentId: null, module: "TRABALHO", position: 0 },
+      { id: "a2", name: "Valentine", parentId: "a1", module: "TRABALHO", position: 0 },
+    ]),
   };
 
-  it("projeto vence a área; sem projeto usa a área; sem nada é null", () => {
+  it("projeto vence a origem; sem projeto usa o caminho da origem; sem nada é null", () => {
     expect(contextLabel({ projectId: "p1", areaId: "a1" }, lookup)).toBe("CRUMB CLUB");
     expect(contextLabel({ projectId: null, areaId: "a1" }, lookup)).toBe("Trabalho");
+    expect(contextLabel({ projectId: null, areaId: "a2" }, lookup)).toBe("Valentine");
     expect(contextLabel({ projectId: null, areaId: null }, lookup)).toBeNull();
   });
 
-  it("id desconhecido cai para a área", () => {
+  it("id desconhecido cai para a origem", () => {
     expect(contextLabel({ projectId: "sumiu", areaId: "a1" }, lookup)).toBe("Trabalho");
   });
 });

@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { PROJECT_STATUSES, type Area, type Project } from "@/types/project";
+import { MODULE_KEYS, PROJECT_STATUSES, type Area, type AreaLink, type Project } from "@/types/project";
 
 export const idSchema = z.uuid();
 
-export const areaNameSchema = z.string().trim().min(1, "Dê um nome para a área.").max(80);
+export const areaNameSchema = z.string().trim().min(1, "Dê um nome.").max(80);
 const projectName = z.string().trim().min(1, "Dê um nome para o projeto.").max(120);
 
 export const createProjectSchema = z.object({
@@ -66,4 +66,38 @@ export const projectRowSchema = z
 
 export const PROJECT_COLUMNS = "id, name, description, status, area_id, due_date, created_at, completed_at";
 
-export const areaRowSchema = z.object({ id: z.string(), name: z.string() }).transform((r): Area => r);
+export const AREA_COLUMNS = "id, name, parent_id, module, position";
+
+export const areaRowSchema = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+    parent_id: z.string().nullable(),
+    module: z.enum(MODULE_KEYS),
+    position: z.number(),
+  })
+  .transform((r): Area => ({ id: r.id, name: r.name, parentId: r.parent_id, module: r.module, position: r.position }));
+
+export const areaLinkRowSchema = z
+  .object({ id: z.string(), title: z.string(), url: z.string() })
+  .transform((r): AreaLink => r);
+
+/** Link de contexto. Sem "https://" na frente, completa sozinho. */
+export const linkInputSchema = z.object({
+  title: z.string().trim().min(1, "Dê um nome para o link.").max(120),
+  url: z
+    .string()
+    .trim()
+    .min(1, "Cole o endereço do link.")
+    .max(2000)
+    .transform((v) => (/^https?:\/\//i.test(v) ? v : `https://${v}`))
+    .pipe(z.url({ protocol: /^https?$/, error: "Esse link não parece válido." })),
+});
+
+export type LinkInput = z.input<typeof linkInputSchema>;
+
+/** Anotação livre do contexto; vazia vira null. */
+export const areaNotesSchema = z
+  .string()
+  .max(20000, "Anotação longa demais.")
+  .transform((v) => (v.trim() === "" ? null : v));

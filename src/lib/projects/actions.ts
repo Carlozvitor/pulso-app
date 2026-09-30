@@ -5,7 +5,6 @@ import { requireUser } from "@/lib/supabase/server";
 import { captureSchema } from "@/lib/tasks/schemas";
 import type { ActionResult } from "@/lib/tasks/actions";
 import {
-  areaNameSchema,
   createProjectSchema,
   idSchema,
   projectPatchSchema,
@@ -17,47 +16,6 @@ import {
 export type CreateResult = { ok: true; id: string } | { ok: false; error: string };
 
 const GENERIC_ERROR = "Não deu para salvar agora. Tente de novo.";
-
-// ── Áreas ───────────────────────────────────────────────────
-
-export async function createArea(name: string): Promise<CreateResult> {
-  const parsed = areaNameSchema.safeParse(name);
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-
-  const { supabase } = await requireUser();
-  const { data, error } = await supabase.from("areas").insert({ name: parsed.data }).select("id").single();
-  if (error) return { ok: false, error: GENERIC_ERROR };
-
-  refresh();
-  return { ok: true, id: data.id };
-}
-
-export async function renameArea(id: string, name: string): Promise<ActionResult> {
-  const parsedId = idSchema.safeParse(id);
-  const parsed = areaNameSchema.safeParse(name);
-  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
-  if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-
-  const { supabase } = await requireUser();
-  const { error } = await supabase.from("areas").update({ name: parsed.data }).eq("id", parsedId.data);
-  if (error) return { ok: false, error: GENERIC_ERROR };
-
-  refresh();
-  return { ok: true };
-}
-
-/** Projetos e tarefas da área ficam sem área (FK on delete set null) — nada é apagado junto. */
-export async function deleteArea(id: string): Promise<ActionResult> {
-  const parsedId = idSchema.safeParse(id);
-  if (!parsedId.success) return { ok: false, error: GENERIC_ERROR };
-
-  const { supabase } = await requireUser();
-  const { error } = await supabase.from("areas").delete().eq("id", parsedId.data);
-  if (error) return { ok: false, error: GENERIC_ERROR };
-
-  refresh();
-  return { ok: true };
-}
 
 // ── Projetos ────────────────────────────────────────────────
 

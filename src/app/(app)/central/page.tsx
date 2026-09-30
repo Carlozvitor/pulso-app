@@ -5,6 +5,7 @@ import { TaskCard } from "@/components/agora/task-card";
 import { CardTile, SectionHeading } from "@/components/cards/card-parts";
 import { AttentionCard } from "@/components/central/attention-card";
 import { CentralCapture } from "@/components/central/central-capture";
+import { ModuleCard } from "@/components/central/module-card";
 import { Page, Pill } from "@/components/layout/page";
 import { ProjectCard } from "@/components/projects/project-card";
 import { getCentralPage } from "@/lib/central/queries";
@@ -24,7 +25,7 @@ function deadlines(count: number, more: number): string {
 
 /** Central: a porta de entrada do Hub — o que fazer agora, o que vence hoje e o que vem aí. */
 export default async function CentralPage() {
-  const [{ view, projects }, session] = await Promise.all([getCentralPage(), getActiveSession()]);
+  const [{ view, modules, projects }, session] = await Promise.all([getCentralPage(), getActiveSession()]);
   const { todayList, upcoming } = view;
 
   return (
@@ -99,7 +100,7 @@ export default async function CentralPage() {
         />
       </div>
 
-      {projects.length > 0 && (
+      {(modules.length > 0 || projects.length > 0) && (
         <section aria-labelledby="central-vida" className="mt-8 lg:mt-9">
           <SectionHeading
             id="central-vida"
@@ -111,6 +112,9 @@ export default async function CentralPage() {
             }
           />
           <div className="grid grid-cols-2 gap-3 lg:gap-5 xl:grid-cols-4">
+            {modules.map((module) => (
+              <ModuleCard key={module.key} module={module} />
+            ))}
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} today={view.today} compact />
             ))}

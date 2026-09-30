@@ -10,17 +10,28 @@ import { datePill, timeLabel } from "@/lib/dates";
 import { listAreas } from "@/lib/projects/queries";
 import { getActiveSession } from "@/lib/sessions/queries";
 import { pendingLabel } from "@/lib/tasks/format";
-import { getAgoraView } from "@/lib/tasks/queries";
+import { getAgoraView, listOpenTasks } from "@/lib/tasks/queries";
+import { openCounts } from "@/lib/origins/summary";
+import { MODULES, buildOriginTree } from "@/lib/origins/tree";
+import type { Area } from "@/types/project";
 
 export const metadata = { title: "Agora" };
 
 export default async function AgoraPage({ searchParams }: PageProps<"/agora">) {
   const { area } = await searchParams;
-  const [areas, session] = await Promise.all([listAreas(), getActiveSession()]);
-  // Só vale filtro de área que existe — id inválido na URL cai em "Tudo".
+  const [areas, open, session] = await Promise.all([listAreas(), listOpenTasks(), getActiveSession()]);
+  // Só vale filtro de origem que existe — id inválido na URL cai em "Tudo".
   const selected = typeof area === "string" && areas.some((a) => a.id === area) ? area : null;
   const view = await getAgoraView(selected);
-  const areaName = areas.find((a) => a.id === selected)?.name;
+  const counts = openCounts(areas, open);
+  const nameOf = (a: Area) => (a.parentId === null ? MODULES[a.module].label : a.name);
+  // Módulos com algo aberto (ou o escolhido) + o item escolhido, se for mais fundo.
+  const filters = [
+    ...buildOriginTree(areas).filter((root) => (counts.get(root.id) ?? 0) > 0 || root.id === selected),
+    ...areas.filter((a) => a.id === selected && a.parentId !== null),
+  ].map((a) => ({ id: a.id, name: nameOf(a) }));
+  const selectedArea = areas.find((a) => a.id === selected);
+  const areaName = selectedArea ? nameOf(selectedArea) : undefined;
   const inboxOnly = !view.now && view.pendingCount > 0;
 
   return (
@@ -44,7 +55,7 @@ export default async function AgoraPage({ searchParams }: PageProps<"/agora">) {
     >
       <div className="flex flex-col gap-5 lg:gap-6">
         <SearchBox />
-        <AreaFilter areas={areas} selected={selected} />
+        <AreaFilter options={filters} selected={selected} />
       </div>
 
       <section aria-labelledby="agora-e-depois" className="mt-8 lg:mt-9">

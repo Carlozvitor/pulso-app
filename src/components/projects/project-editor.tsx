@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import type { Area, Project } from "@/types/project";
 import { AttributeRow } from "@/components/tasks/attribute-row";
-import { ChipGroup } from "@/components/tasks/chip-group";
+import { OriginField } from "@/components/origins/origin-field";
 import { DueField } from "@/components/tasks/due-field";
 import { updateProject } from "@/lib/actions/client";
 import type { ProjectPatch } from "@/lib/projects/schemas";
@@ -58,7 +58,7 @@ export function ProjectEditor({ project, areas, today }: { project: Project; are
     if (await save({ description })) savedDescription.current = description;
   }
 
-  // Chips: atualizam na hora; se o servidor recusar, voltam.
+  // Atualiza na hora; se o servidor recusar, volta.
   function changeArea(next: string | null) {
     const previous = areaId;
     setAreaId(next);
@@ -122,17 +122,13 @@ export function ProjectEditor({ project, areas, today }: { project: Project; are
 
       <section aria-label="Detalhes do projeto" className="mt-6 flex flex-col gap-7 border-t border-border pt-6">
         {areas.length > 0 && (
-          <AttributeRow
-            id="project-area-label"
-            label="Área"
-            hint="As tarefas do projeto ficam nesta área"
-            onClear={areaId ? () => changeArea(null) : undefined}
-          >
-            <ChipGroup
+          <AttributeRow id="project-area-label" label="Origem" hint="As tarefas do projeto herdam esta origem">
+            <OriginField
               labelId="project-area-label"
-              options={areas.map((a) => ({ value: a.id, label: a.name }))}
+              areas={areas}
               value={areaId}
               onChange={changeArea}
+              pickerTitle="De onde vem esse projeto?"
             />
           </AttributeRow>
         )}

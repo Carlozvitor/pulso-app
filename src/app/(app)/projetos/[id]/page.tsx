@@ -7,6 +7,7 @@ import { ProjectStatusActions } from "@/components/projects/project-status-actio
 import { ProjectTasks } from "@/components/projects/project-tasks";
 import { getProject } from "@/lib/projects/queries";
 import { todayIn } from "@/lib/dates";
+import { indexOrigins, originFullLabel } from "@/lib/origins/tree";
 
 export const metadata = { title: "Projeto" };
 
@@ -19,7 +20,7 @@ export default async function ProjetoPage({ params }: PageProps<"/projetos/[id]"
   const today = todayIn();
 
   return (
-    <Page back icon={FolderOpen} title="Projeto" description={areas.find((a) => a.id === project.areaId)?.name ?? "Sem área"}>
+    <Page back icon={FolderOpen} title="Projeto" description={(project.areaId && originFullLabel(project.areaId, indexOrigins(areas))) || "Sem origem"}>
       {/* Sem key por dados do projeto: o salvamento automático não pode remontar o editor no meio da edição. */}
       <ProjectEditor project={project} areas={areas} today={today} />
 

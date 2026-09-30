@@ -5,6 +5,7 @@ import { TaskEditor } from "@/components/tasks/task-editor";
 import { getAssignOptions } from "@/lib/projects/queries";
 import { getTask } from "@/lib/tasks/queries";
 import { todayIn } from "@/lib/dates";
+import { indexOrigins, originFullLabel } from "@/lib/origins/tree";
 
 export const metadata = { title: "Tarefa" };
 
@@ -14,10 +15,10 @@ export default async function TarefaPage({ params }: PageProps<"/tarefas/[id]">)
   if (!task) notFound();
 
   const project = options.projects.find((p) => p.id === task.projectId);
-  const area = options.areas.find((a) => a.id === task.areaId);
+  const origin = task.areaId ? originFullLabel(task.areaId, indexOrigins(options.areas)) : null;
 
   return (
-    <Page back icon={SquareCheck} title="Tarefa" description={project?.name ?? area?.name ?? "Sem projeto"}>
+    <Page back icon={SquareCheck} title="Tarefa" description={project?.name ?? origin ?? "Sem projeto nem origem"}>
       {/* Sem key por updatedAt: o salvamento automático não pode remontar o formulário no meio da edição. */}
       <TaskEditor task={task} today={todayIn()} options={options} />
     </Page>

@@ -7,7 +7,8 @@ import { TASK_COLUMNS, taskRowSchema } from "@/lib/tasks/schemas";
 import type { Area, Project, ProjectGroup, ProjectProgress, ProjectSummary } from "@/types/project";
 import { TASK_STATUSES, type Task, type TaskStatus } from "@/types/task";
 import { groupProjects, projectProgress, type ContextLookup } from "./organize";
-import { PROJECT_COLUMNS, areaRowSchema, idSchema, projectRowSchema } from "./schemas";
+import { AREA_COLUMNS, PROJECT_COLUMNS, areaRowSchema, idSchema, projectRowSchema } from "./schemas";
+import { indexOrigins } from "@/lib/origins/tree";
 
 const areaRows = z.array(areaRowSchema);
 const projectRows = z.array(projectRowSchema);
@@ -17,7 +18,7 @@ const statusRows = z.array(z.object({ project_id: z.string(), status: z.enum(TAS
 
 export const listAreas = cache(async function listAreas(): Promise<Area[]> {
   const { supabase } = await requireUser();
-  const { data, error } = await supabase.from("areas").select("id, name").order("name");
+  const { data, error } = await supabase.from("areas").select(AREA_COLUMNS).order("name");
   if (error) throw error;
   return areaRows.parse(data);
 });
@@ -30,7 +31,7 @@ export const listProjects = cache(async function listProjects(): Promise<{
   const { supabase } = await requireUser();
   const [projects, areas, statuses] = await Promise.all([
     supabase.from("projects").select(PROJECT_COLUMNS),
-    supabase.from("areas").select("id, name"),
+    supabase.from("areas").select(AREA_COLUMNS),
     supabase.from("tasks").select("project_id, status").not("project_id", "is", null),
   ]);
   if (projects.error) throw projects.error;
@@ -69,7 +70,7 @@ export async function getProject(id: string): Promise<ProjectDetail | null> {
   const { supabase } = await requireUser();
   const [project, areas, tasks] = await Promise.all([
     supabase.from("projects").select(PROJECT_COLUMNS).eq("id", id).maybeSingle(),
-    supabase.from("areas").select("id, name").order("name"),
+    supabase.from("areas").select(AREA_COLUMNS).order("name"),
     supabase.from("tasks").select(TASK_COLUMNS).eq("project_id", id),
   ]);
   if (project.error) throw project.error;
@@ -91,7 +92,7 @@ export async function getProject(id: string): Promise<ProjectDetail | null> {
 export async function getAssignOptions(): Promise<{ areas: Area[]; projects: Project[] }> {
   const { supabase } = await requireUser();
   const [areas, projects] = await Promise.all([
-    supabase.from("areas").select("id, name").order("name"),
+    supabase.from("areas").select(AREA_COLUMNS).order("name"),
     supabase.from("projects").select(PROJECT_COLUMNS).order("name"),
   ]);
   if (areas.error) throw areas.error;
@@ -99,17 +100,17 @@ export async function getAssignOptions(): Promise<{ areas: Area[]; projects: Pro
   return { areas: areaRows.parse(areas.data), projects: projectRows.parse(projects.data) };
 }
 
-/** Nomes de todos os projetos e áreas — para rotular tarefas nas listas. */
+/** Nomes de todos os projetos e a árvore de origens — para rotular tarefas nas listas. */
 export const getContextLookup = cache(async function getContextLookup(): Promise<ContextLookup> {
   const { supabase } = await requireUser();
   const [areas, projects] = await Promise.all([
-    supabase.from("areas").select("id, name"),
+    supabase.from("areas").select(AREA_COLUMNS),
     supabase.from("projects").select("id, name"),
   ]);
   if (areas.error) throw areas.error;
   if (projects.error) throw projects.error;
   return {
-    areas: new Map(areaRows.parse(areas.data).map((a) => [a.id, a.name])),
+    origins: indexOrigins(areaRows.parse(areas.data)),
     projects: new Map(namedRows.parse(projects.data).map((p) => [p.id, p.name])),
   };
 });

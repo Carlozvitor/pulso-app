@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H5 (lançar)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  body { display: block; overflow: auto; background: repeating-linear-gradient(90deg, #0b0b0d 0 180px, #0f0f12 180px 190px); }
+  .stage { min-height: 100vh; background: rgb(0 0 0 / .6); display: flex; justify-content: center; align-items: flex-end; gap: 28px; padding: 30px 20px 0; flex-wrap: wrap; }
+  .cap { color: var(--text-2); font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .sheet { width: 460px; background: var(--elev); border: 1px solid var(--line); border-bottom: 0; border-radius: 20px 20px 0 0; padding: 12px 18px 22px; }
+  .grab { width: 40px; height: 4px; border-radius: 99px; background: var(--line); margin: 0 auto 14px; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  h2 { font-size: 20px; font-weight: 600; }
+  .sheet-head .x { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; color: var(--text-3); }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 10px; background: #0f0f12; border: 1px solid var(--line); margin-bottom: 14px; }
+  .seg span { height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: 7px; font-size: 14px; font-weight: 500; color: var(--text-2); }
+  .seg span svg.lucide { width: 15px; height: 15px; }
+  .seg span.on { background: #1f1f24; color: var(--text); box-shadow: inset 0 0 0 1px var(--line-2); }
+  .amount { height: 64px; border-radius: 10px; border: 1px solid var(--accent-soft); background: #0f0f12; display: flex; align-items: baseline; gap: 8px; padding: 0 16px; }
+  .amount small { font-size: 18px; color: var(--text-3); line-height: 64px; }
+  .amount b { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 64px; }
+  .input { min-height: 46px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--line); background: #0f0f12; display: flex; align-items: center; padding: 0 14px; font-size: 16px; }
+  .row { margin-top: 16px; }
+  .row h3 { font-size: 13.5px; font-weight: 500; color: var(--text-2); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .row h3 small { font-weight: 400; color: var(--text-3); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { height: 36px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--line-2); background: #1a1a1e; display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--text-2); }
+  .chip svg.lucide { width: 15px; height: 15px; }
+  .chip.on { background: var(--green-tile); border-color: var(--green-line); color: #dcfce7; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { height: 44px; border-radius: 8px; border: 1px solid var(--line); background: #0f0f12; display: flex; align-items: center; gap: 8px; padding: 0 12px; font-size: 15px; }
+  .field svg.lucide { width: 16px; height: 16px; color: var(--text-3); }
+  .field .suf { margin-left: auto; font-size: 12.5px; color: var(--text-3); }
+  .stepper { display: flex; align-items: center; gap: 0; height: 44px; border-radius: 8px; border: 1px solid var(--line); background: #0f0f12; overflow: hidden; }
+  .stepper span { width: 44px; height: 100%; display: grid; place-items: center; color: var(--text-2); }
+  .stepper b { flex: 1; text-align: center; font-size: 15px; font-weight: 600; border-inline: 1px solid var(--line); line-height: 42px; }
+  .hint { font-size: 12.5px; color: var(--text-3); margin-top: 8px; line-height: 1.45; }
+  .hint b { color: var(--green-ink); font-weight: 500; }
+  .save { margin-top: 20px; height: 50px; border-radius: 10px; background: var(--accent); display: grid; place-items: center; font-weight: 600; font-size: 15px; }
+
+  .status { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border: 1px solid var(--amber-line); }
+  .status svg.lucide { color: var(--amber-ink); }
+  .status b { display: block; font-size: 14.5px; font-weight: 600; }
+  .status small { font-size: 12.5px; color: rgb(255 255 255 / .6); }
+  .status .v { margin-left: auto; font-size: 18px; font-weight: 600; }
+  .hist { border-radius: 10px; border: 1px solid var(--line); background: #0f0f12; padding: 4px 12px; }
+  .h { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .h:last-child { border-bottom: 0; }
+  .h span { color: var(--text-2); }
+  .h em { font-style: normal; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #6ee7b7; margin-left: 10px; }
+  .h em svg.lucide { width: 12px; height: 12px; }
+  .foot { display: flex; gap: 10px; margin-top: 20px; }
+  .foot .b { height: 48px; flex: 1; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14.5px; border: 1px solid var(--line-2); background: #1a1a1e; }
+  .foot .b svg.lucide { width: 16px; height: 16px; }
+  .foot .b.done { background: #0f2a20; border-color: #1f5b44; color: #bbf7d0; }
+  .foot .b.act { color: #c7cbff; border-color: #2f3461; background: #0f1020; }
+  .foot .b.icon { flex: none; width: 48px; color: var(--text-3); }
+  .saved { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); }
+  .saved svg.lucide { width: 13px; height: 13px; }
+
+  .pop { width: 340px; margin: 0 auto 18px; background: #1b1b20; border: 1px solid var(--line-2); border-radius: 12px; padding: 14px; box-shadow: 0 12px 40px rgb(0 0 0 / .6); }
+  .pop b { display: block; font-size: 14.5px; font-weight: 600; }
+  .pop p { font-size: 13px; color: var(--text-2); margin: 2px 0 10px; }
+  .pop .field { height: 40px; }
+  .pop .btns { display: flex; gap: 8px; margin-top: 10px; }
+  .pop .btns span { flex: 1; height: 38px; border-radius: 8px; display: grid; place-items: center; font-size: 13.5px; font-weight: 600; border: 1px solid var(--line-2); }
+  .pop .btns span.ok { background: #0f2a20; border-color: #1f5b44; color: #bbf7d0; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div>
+      <p class="cap">Novo gasto (botão "Novo gasto" ou o + do Dinheiro no celular)</p>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sheet-head"><h2>Novo gasto</h2><span class="x"><i data-lucide="x"></i></span></div>
+
+        <div class="seg"><span class="on"><i data-lucide="arrow-up-right"></i>Gasto</span><span><i data-lucide="arrow-down-left"></i>Entrada</span></div>
+        <div class="amount"><small>R$</small><b class="money">459,90</b></div>
+        <div class="input">Tênis de corrida</div>
+
+        <div class="row">
+          <h3>Categoria</h3>
+          <div class="chips">
+            <span class="chip">Alimentação</span><span class="chip">Transporte</span><span class="chip">Casa</span><span class="chip">Contas</span><span class="chip">Saúde</span><span class="chip">Lazer</span><span class="chip on">Compras</span><span class="chip">Educação</span><span class="chip">Outros</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <h3>Como pagou</h3>
+          <div class="chips">
+            <span class="chip"><i data-lucide="zap"></i>Pix</span><span class="chip"><i data-lucide="banknote"></i>Dinheiro</span><span class="chip"><i data-lucide="landmark"></i>Débito</span><span class="chip on"><i data-lucide="credit-card"></i>Nubank</span><span class="chip"><i data-lucide="credit-card"></i>Inter</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="two">
+            <div><h3>Data</h3><div class="field"><i data-lucide="calendar"></i>Hoje, 30 set</div></div>
+            <div><h3>Parcelas</h3><div class="stepper"><span><i data-lucide="minus"></i></span><b>3×</b><span><i data-lucide="plus"></i></span></div></div>
+          </div>
+          <p class="hint"><b>3 × R$ 153,30</b>. A primeira vem na fatura de novembro (vence 5 nov), porque a de outubro já fechou dia 28.</p>
+        </div>
+
+        <div class="save">Salvar gasto</div>
+      </div>
+    </div>
+
+    <div>
+      <p class="cap">Conta fixa aberta (tocar em "Academia")</p>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="sheet-head"><h2>Academia</h2><span class="saved"><i data-lucide="check"></i>salvo</span></div>
+
+        <div class="status"><i data-lucide="alarm-clock"></i><div><b>Vence hoje</b><small>setembro · ainda não paga</small></div><span class="v money">R$ 89,90</span></div>
+
+        <div class="row">
+          <div class="two">
+            <div><h3>Valor</h3><div class="field money">R$ 89,90<span class="suf">fixo</span></div></div>
+            <div><h3>Vence</h3><div class="field"><i data-lucide="calendar"></i>todo dia 30</div></div>
+          </div>
+        </div>
+        <div class="row">
+          <h3>Categoria · como paga</h3>
+          <div class="chips"><span class="chip on">Saúde</span><span class="chip on"><i data-lucide="zap"></i>Pix / boleto</span></div>
+          <p class="hint">Se escolher um cartão, ela entra sozinha na fatura todo mês, sem precisar marcar como paga.</p>
+        </div>
+
+        <div class="row">
+          <h3>Últimos meses</h3>
+          <div class="hist">
+            <div class="h"><span>Agosto</span><b class="money">R$ 89,90<em><i data-lucide="check"></i>paga 29 ago</em></b></div>
+            <div class="h"><span>Julho</span><b class="money">R$ 89,90<em><i data-lucide="check"></i>paga 30 jul</em></b></div>
+          </div>
+        </div>
+
+        <div class="foot">
+          <span class="b done"><i data-lucide="check"></i>Marcar como paga</span>
+          <span class="b act"><i data-lucide="circle-dot"></i>Virar ação</span>
+          <span class="b icon"><i data-lucide="trash-2"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="cap">Ao marcar paga (conta de valor que varia)</p>
+      <div class="pop">
+        <b>Luz (Enel) paga?</b>
+        <p>Vira um gasto de setembro em Contas.</p>
+        <div class="two">
+          <div class="field money">R$ 187,35</div>
+          <div class="field"><i data-lucide="calendar"></i>12 set</div>
+        </div>
+        <div class="btns"><span>Cancelar</span><span class="ok">Confirmar</span></div>
+      </div>
+      <div class="pop">
+        <b>Concluiu "Pagar fatura do Nubank".</b>
+        <p>Marcar a fatura de outubro (R$ 734,60) como paga?</p>
+        <div class="btns"><span>Agora não</span><span class="ok">Marcar paga</span></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Gasto e entrada usam a mesma gaveta, com a chave no topo. Na entrada, a categoria vira tipo: Salário, Freela, Outro.</li>
+      <li>Parcelas só aparecem quando você escolhe um cartão. O Hub calcula em qual fatura cai cada uma.</li>
+      <li>Marcar conta como paga cria o gasto. Se o valor varia, ele pergunta quanto foi.</li>
+      <li>"Virar ação" cria "Pagar academia" no PULSO (origem Dinheiro, prazo no vencimento). Ao concluir a ação, o Hub pergunta se quer marcar como paga.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

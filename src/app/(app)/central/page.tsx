@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Briefcase, CalendarClock, CalendarDays, Eye, GraduationCap, Leaf, Sun, Zap } from "lucide-react";
+import { Briefcase, CalendarClock, CalendarDays, Eye, GraduationCap, Leaf, Sun, Wallet, Zap } from "lucide-react";
 import { NowCard } from "@/components/agora/now-card";
 import { TaskCard } from "@/components/agora/task-card";
 import { CardTile, SectionHeading } from "@/components/cards/card-parts";
 import { AttentionCard } from "@/components/central/attention-card";
 import { CentralCapture } from "@/components/central/central-capture";
 import { ModuleCard } from "@/components/central/module-card";
+import { Money } from "@/components/dinheiro/money";
 import { Page, Pill } from "@/components/layout/page";
 import { ProjectCard } from "@/components/projects/project-card";
 import { getCentralPage } from "@/lib/central/queries";
@@ -124,18 +125,31 @@ export default async function CentralPage() {
           }
         />
         <div className="grid grid-cols-2 gap-3 lg:gap-5 xl:grid-cols-4">
-          {modules.map((module) => (
-            <ModuleCard
-              key={module.key}
-              href={module.href}
-              label={module.label}
-              value={openActions(module.open)}
-              // Na Faculdade, a prova/entrega que vem aí vale mais que a próxima tarefa.
-              foot={module.attention ?? (module.next ? `Próxima: ${module.next.title}` : "Nada pedindo atenção")}
-              icon={module.key === "FACULDADE" ? GraduationCap : Briefcase}
-              tone={module.key === "FACULDADE" ? "rose" : "blue"}
-            />
-          ))}
+          {modules.map((module) =>
+            module.leftCents !== undefined ? (
+              // Dinheiro: a sobra do mês e o que vence.
+              <ModuleCard
+                key={module.key}
+                href={module.href}
+                label="Dinheiro · sobra no mês"
+                value={<Money cents={Math.abs(module.leftCents)} sign={module.leftCents < 0 ? "−" : undefined} />}
+                foot={module.attention ?? "Nada vencendo"}
+                icon={Wallet}
+                tone="green"
+              />
+            ) : (
+              <ModuleCard
+                key={module.key}
+                href={module.href}
+                label={module.label}
+                value={openActions(module.open)}
+                // Na Faculdade, a prova/entrega que vem aí vale mais que a próxima tarefa.
+                foot={module.attention ?? (module.next ? `Próxima: ${module.next.title}` : "Nada pedindo atenção")}
+                icon={module.key === "FACULDADE" ? GraduationCap : module.key === "DINHEIRO" ? Wallet : Briefcase}
+                tone={module.key === "FACULDADE" ? "rose" : module.key === "DINHEIRO" ? "green" : "blue"}
+              />
+            ),
+          )}
           <ModuleCard
             href="/compromissos"
             label="Compromissos"

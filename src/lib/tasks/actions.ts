@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/supabase/server";
 import { addDays, todayIn } from "@/lib/dates";
 import type { TaskStatus } from "@/types/task";
 import type { ActionFailure } from "@/lib/actions/resilient";
+import { payPromptFor } from "@/lib/dinheiro/links";
 import {
   patchToRow,
   queuedCaptureSchema,
@@ -52,7 +53,13 @@ export async function updateTask(id: string, patch: TaskPatch): Promise<ActionRe
 }
 
 /** Organizar (TODO), começar, concluir, arquivar ou reabrir. */
-export async function setTaskStatus(id: string, status: TaskStatus): Promise<ActionResult> {
+/**
+ * Resultado de mudar o status. `payPrompt`: a tarefa concluída paga algo do Dinheiro que
+ * ainda não está pago — o app pergunta se quer marcar como paga.
+ */
+export type StatusResult = { ok: true; payPrompt?: string } | ActionFailure;
+
+export async function setTaskStatus(id: string, status: TaskStatus): Promise<StatusResult> {
   const parsed = setStatusSchema.safeParse({ id, status });
   if (!parsed.success) return { ok: false, error: GENERIC_ERROR };
 
@@ -60,8 +67,10 @@ export async function setTaskStatus(id: string, status: TaskStatus): Promise<Act
   const { error } = await supabase.from("tasks").update({ status: parsed.data.status }).eq("id", parsed.data.id);
   if (error) return { ok: false, error: GENERIC_ERROR };
 
+  const payPrompt = parsed.data.status === "DONE" ? await payPromptFor(supabase, parsed.data.id) : null;
+
   refresh();
-  return { ok: true };
+  return payPrompt ? { ok: true, payPrompt } : { ok: true };
 }
 
 /** Pausar: para de fazer sem concluir. Volta para A fazer, marcada como pausada (Retomar = começar de novo). */

@@ -250,3 +250,36 @@ describe("buildCentral com avaliações", () => {
     };
   }
 });
+
+describe("Central · Dinheiro", () => {
+  const now = { date: TODAY, time: "10:00" };
+  const bill = {
+    id: "academia",
+    name: "Academia",
+    amountCents: 8990,
+    variable: false,
+    dueDay: 29,
+    category: "SAUDE" as const,
+    cardId: null,
+    startsOn: "2026-09-01",
+    endsOn: null,
+  };
+  const card = { id: "nu", name: "Nubank", closingDay: 28, dueDay: 5, limitCents: null, archivedAt: null };
+
+  it("o que vence hoje (ou passou sem marcar) vai para Hoje; nos 7 dias, para Próximas atenções", () => {
+    const view = buildCentral([task({ dueDate: TODAY })], [], TODAY, () => null, {
+      events: [],
+      now,
+      money: [
+        { kind: "bill", key: "bill-academia-2026-09", bill, month: "2026-09", title: "Academia", date: TODAY, amountCents: 8990, approximate: false },
+        { kind: "invoice", key: "invoice-nu-2026-10", card, month: "2026-10", title: "Fatura Nubank", date: "2026-10-05", amountCents: 73460, approximate: false, count: 7 },
+        { kind: "invoice", key: "invoice-nu-2026-11", card, month: "2026-11", title: "Fatura Nubank", date: "2026-11-05", amountCents: 100, approximate: false, count: 1 },
+      ],
+    });
+    // No mesmo dia, o que vence vem antes das tarefas.
+    expect(view.todayList.items.map((i) => i.kind)).toEqual(["money", "task"]);
+    expect(view.todayList.items[0]).toMatchObject({ title: "Academia", href: "/dinheiro?conta=academia&mes-conta=2026-09", context: "Conta fixa" });
+    expect(view.upcoming.items).toHaveLength(1);
+    expect(view.upcoming.items[0]).toMatchObject({ title: "Fatura Nubank", href: "/dinheiro/cartoes/nu?fatura=2026-10" });
+  });
+});

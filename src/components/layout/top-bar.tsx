@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { LogOut, Timer } from "lucide-react";
 import { signOut } from "@/lib/auth/actions";
@@ -33,12 +34,7 @@ export function TopBarView({ open, eventsToday, greeting }: { open: number; even
         {/* Alinhado com a coluna de ícones da barra recolhida. */}
         <SidebarToggle className="ml-2" />
         <Link href="/central" className="flex items-center gap-2.5">
-          <span
-            aria-hidden
-            className="flex size-[30px] items-center justify-center rounded-[9px] bg-linear-150 from-[#5d6bff] to-[#3340d6] text-[0.9375rem] font-bold text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]"
-          >
-            C
-          </span>
+          <Image src="/brand/hub-simbolo.png" alt="" width={30} height={30} priority className="size-[30px]" />
           <span className="leading-tight">
             <span className="block text-[0.65625rem] font-semibold tracking-[0.12em] text-foreground-subtle">CARLOS</span>
             <span className="block text-base font-semibold tracking-tight">Hub do Carlos</span>

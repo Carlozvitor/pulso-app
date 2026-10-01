@@ -7,16 +7,21 @@ import { cookies } from "next/headers";
 import { AppSync } from "@/components/sync/app-sync";
 import { SIDEBAR_COMPACT, SIDEBAR_COOKIE } from "@/components/layout/sidebar-state";
 import { SidebarShell } from "@/components/layout/sidebar-shell";
+import { MoneyPrivacyShell } from "@/components/dinheiro/privacy";
+import { MONEY_COOKIE, MONEY_HIDDEN } from "@/components/dinheiro/privacy-state";
 
 /**
  * Celular: uma coluna + navegação embaixo.
  * PC (≥ 1024px): topo + barra lateral fixa + painel principal com moldura.
  */
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const compact = (await cookies()).get(SIDEBAR_COOKIE)?.value === SIDEBAR_COMPACT;
+  const jar = await cookies();
+  const compact = jar.get(SIDEBAR_COOKIE)?.value === SIDEBAR_COMPACT;
+  const moneyHidden = jar.get(MONEY_COOKIE)?.value === MONEY_HIDDEN;
   return (
     // Barra lateral aberta ou recolhida: o botão fica no topo; a largura vem do CSS.
     <SidebarShell initialCompact={compact}>
+      <MoneyPrivacyShell initialHidden={moneyHidden}>
       {/* Faixa sob a status bar translúcida do iOS: o conteúdo rolado não passa por baixo do relógio. */}
       <div aria-hidden className="fixed inset-x-0 top-0 z-40 h-(--safe-top) bg-background lg:hidden" />
 
@@ -34,6 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <CaptureDock />
       <AppSync />
       <Shortcuts />
+      </MoneyPrivacyShell>
     </SidebarShell>
   );
 }

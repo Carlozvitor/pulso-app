@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { CardTile } from "@/components/cards/card-parts";
+import { Money } from "@/components/dinheiro/money";
 import type { AttentionItem, AttentionList } from "@/lib/central/central";
 import type { Occurrence } from "@/types/event";
 import { dueLabel } from "@/lib/dates";
@@ -13,8 +14,15 @@ function when(item: AttentionItem, today: string): string {
   return (item.kind === "event" || item.kind === "assessment") && item.time ? `${day} · ${item.time}` : day;
 }
 
-function origin(item: AttentionItem): string | null {
+function origin(item: AttentionItem): React.ReactNode {
   if (item.kind === "project") return `Prazo do projeto · ${item.progress.done} de ${item.progress.total} feitas`;
+  if (item.kind === "money") {
+    return (
+      <>
+        {item.context} · <Money cents={item.amountCents} approximate={item.approximate} />
+      </>
+    );
+  }
   return item.context;
 }
 
@@ -22,11 +30,12 @@ function hrefOf(item: AttentionItem): string {
   if (item.kind === "task") return `/tarefas/${item.id}`;
   if (item.kind === "project") return `/projetos/${item.id}`;
   if (item.kind === "assessment") return assessmentHref({ id: item.id, areaId: item.areaId });
+  if (item.kind === "money") return item.href;
   return `/compromissos?dia=${item.date}`;
 }
 
-/** Cor da linha de baixo: projeto em roxo, avaliação em rosa (a família do módulo). */
-const ORIGIN_TONE: Partial<Record<AttentionItem["kind"], string>> = { project: "text-plum-ink", assessment: "text-rose-ink" };
+/** Cor da linha de baixo: projeto em roxo, avaliação em rosa, Dinheiro em verde (a família do módulo). */
+const ORIGIN_TONE: Partial<Record<AttentionItem["kind"], string>> = { project: "text-plum-ink", assessment: "text-rose-ink", money: "text-green-ink" };
 
 const rowClass =
   "flex min-h-12 items-center gap-3 rounded-lg bg-black/20 px-3 py-2 transition-colors duration-(--duration-fast) hover:bg-black/35";
@@ -117,7 +126,9 @@ export function AttentionCard({
                     <span
                       className={cn(
                         "tabular shrink-0 text-caption font-semibold",
-                        tone === "amber" || item.kind === "event" || item.kind === "assessment" ? "text-amber-ink" : "text-white/60",
+                        tone === "amber" || item.kind === "event" || item.kind === "assessment" || (item.kind === "money" && item.date <= today)
+                          ? "text-amber-ink"
+                          : "text-white/60",
                       )}
                     >
                       {when(item, today)}

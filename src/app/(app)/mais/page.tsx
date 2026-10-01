@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Briefcase, CalendarClock, ChevronRight, CircleCheck, Ellipsis, GraduationCap, Inbox, Rocket, Search, Settings } from "lucide-react";
+import { Briefcase, CalendarClock, ChevronRight, CircleCheck, Ellipsis, GraduationCap, Inbox, Rocket, Search, Settings, Wallet } from "lucide-react";
 import { ListPanel, Page } from "@/components/layout/page";
 
 export const metadata = { title: "Mais" };
@@ -7,6 +7,7 @@ export const metadata = { title: "Mais" };
 const LINKS = [
   { href: "/trabalho", label: "Trabalho", icon: Briefcase },
   { href: "/faculdade", label: "Faculdade", icon: GraduationCap },
+  { href: "/dinheiro", label: "Dinheiro", icon: Wallet },
   { href: "/compromissos", label: "Compromissos", icon: CalendarClock },
   { href: "/projetos", label: "Projetos", icon: Rocket },
   { href: "/feitas", label: "Feitas", icon: CircleCheck },

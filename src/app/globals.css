@@ -33,7 +33,7 @@
 
   /*
    * Famílias de cor por seção (cards com leve degradê e borda da mesma cor):
-   * teal = Agora · plum = Projetos · amber = Prazos/Agenda · blue = Trabalho · rose = Faculdade
+   * teal = Agora · plum = Projetos · amber = Prazos/Agenda · blue = Trabalho · rose = Faculdade · green = Dinheiro
    */
   --teal-a: #0c3a42;
   --teal-b: #081b20;
@@ -60,6 +60,11 @@
   --rose-line: #6e2757;
   --rose-tile: #5b1c47;
   --rose-ink: #f9a8d4;
+  --green-a: #0f3320;
+  --green-b: #07160e;
+  --green-line: #1f6b3f;
+  --green-tile: #14532d;
+  --green-ink: #86efac;
 
   /* Mapeamento para os nomes que o shadcn espera */
   --card: var(--surface);
@@ -150,6 +155,9 @@
   --color-rose-tile: var(--rose-tile);
   --color-rose-ink: var(--rose-ink);
   --color-rose-line: var(--rose-line);
+  --color-green-tile: var(--green-tile);
+  --color-green-ink: var(--green-ink);
+  --color-green-line: var(--green-line);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -303,6 +311,13 @@
     --tint-tile: var(--rose-tile);
     --tint-ink: var(--rose-ink);
   }
+  .tint-green {
+    --tint-a: var(--green-a);
+    --tint-b: var(--green-b);
+    --tint-line: var(--green-line);
+    --tint-tile: var(--green-tile);
+    --tint-ink: var(--green-ink);
+  }
   /* Sem família: mesma forma, sem cor (itens "mais tarde", estados vazios) */
   .tint-neutral {
     --tint-a: #141417;
@@ -315,4 +330,15 @@
     background: var(--tint-tile);
     color: var(--tint-ink);
   }
+}
+
+/* Valores do Dinheiro: o olho esconde todos (R$ •••); nomes e datas continuam à vista. */
+.money-h {
+  display: none;
+}
+[data-valores="ocultos"] .money-v {
+  display: none;
+}
+[data-valores="ocultos"] .money-h {
+  display: inline;
 }

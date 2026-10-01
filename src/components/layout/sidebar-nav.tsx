@@ -10,11 +10,13 @@ import {
   CircleCheck,
   CircleDot,
   CornerDownRight,
+  CreditCard,
   GraduationCap,
   Inbox,
   ListTodo,
   Rocket,
   Settings,
+  Wallet,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -42,6 +44,9 @@ function agendaLabel({ count, next }: SidebarAgenda): string {
  * `attention`: a próxima coisa do módulo que não é tarefa (Faculdade: "Prova amanhã · 19:00").
  */
 export type SidebarModule = { areas: Area[]; open: Record<string, number>; attention?: string | null };
+
+/** Dinheiro: a frase do que vence ("2 vencem hoje") e os cartões, que ficam embaixo dele. */
+export type SidebarMoney = { cards: { id: string; name: string }[]; attention: string };
 
 type ItemProps = {
   href: string;
@@ -210,6 +215,7 @@ export function SidebarNav({
   projects,
   work,
   school,
+  money,
   agenda,
   inboxCount,
   todoCount,
@@ -217,6 +223,7 @@ export function SidebarNav({
   projects: SidebarProject[];
   work: SidebarModule;
   school: SidebarModule | null;
+  money: SidebarMoney | null;
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
@@ -265,6 +272,31 @@ export function SidebarNav({
             tile={{ className: "bg-rose-tile text-rose-ink", icon: GraduationCap }}
             pathname={pathname}
           />
+        )}
+
+        {money && (
+          <div className="mt-1">
+            <Item
+              href="/dinheiro"
+              title="Dinheiro"
+              subtitle={money.attention}
+              active={pathname === "/dinheiro" || (compact && pathname.startsWith("/dinheiro/"))}
+              tile={{ className: "bg-green-tile text-green-ink", icon: Wallet }}
+            />
+            {money.cards.length > 0 && (
+              <Kids label="Cartões">
+                {money.cards.map((card) => (
+                  <Kid
+                    key={card.id}
+                    href={`/dinheiro/cartoes/${card.id}`}
+                    label={card.name}
+                    icon={CreditCard}
+                    active={pathname === `/dinheiro/cartoes/${card.id}`}
+                  />
+                ))}
+              </Kids>
+            )}
+          </div>
         )}
 
         <div className="mt-1">

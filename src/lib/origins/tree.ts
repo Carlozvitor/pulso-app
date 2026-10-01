@@ -7,7 +7,7 @@ import { MODULE_KEYS, type Area, type ModuleKey } from "@/types/project";
 export const MODULES: Record<ModuleKey, { label: string; href: string | null }> = {
   TRABALHO: { label: "Trabalho", href: "/trabalho" },
   FACULDADE: { label: "Faculdade", href: "/faculdade" },
-  DINHEIRO: { label: "Dinheiro", href: null },
+  DINHEIRO: { label: "Dinheiro", href: "/dinheiro" },
   TREINO: { label: "Treino", href: null },
   VIDA_PESSOAL: { label: "Vida pessoal", href: null },
 };

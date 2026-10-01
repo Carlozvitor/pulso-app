@@ -1,4 +1,5 @@
 import { nowIn } from "@/lib/dates";
+import { getDinheiroCentral } from "@/lib/dinheiro/pages";
 import { listEvents } from "@/lib/events/queries";
 import { occurrencesBetween } from "@/lib/events/occurrences";
 import { attentionLabel, nextAttention } from "@/lib/faculdade/assessments";
@@ -24,6 +25,8 @@ export type ModuleCardData = {
   next: TaskSummary | null;
   /** Próxima atenção do módulo que não é tarefa (Faculdade: "Prova amanhã · 19:00"). */
   attention: string | null;
+  /** Dinheiro: quanto sobra no mês (o número do card). */
+  leftCents?: number;
 };
 
 /** Card de Compromissos em "Minha vida": quantos hoje e o próximo que ainda não passou. */
@@ -37,13 +40,14 @@ export type CentralPage = {
 };
 
 export async function getCentralPage(): Promise<CentralPage> {
-  const [tasks, { groups }, areas, lookup, events, assessments] = await Promise.all([
+  const [tasks, { groups }, areas, lookup, events, assessments, money] = await Promise.all([
     listOpenTasks(),
     listProjects(),
     listAreas(),
     getContextLookup(),
     listEvents(),
     listAssessments(),
+    getDinheiroCentral(),
   ]);
   const active = groups.flatMap((g) => g.projects);
   const now = nowIn();
@@ -62,21 +66,22 @@ export async function getCentralPage(): Promise<CentralPage> {
     if (!root || !href) return [];
     const next = nextActionIn(root.id, areas, tasks, today, contextOf);
     const upcoming = key === "FACULDADE" ? nextAttention(liveAssessments, today) : null;
-    return [
-      {
-        key,
-        label: MODULES[key].label,
-        href,
-        open: counts.get(root.id) ?? 0,
-        next,
-        attention: upcoming ? attentionLabel(upcoming, today) : null,
-      },
-    ];
+    const card: ModuleCardData = {
+      key,
+      label: MODULES[key].label,
+      href,
+      open: counts.get(root.id) ?? 0,
+      next,
+      attention: upcoming ? attentionLabel(upcoming, today) : null,
+    };
+    // Dinheiro: o número é a sobra do mês e a linha de baixo, o que vence.
+    if (key === "DINHEIRO" && money) return [{ ...card, attention: money.attention, leftCents: money.leftCents }];
+    return [card];
   });
   const projectSlots = (ROW - ((modules.length + 1) % ROW)) % ROW;
 
   return {
-    view: buildCentral(tasks, active, today, contextOf, { events, now, areaLabel, assessments: liveAssessments }),
+    view: buildCentral(tasks, active, today, contextOf, { events, now, areaLabel, assessments: liveAssessments, money: money?.dues }),
     modules,
     agenda: { count: todayEvents.length, next: nextEvent ? { time: nextEvent.startTime, title: nextEvent.title } : null },
     projects: [...active].sort(compareProjects).slice(0, projectSlots),

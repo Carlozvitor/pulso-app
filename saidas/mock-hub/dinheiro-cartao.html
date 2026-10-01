@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H5 (cartão)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 20px; align-items: start; }
+  .eye { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--line-2); border-radius: 8px; background: var(--elev); color: var(--text-2); }
+  .eye svg.lucide { width: 17px; height: 17px; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .tab { height: 34px; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; }
+  .tab small { font-size: 11.5px; color: var(--text-3); font-weight: 400; }
+  .tab.on { background: var(--green-tile); border-color: var(--green-line); color: #dcfce7; }
+  .tab.on small { color: #a7d9b8; }
+
+  .inv-head { padding: 20px 22px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+  .inv-head small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(255 255 255 / .55); }
+  .inv-head .v { display: block; font-size: 34px; font-weight: 600; letter-spacing: -0.02em; margin: 4px 0 2px; }
+  .inv-head p { font-size: 13.5px; color: rgb(255 255 255 / .65); }
+  .inv-head p b { color: rgb(255 255 255 / .9); font-weight: 500; }
+  .acts { display: grid; gap: 8px; }
+  .b { height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; border-radius: 9px; font-weight: 600; font-size: 14px; border: 1px solid var(--line-2); background: rgb(0 0 0 / .25); }
+  .b svg.lucide { width: 16px; height: 16px; }
+  .b.done { background: #0f2a20; border-color: #1f5b44; color: #bbf7d0; }
+  .b.act { color: #c7cbff; border-color: #2f3461; background: #0f1020; }
+
+  .buys { padding: 8px; margin-top: 16px; }
+  .buys ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .by { display: grid; grid-template-columns: 50px 34px 1fr auto; gap: 12px; align-items: center; padding: 9px 12px 9px 10px; border-radius: 8px; }
+  .by .d { font: 600 12px "Geist Mono"; color: var(--text-3); }
+  .by .ic { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: #1c1c20; color: var(--text-2); }
+  .by .ic svg.lucide { width: 16px; height: 16px; }
+  .by b { display: block; font-weight: 500; font-size: 14px; }
+  .by .meta { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); }
+  .by .meta svg.lucide { width: 11px; height: 11px; }
+  .by .amt { font-weight: 600; font-size: 14px; text-align: right; }
+  .pc { font: 600 11.5px "Geist Mono"; color: var(--green-ink); background: rgb(134 239 172 / .1); border-radius: 5px; padding: 1px 6px; }
+  .buys .foot { display: flex; justify-content: space-between; padding: 12px 12px 6px; margin-top: 6px; border-top: 1px solid var(--line); font-size: 13px; color: var(--text-3); }
+  .buys .foot b { color: var(--text); font-weight: 600; }
+
+  .side-card { padding: 16px 18px; }
+  .side-card h3 { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin-bottom: 10px; }
+  .kv { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+  .kv:last-child { border-bottom: 0; }
+  .kv span { color: var(--text-3); }
+  .kv b { font-weight: 500; }
+  .cats { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .cats li { display: flex; justify-content: space-between; padding: 7px 0; font-size: 13.5px; border-bottom: 1px solid var(--line); }
+  .cats li:last-child { border-bottom: 0; }
+  .cats li span { color: var(--text-2); }
+  .hint { font-size: 12.5px; color: var(--text-3); line-height: 1.5; margin-top: 10px; }
+  .link-task { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: #0f1020; border: 1px solid #2f3461; }
+  .link-task .check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #4b4b52; flex: none; }
+  .link-task b { display: block; font-size: 13.5px; font-weight: 500; }
+  .link-task small { font-size: 12px; color: var(--text-3); }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova amanhã · 19:00</span></div></a>
+        <a class="item on"><span class="ico" style="background:var(--green-tile);color:var(--green-ink)"><i data-lucide="wallet"></i></span><div><b>Dinheiro</b><span class="sub">2 vencem hoje</span></div></a>
+        <ul class="kids">
+          <li class="kid on"><i data-lucide="credit-card"></i>Nubank</li>
+          <li class="kid"><i data-lucide="credit-card"></i>Inter</li>
+        </ul>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">2 hoje · próximo 14:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="crumbs">Dinheiro <i data-lucide="chevron-right"></i> <b>Nubank</b></div>
+      <div class="main-head">
+        <span class="app-ico green"><i data-lucide="credit-card"></i></span>
+        <div><h1>Nubank</h1><p>Fecha dia 28 · vence dia 5 · limite R$ 3.000</p></div>
+        <div class="head-right">
+          <span class="eye"><i data-lucide="eye"></i></span>
+          <span class="chipbtn"><i data-lucide="plus"></i>Compra neste cartão</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="tabs">
+          <span class="tab">Setembro <small>paga</small></span>
+          <span class="tab on">Outubro <small>fechada</small></span>
+          <span class="tab">Novembro <small>aberta</small></span>
+          <span class="tab">Dezembro <small>só parcelas</small></span>
+        </div>
+
+        <div class="grid">
+          <section>
+            <article class="card green inv-head">
+              <div>
+                <small>Fatura de outubro</small>
+                <span class="v money">R$ 734,60</span>
+                <p>Fechou dom, 28 set · <b>vence seg, 5 out</b></p>
+              </div>
+              <div class="acts">
+                <span class="b done"><i data-lucide="check"></i>Marcar fatura como paga</span>
+                <span class="b act"><i data-lucide="circle-dot"></i>Virar ação</span>
+              </div>
+            </article>
+
+            <article class="card neutral buys">
+              <ul>
+                <li class="by"><span class="d">28 set</span><span class="ic"><i data-lucide="fuel"></i></span><div><b>Posto Ipiranga</b><span class="meta">Transporte</span></div><span class="amt money">R$ 150,00</span></li>
+                <li class="by"><span class="d">21 set</span><span class="ic"><i data-lucide="music"></i></span><div><b>Spotify</b><span class="meta"><i data-lucide="repeat"></i>Conta fixa · Lazer</span></div><span class="amt money">R$ 21,90</span></li>
+                <li class="by"><span class="d">18 set</span><span class="ic"><i data-lucide="utensils"></i></span><div><b>iFood</b><span class="meta">Alimentação</span></div><span class="amt money">R$ 62,40</span></li>
+                <li class="by"><span class="d">12 set</span><span class="ic"><i data-lucide="shopping-cart"></i></span><div><b>Mercado Pão de Açúcar</b><span class="meta">Alimentação</span></div><span class="amt money">R$ 248,30</span></li>
+                <li class="by"><span class="d">6 set</span><span class="ic"><i data-lucide="shirt"></i></span><div><b>Renner</b><span class="meta">Compras</span></div><span class="amt money">R$ 105,10</span></li>
+                <li class="by"><span class="d">parc.</span><span class="ic"><i data-lucide="book-open"></i></span><div><b>Curso de UX <span class="pc">2/6</span></b><span class="meta">Educação · compra de 14 ago · R$ 582,00</span></div><span class="amt money">R$ 97,00</span></li>
+                <li class="by"><span class="d">parc.</span><span class="ic"><i data-lucide="headphones"></i></span><div><b>Fone JBL <span class="pc">4/10</span></b><span class="meta">Compras · compra de 20 jun · R$ 499,00</span></div><span class="amt money">R$ 49,90</span></li>
+              </ul>
+              <div class="foot"><span>7 lançamentos</span><b class="money">R$ 734,60</b></div>
+            </article>
+          </section>
+
+          <aside style="display:grid;gap:16px">
+            <article class="card neutral side-card">
+              <h3>Por categoria</h3>
+              <ul class="cats">
+                <li><span>Alimentação</span><b class="money">R$ 310,70</b></li>
+                <li><span>Transporte</span><b class="money">R$ 150,00</b></li>
+                <li><span>Compras</span><b class="money">R$ 155,00</b></li>
+                <li><span>Educação</span><b class="money">R$ 97,00</b></li>
+                <li><span>Lazer</span><b class="money">R$ 21,90</b></li>
+              </ul>
+              <p class="hint">Estes valores entram no "Saiu" de outubro, mês em que a fatura vence.</p>
+            </article>
+
+            <article class="card neutral side-card">
+              <h3>Cartão</h3>
+              <div class="kv"><span>Fecha</span><b>dia 28</b></div>
+              <div class="kv"><span>Vence</span><b>dia 5</b></div>
+              <div class="kv"><span>Limite</span><b class="money">R$ 3.000,00</b></div>
+              <div class="kv"><span>Em uso</span><b class="money">R$ 1.461,40</b></div>
+              <p class="hint">"Em uso" soma a fatura fechada, a aberta e as parcelas que ainda vêm.</p>
+            </article>
+
+            <article class="card neutral side-card">
+              <h3>Ação no PULSO</h3>
+              <div class="link-task"><span class="check"></span><div><b>Pagar fatura do Nubank</b><small>Dinheiro · prazo seg, 5 out</small></div></div>
+              <p class="hint">Aparece depois de "Virar ação". Ao concluir a ação, o Hub pergunta: "Marcar a fatura como paga?"</p>
+            </article>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Cada cartão tem sua página. As abas são as faturas: paga, fechada, aberta e as próximas, que por enquanto só têm parcelas.</li>
+      <li>A fatura soma sozinha: compras entre um fechamento e outro, parcelas do mês e contas fixas no cartão.</li>
+      <li>Marcar como paga não cria gasto novo, porque as compras já estão lançadas. Só muda a situação.</li>
+      <li>Os cartões aparecem embaixo de Dinheiro na barra lateral.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

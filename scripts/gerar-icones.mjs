@@ -1,37 +1,28 @@
-// Gera os ícones provisórios do PWA a partir de um SVG simples.
+// Gera os ícones do PWA a partir do símbolo do Hub do Carlos (identidade/logo-hub-simbolo.png:
+// o "C" com a estrela, recortado da logo com fundo transparente).
 // Uso: node scripts/gerar-icones.mjs
-// Quando existir logo definitivo, trocar o SVG abaixo por identidade/logo.svg.
 import sharp from "sharp";
 import { mkdir } from "node:fs/promises";
 
-const BG = "#0a0a0b";
-const ACCENT = "#4c5bff";
-const SOFT = "#8b95ff";
+const BG = "#050506";
+const SYMBOL = "identidade/logo-hub-simbolo.png";
 
-// scale < 1 deixa margem de segurança (ícone maskable é recortado em círculo)
-const mark = (size, scale, rounded) => {
-  const c = size / 2;
-  const r = (size * 0.13) * scale;
-  const ring = (size * 0.27) * scale;
+// scale = quanto do quadrado o símbolo ocupa (o maskable é recortado em círculo: precisa de margem).
+async function icon(file, size, scale, rounded) {
+  const inner = Math.round(size * scale);
+  const symbol = await sharp(SYMBOL).resize(inner, inner).png().toBuffer();
   const radius = rounded ? size * 0.22 : 0;
-  return Buffer.from(`
-<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-  <rect width="${size}" height="${size}" rx="${radius}" fill="${BG}"/>
-  <circle cx="${c}" cy="${c}" r="${ring}" fill="none" stroke="${SOFT}" stroke-opacity="0.35" stroke-width="${size * 0.02 * scale}"/>
-  <circle cx="${c}" cy="${c}" r="${r}" fill="${ACCENT}"/>
-</svg>`);
-};
-
-const out = [
-  ["public/icons/icon-192.png", 192, 1, false],
-  ["public/icons/icon-512.png", 512, 1, false],
-  ["public/icons/icon-maskable-512.png", 512, 0.8, false],
-  ["src/app/apple-icon.png", 180, 1, false],
-  ["src/app/icon.png", 64, 1.4, true],
-];
-
-await mkdir("public/icons", { recursive: true });
-for (const [file, size, scale, rounded] of out) {
-  await sharp(mark(size, scale, rounded)).png().toFile(file);
+  const base = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${radius}" fill="${BG}"/></svg>`,
+  );
+  const offset = Math.round((size - inner) / 2);
+  await sharp(base).composite([{ input: symbol, left: offset, top: offset }]).png().toFile(file);
   console.log("✓", file);
 }
+
+await mkdir("public/icons", { recursive: true });
+await icon("public/icons/icon-192.png", 192, 0.66, false);
+await icon("public/icons/icon-512.png", 512, 0.66, false);
+await icon("public/icons/icon-maskable-512.png", 512, 0.54, false);
+await icon("src/app/apple-icon.png", 180, 0.66, false);
+await icon("src/app/icon.png", 64, 0.8, true);

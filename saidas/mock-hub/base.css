@@ -120,3 +120,10 @@ kbd { font: 600 11px "Geist Mono"; color: var(--text-2); background: rgb(255 255
 .kind { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600; background: rgb(255 255 255 / .08); color: #f5d0e6; white-space: nowrap; }
 .kind svg.lucide { width: 12px; height: 12px; color: var(--rose-ink); }
 .task .ctx { color: var(--rose-ink); }
+
+/* H5: Dinheiro (família verde) */
+:root { --green-a: #0f3320; --green-b: #07160e; --green-line: #1f6b3f; --green-tile: #14532d; --green-ink: #86efac; }
+.green { background: linear-gradient(160deg, var(--green-a), var(--green-b)); border-color: var(--green-line); }
+.green .tile { background: var(--green-tile); color: var(--green-ink); }
+.app-ico.green { background: var(--green-tile); color: var(--green-ink); box-shadow: inset 0 0 0 1px var(--green-line); }
+.money { font-variant-numeric: tabular-nums; white-space: nowrap; }

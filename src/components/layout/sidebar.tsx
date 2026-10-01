@@ -2,16 +2,18 @@ import { compareProjects, projectMonogram } from "@/lib/projects/organize";
 import { listProjects } from "@/lib/projects/queries";
 import { countInbox, countTodo } from "@/lib/tasks/queries";
 import { getTodaySummary } from "@/lib/events/queries";
+import { getDinheiroNav } from "@/lib/dinheiro/pages";
 import { getFaculdadeNav } from "@/lib/faculdade/pages";
 import { getModuleNav } from "@/lib/origins/queries";
-import { SidebarNav, type SidebarAgenda, type SidebarModule, type SidebarProject } from "./sidebar-nav";
+import { SidebarNav, type SidebarAgenda, type SidebarModule, type SidebarMoney, type SidebarProject } from "./sidebar-nav";
 
 /** Barra lateral do PC: a navegação do Hub, fixa na altura da tela. */
 export async function Sidebar() {
-  const [{ groups }, workNav, schoolNav, agenda, inboxCount, todoCount] = await Promise.all([
+  const [{ groups }, workNav, schoolNav, money, agenda, inboxCount, todoCount] = await Promise.all([
     listProjects(),
     getModuleNav("TRABALHO"),
     getFaculdadeNav(),
+    getDinheiroNav(),
     getTodaySummary(),
     countInbox(),
     countTodo(),
@@ -32,7 +34,7 @@ export async function Sidebar() {
     }));
 
   return (
-    <SidebarView projects={projects} work={work} school={school} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} />
+    <SidebarView projects={projects} work={work} school={school} money={money} agenda={agenda} inboxCount={inboxCount} todoCount={todoCount} />
   );
 }
 
@@ -40,6 +42,7 @@ export function SidebarView({
   projects,
   work,
   school,
+  money,
   agenda,
   inboxCount,
   todoCount,
@@ -47,6 +50,7 @@ export function SidebarView({
   projects: SidebarProject[];
   work: SidebarModule;
   school: SidebarModule | null;
+  money: SidebarMoney | null;
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
@@ -57,6 +61,7 @@ export function SidebarView({
         projects={projects}
         work={work}
         school={school}
+        money={money}
         agenda={agenda}
         inboxCount={inboxCount}
         todoCount={todoCount}

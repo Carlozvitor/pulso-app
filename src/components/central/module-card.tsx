@@ -14,11 +14,11 @@ export function ModuleCard({
 }: {
   href: string;
   label: string;
-  /** "3 ações", "2 hoje"… */
-  value: string;
+  /** "3 ações", "2 hoje", a sobra do mês… */
+  value: React.ReactNode;
   foot: string;
   icon: LucideIcon;
-  tone: "blue" | "amber" | "rose";
+  tone: "blue" | "amber" | "rose" | "green";
 }) {
   return (
     <Link

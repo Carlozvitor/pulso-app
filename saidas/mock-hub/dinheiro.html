@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H5 (Dinheiro)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .top-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+
+  /* mês */
+  .month { height: 38px; display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--elev); padding: 0 4px; }
+  .month b { font-weight: 500; padding: 0 8px; }
+  .month svg.lucide { width: 16px; height: 16px; color: var(--text-2); }
+  .eye { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--line-2); border-radius: 8px; background: var(--elev); color: var(--text-2); }
+  .eye svg.lucide { width: 17px; height: 17px; }
+  .chipbtn.green-btn { background: var(--green-tile); border-color: var(--green-line); color: #dcfce7; }
+  .chipbtn.green-btn svg.lucide { color: var(--green-ink); }
+
+  /* resumo */
+  .sum { padding: 20px 22px 18px; }
+  .sum-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .sum-grid > div { padding: 0 18px; border-left: 1px solid rgb(255 255 255 / .1); }
+  .sum-grid > div:first-child { padding-left: 0; border-left: 0; }
+  .sum small { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(255 255 255 / .55); }
+  .sum small svg.lucide { width: 14px; height: 14px; }
+  .sum .v { display: block; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-top: 6px; }
+  .sum .v.pos { color: var(--green-ink); }
+  .sum .s { display: block; font-size: 12.5px; color: rgb(255 255 255 / .55); margin-top: 2px; }
+  .sum .s b { color: rgb(255 255 255 / .85); font-weight: 500; }
+
+  /* movimentações */
+  .filters { display: flex; gap: 6px; }
+  .f { height: 28px; display: inline-flex; align-items: center; padding: 0 11px; border-radius: 999px; font-size: 12.5px; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; }
+  .f.on { background: #1f2a22; border-color: var(--green-line); color: #dcfce7; }
+  .moves { padding: 8px; }
+  .moves ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .mv { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 9px 12px 9px 10px; border-radius: 8px; }
+  .mv:hover { background: rgb(255 255 255 / .03); }
+  .mv .ic { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: #1c1c20; color: var(--text-2); }
+  .mv .ic svg.lucide { width: 16px; height: 16px; }
+  .mv .ic.in { background: var(--green-tile); color: var(--green-ink); }
+  .mv b { display: block; font-weight: 500; font-size: 14px; }
+  .mv .meta { display: block; font-size: 12px; color: var(--text-3); }
+  .mv .meta .tag { display: inline-flex; align-items: center; gap: 4px; }
+  .mv .meta svg.lucide { width: 11px; height: 11px; vertical-align: -1px; }
+  .mv .amt { font-weight: 600; font-size: 14px; text-align: right; }
+  .mv .amt.in { color: var(--green-ink); }
+  .mv .amt small { display: block; font-weight: 400; font-size: 11.5px; color: var(--text-3); }
+  .more { display: flex; justify-content: space-between; padding: 10px 12px 4px; font-size: 12.5px; color: var(--text-3); border-top: 1px solid var(--line); margin-top: 6px; }
+
+  /* vencimentos */
+  .dues { padding: 10px; }
+  .dues ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .due { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 9px 12px 9px 6px; border-radius: 8px; background: rgb(0 0 0 / .22); }
+  .when { text-align: center; line-height: 1.1; }
+  .when small { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .08em; color: rgb(255 255 255 / .5); }
+  .when b { display: block; font: 600 19px "Geist"; letter-spacing: -0.02em; }
+  .due.today .when small, .due.today .when b { color: var(--amber-ink); }
+  .due b.t { display: block; font-weight: 500; font-size: 14px; }
+  .due .meta { display: flex; align-items: center; gap: 5px; font-size: 12px; color: rgb(255 255 255 / .55); }
+  .due .meta svg.lucide { width: 12px; height: 12px; }
+  .due .amt { text-align: right; font-weight: 600; font-size: 14px; }
+  .due .amt small { display: block; font-weight: 500; font-size: 11.5px; color: rgb(255 255 255 / .5); }
+  .due .amt small.hot { color: var(--amber-ink); }
+  .dues .foot { display: flex; justify-content: space-between; padding: 10px 10px 2px; font-size: 12.5px; color: rgb(255 255 255 / .5); }
+
+  /* cartões */
+  .cards2 { display: grid; gap: 12px; }
+  .cc { padding: 16px 18px 14px; }
+  .cc-head { display: flex; align-items: center; gap: 12px; }
+  .cc-head .tile { width: 38px; height: 38px; }
+  .cc-head .tile svg.lucide { width: 18px; height: 18px; }
+  .cc-head h3 { font-size: 16px; font-weight: 600; }
+  .cc-head p { font-size: 12.5px; color: rgb(255 255 255 / .55); }
+  .cc-head .go { margin-left: auto; color: var(--green-ink); opacity: .7; }
+  .inv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .inv > div { padding: 10px 12px; border-radius: 8px; background: rgb(0 0 0 / .22); }
+  .inv small { display: block; font-size: 11.5px; color: rgb(255 255 255 / .5); }
+  .inv b { display: block; font-size: 16px; font-weight: 600; margin-top: 1px; }
+  .inv span { display: block; font-size: 11.5px; color: rgb(255 255 255 / .55); }
+  .inv span.hot { color: var(--amber-ink); }
+  .use { margin-top: 10px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: rgb(255 255 255 / .55); }
+  .bar { flex: 1; height: 4px; border-radius: 99px; background: rgb(255 255 255 / .1); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--green-ink); opacity: .75; border-radius: 99px; }
+
+  /* três colunas */
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+  .list { padding: 8px; }
+  .list ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .ln { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 8px; }
+  .ln b { display: block; font-weight: 500; font-size: 14px; }
+  .ln .meta { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-3); }
+  .ln .meta svg.lucide { width: 12px; height: 12px; }
+  .ln .amt { text-align: right; font-weight: 600; font-size: 13.5px; }
+  .ln .amt small { display: block; font-weight: 500; font-size: 11.5px; color: var(--text-3); }
+  .st { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; }
+  .st.ok { color: #6ee7b7; }
+  .st.hot { color: var(--amber-ink); }
+  .st svg.lucide { width: 12px; height: 12px; }
+  .pc { font: 600 11.5px "Geist Mono"; color: var(--green-ink); background: rgb(134 239 172 / .1); border-radius: 5px; padding: 1px 6px; }
+  .list .add-line { display: flex; align-items: center; gap: 8px; margin: 6px 2px 2px; height: 38px; padding: 0 10px; border-radius: 8px; border: 1px dashed var(--line-2); font-size: 13px; color: var(--text-3); }
+  .list .add-line svg.lucide { width: 14px; height: 14px; }
+  .list .total { display: flex; justify-content: space-between; padding: 10px 10px 4px; margin-top: 4px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--text-3); }
+  .list .total b { color: var(--text-2); font-weight: 500; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa tarde, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova amanhã · 19:00</span></div></a>
+        <a class="item on"><span class="ico" style="background:var(--green-tile);color:var(--green-ink)"><i data-lucide="wallet"></i></span><div><b>Dinheiro</b><span class="sub">2 vencem hoje</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">2 hoje · próximo 14:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento</span></div></a>
+        <ul class="kids">
+          <li class="kid"><span class="mono">CC</span>CRUMB CLUB<span class="count">5</span></li>
+          <li class="kid"><span class="mono">AC</span>AURA CAFÉ<span class="count">3</span></li>
+        </ul>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="main-head" style="padding-top:20px">
+        <span class="app-ico green"><i data-lucide="wallet"></i></span>
+        <div><h1>Dinheiro</h1><p>O contexto financeiro. Pagar vira ação no PULSO quando você decidir.</p></div>
+        <div class="head-right">
+          <span class="month"><i data-lucide="chevron-left"></i><b>Setembro 2026</b><i data-lucide="chevron-right"></i></span>
+          <span class="eye" title="Esconder valores"><i data-lucide="eye"></i></span>
+          <span class="chipbtn"><i data-lucide="arrow-down-left"></i>Nova entrada</span>
+          <span class="chipbtn green-btn"><i data-lucide="plus"></i>Novo gasto</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="top-grid">
+          <section>
+            <div class="section"><h2>Resumo de setembro</h2></div>
+            <article class="card green sum">
+              <div class="sum-grid">
+                <div>
+                  <small><i data-lucide="arrow-down-left"></i>Entrou</small>
+                  <span class="v money">R$ 4.850,00</span>
+                  <span class="s">salário e 1 freela</span>
+                </div>
+                <div>
+                  <small><i data-lucide="arrow-up-right"></i>Saiu</small>
+                  <span class="v money">R$ 3.412,40</span>
+                  <span class="s">inclui <b class="money">R$ 289,90</b> que vence hoje</span>
+                </div>
+                <div>
+                  <small><i data-lucide="piggy-bank"></i>Sobra</small>
+                  <span class="v pos money">R$ 1.437,60</span>
+                  <span class="s">se pagar o que falta</span>
+                </div>
+              </div>
+            </article>
+
+            <div class="section">
+              <h2>Movimentações</h2>
+              <div class="filters"><span class="f on">Tudo</span><span class="f">Entradas</span><span class="f">Gastos</span><span class="f">Categoria ▾</span></div>
+            </div>
+            <article class="card neutral moves">
+              <ul>
+                <li class="mv"><span class="ic"><i data-lucide="pill"></i></span><div><b>Farmácia Pague Menos</b><span class="meta">Saúde · Pix</span></div><span class="amt money">− R$ 56,20<small>26 set</small></span></li>
+                <li class="mv"><span class="ic"><i data-lucide="smartphone"></i></span><div><b>Celular (Claro)</b><span class="meta"><span class="tag"><i data-lucide="repeat"></i>Conta fixa</span> · Contas</span></div><span class="amt money">− R$ 49,90<small>20 set</small></span></li>
+                <li class="mv"><span class="ic in"><i data-lucide="arrow-down-left"></i></span><div><b>Freela — site Dermathos</b><span class="meta">Freela · 2ª parte</span></div><span class="amt in money">+ R$ 1.250,00<small>18 set</small></span></li>
+                <li class="mv"><span class="ic"><i data-lucide="wifi"></i></span><div><b>Internet</b><span class="meta"><span class="tag"><i data-lucide="repeat"></i>Conta fixa</span> · Contas</span></div><span class="amt money">− R$ 99,90<small>15 set</small></span></li>
+                <li class="mv"><span class="ic"><i data-lucide="car"></i></span><div><b>Uber</b><span class="meta">Transporte · Pix</span></div><span class="amt money">− R$ 38,70<small>14 set</small></span></li>
+                <li class="mv"><span class="ic"><i data-lucide="zap"></i></span><div><b>Luz (Enel)</b><span class="meta"><span class="tag"><i data-lucide="repeat"></i>Conta fixa</span> · Contas</span></div><span class="amt money">− R$ 187,35<small>12 set</small></span></li>
+                <li class="mv"><span class="ic"><i data-lucide="credit-card"></i></span><div><b>Fatura Nubank</b><span class="meta">14 compras · categorias dentro da fatura</span></div><span class="amt money">− R$ 842,15<small>5 set</small></span></li>
+                <li class="mv"><span class="ic in"><i data-lucide="arrow-down-left"></i></span><div><b>Salário</b><span class="meta">Salário · Valentine</span></div><span class="amt in money">+ R$ 3.600,00<small>5 set</small></span></li>
+              </ul>
+              <div class="more"><span>Mostrando 8 de 12</span><span>Ver todas</span></div>
+            </article>
+          </section>
+
+          <section>
+            <div class="section"><h2>Próximos vencimentos</h2><a>30 dias</a></div>
+            <article class="card green dues">
+              <ul>
+                <li class="due today"><div class="when"><small>HOJE</small><b>30</b></div><div><b class="t">Academia</b><span class="meta"><i data-lucide="repeat"></i>Conta fixa · Saúde</span></div><span class="amt money">R$ 89,90<small class="hot">Vence hoje</small></span></li>
+                <li class="due today"><div class="when"><small>HOJE</small><b>30</b></div><div><b class="t">Fatura Inter</b><span class="meta"><i data-lucide="credit-card"></i>Fechou dia 23 · 3 compras</span></div><span class="amt money">R$ 200,00<small class="hot">Vence hoje</small></span></li>
+                <li class="due"><div class="when"><small>SEG</small><b>5</b></div><div><b class="t">Fatura Nubank</b><span class="meta"><i data-lucide="credit-card"></i>Fechada · 7 lançamentos</span></div><span class="amt money">R$ 734,60<small>Segunda</small></span></li>
+                <li class="due"><div class="when"><small>QUI</small><b>8</b></div><div><b class="t">Mensalidade da faculdade</b><span class="meta"><i data-lucide="repeat"></i>Conta fixa · Educação</span></div><span class="amt money">R$ 612,00<small>8 out</small></span></li>
+                <li class="due"><div class="when"><small>SÁB</small><b>10</b></div><div><b class="t">Aluguel</b><span class="meta"><i data-lucide="repeat"></i>Conta fixa · Casa</span></div><span class="amt money">R$ 1.100,00<small>10 out</small></span></li>
+                <li class="due"><div class="when"><small>SEG</small><b>12</b></div><div><b class="t">Luz (Enel)</b><span class="meta"><i data-lucide="repeat"></i>Conta fixa · valor varia</span></div><span class="amt money">≈ R$ 180,00<small>12 out</small></span></li>
+                <li class="due"><div class="when"><small>DOM</small><b>18</b></div><div><b class="t">Revisão da moto</b><span class="meta"><i data-lucide="calendar-plus"></i>Pagamento futuro</span></div><span class="amt money">R$ 350,00<small>18 out</small></span></li>
+              </ul>
+              <div class="foot"><span>+ 4 até 30 out</span><span class="money">R$ 3.570,20 no total</span></div>
+            </article>
+
+            <div class="section"><h2>Cartões</h2><a>+ Novo cartão</a></div>
+            <div class="cards2">
+              <article class="card green cc">
+                <div class="cc-head"><span class="tile"><i data-lucide="credit-card"></i></span><div><h3>Nubank</h3><p>Fecha dia 28 · vence dia 5</p></div><i data-lucide="arrow-up-right" class="go"></i></div>
+                <div class="inv">
+                  <div><small>Fatura de outubro · fechada</small><b class="money">R$ 734,60</b><span>vence seg, 5 out</span></div>
+                  <div><small>Fatura de novembro · aberta</small><b class="money">R$ 186,30</b><span>até agora</span></div>
+                </div>
+                <div class="use"><span class="money">Em uso R$ 1.461,40 de R$ 3.000</span><span class="bar"><i style="width:49%"></i></span></div>
+              </article>
+              <article class="card green cc">
+                <div class="cc-head"><span class="tile"><i data-lucide="credit-card"></i></span><div><h3>Inter</h3><p>Fecha dia 23 · vence dia 30</p></div><i data-lucide="arrow-up-right" class="go"></i></div>
+                <div class="inv">
+                  <div><small>Fatura de setembro · fechada</small><b class="money">R$ 200,00</b><span class="hot">vence hoje</span></div>
+                  <div><small>Fatura de outubro · aberta</small><b class="money">R$ 64,00</b><span>até agora</span></div>
+                </div>
+                <div class="use"><span class="money">Em uso R$ 264,00 de R$ 1.500</span><span class="bar"><i style="width:18%"></i></span></div>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <div class="three">
+          <section>
+            <div class="section"><h2>Contas fixas</h2><a>7 contas</a></div>
+            <article class="card neutral list">
+              <ul>
+                <li class="ln"><div><b>Academia</b><span class="meta">todo dia 30 · Saúde</span></div><span class="amt money">R$ 89,90<small><span class="st hot">a pagar</span></small></span></li>
+                <li class="ln"><div><b>Aluguel</b><span class="meta">todo dia 10 · Casa</span></div><span class="amt money">R$ 1.100,00<small><span class="st ok"><i data-lucide="check"></i>paga</span></small></span></li>
+                <li class="ln"><div><b>Mensalidade da faculdade</b><span class="meta">todo dia 8 · Educação</span></div><span class="amt money">R$ 612,00<small><span class="st ok"><i data-lucide="check"></i>paga</span></small></span></li>
+                <li class="ln"><div><b>Luz (Enel)</b><span class="meta">todo dia 12 · valor varia</span></div><span class="amt money">R$ 187,35<small><span class="st ok"><i data-lucide="check"></i>paga</span></small></span></li>
+                <li class="ln"><div><b>Internet</b><span class="meta">todo dia 15 · Contas</span></div><span class="amt money">R$ 99,90<small><span class="st ok"><i data-lucide="check"></i>paga</span></small></span></li>
+                <li class="ln"><div><b>Celular (Claro)</b><span class="meta">todo dia 20 · Contas</span></div><span class="amt money">R$ 49,90<small><span class="st ok"><i data-lucide="check"></i>paga</span></small></span></li>
+                <li class="ln"><div><b>Spotify</b><span class="meta"><i data-lucide="credit-card"></i>no Nubank · entra na fatura</span></div><span class="amt money">R$ 21,90<small>automático</small></span></li>
+              </ul>
+              <div class="add-line"><i data-lucide="plus"></i>Nova conta fixa</div>
+            </article>
+          </section>
+
+          <section>
+            <div class="section"><h2>Parcelas</h2><a>3 ativas</a></div>
+            <article class="card neutral list">
+              <ul>
+                <li class="ln"><div><b>Fone JBL <span class="pc">4/10</span></b><span class="meta">Nubank · termina em abr/27</span></div><span class="amt money">R$ 49,90<small>por mês</small></span></li>
+                <li class="ln"><div><b>Curso de UX <span class="pc">2/6</span></b><span class="meta">Nubank · termina em fev/27</span></div><span class="amt money">R$ 97,00<small>por mês</small></span></li>
+                <li class="ln"><div><b>Cadeira de escritório <span class="pc">3/3</span></b><span class="meta">Inter · última na fatura de out</span></div><span class="amt money">R$ 64,00<small>por mês</small></span></li>
+              </ul>
+              <div class="total"><span>Por mês em parcelas</span><b class="money">R$ 210,90</b></div>
+            </article>
+          </section>
+
+          <section>
+            <div class="section"><h2>Pagamentos futuros</h2><a>avulsos</a></div>
+            <article class="card neutral list">
+              <ul>
+                <li class="ln"><div><b>Revisão da moto</b><span class="meta">dom, 18 out · Transporte</span></div><span class="amt money">R$ 350,00<small>em 18 dias</small></span></li>
+                <li class="ln"><div><b>Presente de aniversário da mãe</b><span class="meta">sáb, 21 nov · Compras</span></div><span class="amt money">≈ R$ 200,00<small>nov</small></span></li>
+                <li class="ln"><div><b>IPVA 2027</b><span class="meta">jan/27 · Transporte</span></div><span class="amt money">≈ R$ 420,00<small>jan</small></span></li>
+              </ul>
+              <div class="add-line"><i data-lucide="plus"></i>Novo pagamento futuro</div>
+            </article>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Verde é a cor do Dinheiro. A seta ‹ › troca o mês.</li>
+      <li>"Saiu" já conta o que vence no mês (pago ou não). Compra no cartão conta no mês da fatura; parcela, uma por mês.</li>
+      <li>Nas movimentações, o cartão aparece como uma linha só ("Fatura Nubank"); as compras ficam dentro da fatura.</li>
+      <li>Conta fixa no cartão (Spotify) entra sozinha na fatura; não precisa marcar como paga.</li>
+      <li>O olho esconde todos os valores (R$ •••), aqui e na Central.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

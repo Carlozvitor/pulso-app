@@ -16,15 +16,16 @@ como dev principal, pensando também em UX e produto.
 - `_memoria/hub-mestre.md` — documento mestre do Hub do Carlos (fonte de verdade de produto; o PULSO é o módulo de execução)
 - `_memoria/contexto-mestre.md` — documento mestre do PULSO (ler antes de qualquer funcionalidade)
 - `identidade/design-guide.md` — tokens de cor, tipografia, raios, movimento
-- `src/app/(app)/` — rotas do app: central (página inicial do Hub), trabalho, trabalho/[id], faculdade, faculdade/[id] (disciplina; `?avaliacao=` abre a gaveta), compromissos, origens, configuracoes, agora, a-fazer, inbox, agenda, feitas, busca, mais, projetos, projetos/[id], areas, sessao, tarefas/[id]
+- `src/app/(app)/` — rotas do app: central (página inicial do Hub), trabalho, trabalho/[id], faculdade, faculdade/[id] (disciplina; `?avaliacao=` abre a gaveta), dinheiro (`?mes=`, `?conta=`, `?lancamento=`), dinheiro/cartoes/[id] (`?fatura=`), dinheiro/[id], compromissos, origens, configuracoes, agora, a-fazer, inbox, agenda, feitas, busca, mais, projetos, projetos/[id], areas, sessao, tarefas/[id]
 - `src/app/login/` — autenticação (e-mail + senha)
 - `src/components/ui/` — primitivos shadcn (base-nova / Base UI). Editar só tema/tokens
 - `src/components/layout/` — moldura do app: topo e barra lateral (PC), `Page` (cabeçalho de tela), atalhos de teclado
 - `src/components/cards/` — peças dos cards coloridos (selo, anel de progresso, rodapé)
-- `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, sync, feedback, pwa, faculdade (gaveta de avaliação, cards de disciplina, aulas)
+- `src/components/<domínio>/` — navigation, tasks, inbox, agora, agenda, projects, session, sync, feedback, pwa, faculdade (gaveta de avaliação, cards de disciplina, aulas), dinheiro (gavetas de gasto/conta/cartão, listas, valor que o olho esconde)
 - `src/lib/origins/` — árvore de origens (áreas por módulo), resumos por módulo/item, ações e consultas (TS puro com testes em tree/summary)
 - `src/lib/events/` — compromissos: repetição semanal em ocorrências, visões (semana/hoje/próximos/concluídos), ações "só este / todos" (TS puro com testes)
 - `src/lib/faculdade/` — avaliações (estado aberta/"era pra"/feita, nota, rótulos), resumo da tela e das disciplinas (TS puro com testes), consultas (`queries` = lista; `pages` = telas e barra lateral) e ações
+- `src/lib/dinheiro/` — Dinheiro: meses, faturas/parcelas, resumo do mês e vencimentos (TS puro com testes), consultas (`queries`), telas (`pages`), ações e a ligação com tarefas (`links`)
 - `src/lib/central/` — síntese da Central (Agora + Hoje + Próximas atenções), TS puro com testes
 - `src/lib/priorities/` — motor de prioridade e seleção de sessão (TS puro, com testes)
 - `src/lib/{tasks,projects,sessions}/` — queries, server actions e schemas Zod
@@ -32,7 +33,8 @@ como dev principal, pensando também em UX e produto.
 - `src/lib/supabase/` — clients (browser/server) e proxy de auth
 - `src/lib/dates/` — datas no fuso do usuário (America/Fortaleza)
 - `supabase/migrations/` — schema versionado
-- `scripts/gerar-icones.mjs` — gera os ícones do PWA (`npm run icons`)
+- `scripts/gerar-icones.mjs` — gera os ícones do PWA a partir de `identidade/logo-hub-simbolo.png` (`npm run icons`)
+- `identidade/logo-hub-do-carlos.png` — logo oficial (2026-09-30); símbolo recortado em `identidade/logo-hub-simbolo.png` e `public/brand/hub-simbolo.png`
 - `saidas/`, `marketing/`, `dados/` — pastas padrão do MazyOS
 
 ## Regras do projeto

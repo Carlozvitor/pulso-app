@@ -1,10 +1,12 @@
 import * as auth from "@/lib/auth/actions";
+import * as dinheiro from "@/lib/dinheiro/actions";
 import * as events from "@/lib/events/actions";
 import * as faculdade from "@/lib/faculdade/actions";
 import * as origins from "@/lib/origins/actions";
 import * as projects from "@/lib/projects/actions";
 import * as sessions from "@/lib/sessions/actions";
 import * as tasks from "@/lib/tasks/actions";
+import { withPayPrompt } from "./pay-prompt";
 import { resilient } from "./resilient";
 
 /*
@@ -16,7 +18,8 @@ import { resilient } from "./resilient";
 export const signIn = resilient(auth.signIn);
 export const signUp = resilient(auth.signUp);
 
-export const setTaskStatus = resilient(tasks.setTaskStatus);
+export const payTaskLink = resilient(dinheiro.payTaskLink);
+export const setTaskStatus = withPayPrompt(resilient(tasks.setTaskStatus), payTaskLink);
 export const updateTask = resilient(tasks.updateTask);
 export const pauseTask = resilient(tasks.pauseTask);
 export const snoozeTask = resilient(tasks.snoozeTask);
@@ -49,3 +52,19 @@ export const deleteEvent = resilient(events.deleteEvent);
 
 export const startSession = resilient(sessions.startSession);
 export const endSession = resilient(sessions.endSession);
+
+export const createEntry = resilient(dinheiro.createEntry);
+export const updateEntry = resilient(dinheiro.updateEntry);
+export const deleteEntry = resilient(dinheiro.deleteEntry);
+export const payPlanned = resilient(dinheiro.payPlanned);
+export const createBill = resilient(dinheiro.createBill);
+export const updateBill = resilient(dinheiro.updateBill);
+export const endBill = resilient(dinheiro.endBill);
+export const payBill = resilient(dinheiro.payBill);
+export const unpayBill = resilient(dinheiro.unpayBill);
+export const createCard = resilient(dinheiro.createCard);
+export const updateCard = resilient(dinheiro.updateCard);
+export const setCardArchived = resilient(dinheiro.setCardArchived);
+export const deleteCard = resilient(dinheiro.deleteCard);
+export const setInvoicePaid = resilient(dinheiro.setInvoicePaid);
+export const createMoneyTask = resilient(dinheiro.createMoneyTask);

@@ -3,6 +3,7 @@ import type { CalendarEvent, Occurrence } from "@/types/event";
 import type { ProjectProgress, ProjectSummary } from "@/types/project";
 import type { AgoraView, Task } from "@/types/task";
 import { addDays } from "@/lib/dates";
+import type { DueItem } from "@/lib/dinheiro/summary";
 import { isPending, toAgendaAssessment } from "@/lib/faculdade/assessments";
 import { occurrencesBetween, type AreaLabel, type Now } from "@/lib/events/occurrences";
 import { buildAgoraView, type ContextOf } from "@/lib/priorities/agora";
@@ -21,7 +22,8 @@ export type AttentionItem =
   | { kind: "event"; id: string; title: string; date: string; time: string | null; context: string | null }
   | { kind: "assessment"; id: string; areaId: string; title: string; date: string; time: string | null; context: string | null }
   | { kind: "task"; id: string; title: string; context: string | null; date: string }
-  | { kind: "project"; id: string; title: string; date: string; progress: ProjectProgress };
+  | { kind: "project"; id: string; title: string; date: string; progress: ProjectProgress }
+  | { kind: "money"; id: string; title: string; date: string; amountCents: number; approximate: boolean; context: string; href: string };
 
 export type AttentionList = {
   items: AttentionItem[];
@@ -46,15 +48,31 @@ export type CentralView = {
  * Agenda para a Central (opcional: sem ela, só prazos). Avaliações: só as das disciplinas
  * valendo (as encerradas ficam de fora antes de chegar aqui).
  */
-export type CentralAgenda = { events: CalendarEvent[]; now: Now; areaLabel?: AreaLabel; assessments?: Assessment[] };
+export type CentralAgenda = {
+  events: CalendarEvent[];
+  now: Now;
+  areaLabel?: AreaLabel;
+  assessments?: Assessment[];
+  /** Do Dinheiro: contas, faturas e pagamentos futuros ainda não pagos. */
+  money?: DueItem[];
+};
 
-const KIND_ORDER: Record<AttentionItem["kind"], number> = { event: 0, assessment: 1, task: 2, project: 3 };
+const KIND_ORDER: Record<AttentionItem["kind"], number> = { event: 0, assessment: 1, money: 2, task: 3, project: 4 };
+
+/** Uma conta, fatura ou pagamento futuro como linha da Central (abre a gaveta ou a fatura). */
+export function moneyAttention(item: DueItem): AttentionItem {
+  const base = { kind: "money" as const, id: item.key, title: item.title, date: item.date, amountCents: item.amountCents, approximate: item.approximate };
+  if (item.kind === "bill") return { ...base, context: "Conta fixa", href: `/dinheiro?conta=${item.bill.id}&mes-conta=${item.month}` };
+  if (item.kind === "invoice") return { ...base, context: "Fatura", href: `/dinheiro/cartoes/${item.card.id}?fatura=${item.month}` };
+  return { ...base, context: "Pagamento futuro", href: `/dinheiro?lancamento=${item.entry.id}` };
+}
 
 const timeOf = (item: AttentionItem) => (item.kind === "event" || item.kind === "assessment" ? item.time : null);
 
 /**
  * Ordem das linhas: data mais cedo primeiro; no mesmo dia, compromissos, depois avaliações
- * (pelo horário, sem horário depois), depois tarefas (por prioridade), depois projetos (por nome).
+ * (pelo horário, sem horário depois), depois o que vence no Dinheiro, depois tarefas (por
+ * prioridade), depois projetos (por nome).
  */
 function sortItems(items: AttentionItem[], taskRank: Map<string, number>): AttentionItem[] {
   return items.sort((a, b) => {
@@ -124,6 +142,8 @@ export function buildCentral(
           context: [item.context, a.location].filter(Boolean).join(" · ") || null,
         };
       }),
+    // Dinheiro: o que vence (o que passou do dia sem marcar aparece em Hoje).
+    ...(agenda?.money ?? []).map(moneyAttention),
   ];
   const sorted = sortItems(items, taskRank);
 

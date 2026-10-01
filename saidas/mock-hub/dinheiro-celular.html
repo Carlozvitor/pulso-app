@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H5 (celular)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#050506; --line:#232327; --line-2:#2e2e33; --text:#f4f4f5; --text-2:#a1a1aa; --text-3:#8a8a93; --accent:#4c5bff; --accent-soft:#8b95ff; --teal-ink:#5eead4;
+    --amber-a:#4d260c; --amber-b:#1f1007; --amber-line:#8a4818; --amber-tile:#6d3510; --amber-ink:#fdba74;
+    --rose-tile:#5b1c47; --rose-ink:#f9a8d4;
+    --green-a:#0f3320; --green-b:#07160e; --green-line:#1f6b3f; --green-tile:#14532d; --green-ink:#86efac; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #1a1a1d; color: var(--text); font: 15px/1.45 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; }
+  .money { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cap { color: #a1a1aa; font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .phone { width: 390px; height: 844px; border-radius: 44px; border: 10px solid #000; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 30px 80px rgb(0 0 0 / .6); }
+  .scroll { height: 100%; overflow: auto; padding: 54px 16px 110px; scrollbar-width: none; }
+  .status { position: absolute; top: 0; inset-inline: 0; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font-weight: 600; font-size: 14px; background: var(--bg); z-index: 3; }
+  .head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin: 0 -16px 14px; padding-inline: 16px; }
+  .seal { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+  .seal.green { background: var(--green-tile); color: var(--green-ink); box-shadow: inset 0 0 0 1px var(--green-line); }
+  .head h1 { font-size: 20px; font-weight: 600; }
+  .head p { font-size: 13px; color: var(--text-2); }
+  .head .tools { margin-left: auto; display: flex; gap: 6px; }
+  .head .tb { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; }
+  .head .tb.green { background: var(--green-tile); border-color: var(--green-line); color: #dcfce7; }
+  .head .tb.on { color: var(--green-ink); border-color: var(--green-line); }
+  .month { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-weight: 500; }
+  .month svg.lucide { color: var(--text-3); }
+  .lbl { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin: 18px 2px 8px; display: flex; justify-content: space-between; }
+  .lbl a { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-3); font-size: 12.5px; }
+
+  .card { border-radius: 12px; padding: 8px; border: 1px solid; }
+  .card.green { background: linear-gradient(160deg, var(--green-a), var(--green-b)); border-color: var(--green-line); }
+  .card.neutral { background: linear-gradient(160deg, #141417, #0d0d0f); border-color: var(--line); }
+
+  .sum { padding: 16px; }
+  .sum .big small { font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(255 255 255 / .55); }
+  .sum .big b { display: block; font-size: 32px; font-weight: 600; letter-spacing: -0.02em; color: var(--green-ink); }
+  .sum .big span { font-size: 12.5px; color: rgb(255 255 255 / .55); }
+  .sum .pair { display: grid; grid-template-columns: 1fr 1fr; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgb(255 255 255 / .1); }
+  .sum .pair div + div { padding-left: 14px; border-left: 1px solid rgb(255 255 255 / .1); }
+  .sum .pair small { display: flex; align-items: center; gap: 5px; font-size: 12px; color: rgb(255 255 255 / .55); }
+  .sum .pair small svg.lucide { width: 13px; height: 13px; }
+  .sum .pair b { font-size: 17px; font-weight: 600; }
+
+  .due { display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: center; padding: 10px; border-radius: 8px; background: rgb(0 0 0 / .22); margin-bottom: 2px; }
+  .due .w { text-align: center; line-height: 1.1; }
+  .due .w small { display: block; font-size: 10px; font-weight: 600; letter-spacing: .08em; color: rgb(255 255 255 / .5); }
+  .due .w b { font-size: 18px; font-weight: 600; }
+  .due.today .w small, .due.today .w b { color: var(--amber-ink); }
+  .due b.t { display: block; font-weight: 500; font-size: 14.5px; }
+  .due span.m { font-size: 12px; color: rgb(255 255 255 / .55); }
+  .due .r { font-weight: 600; font-size: 14px; text-align: right; }
+  .due .r small { display: block; font-weight: 500; font-size: 11.5px; color: rgb(255 255 255 / .5); }
+  .due .r small.hot { color: var(--amber-ink); }
+
+  .ccs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cc { border-radius: 12px; padding: 12px; border: 1px solid var(--green-line); background: linear-gradient(160deg, var(--green-a), var(--green-b)); }
+  .cc .n { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 14.5px; }
+  .cc .n svg.lucide { width: 15px; height: 15px; color: var(--green-ink); }
+  .cc b { display: block; font-size: 18px; font-weight: 600; margin-top: 8px; }
+  .cc span { display: block; font-size: 12px; color: rgb(255 255 255 / .55); }
+  .cc span.hot { color: var(--amber-ink); }
+
+  .rows { border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(160deg, #141417, #0d0d0f); }
+  .rw { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--line); }
+  .rw:last-child { border-bottom: 0; }
+  .rw .ic { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; background: #1c1c20; color: var(--text-2); }
+  .rw .ic svg.lucide { width: 16px; height: 16px; }
+  .rw b { display: block; font-weight: 500; font-size: 15px; }
+  .rw small { font-size: 12.5px; color: var(--text-3); }
+  .rw .go { margin-left: auto; color: var(--text-3); }
+
+  .hidden .money { letter-spacing: .12em; }
+
+  /* central */
+  .pa { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 11px 10px; border-radius: 8px; background: rgb(0 0 0 / .22); margin-bottom: 2px; }
+  .pa .ic { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; }
+  .pa .ic svg.lucide { width: 15px; height: 15px; }
+  .pa .ic.rose { background: var(--rose-tile); color: var(--rose-ink); }
+  .pa .ic.amber { background: var(--amber-tile); color: var(--amber-ink); }
+  .pa .ic.teal { background: #0f4e59; color: var(--teal-ink); }
+  .pa .ic.green { background: var(--green-tile); color: var(--green-ink); }
+  .pa b { display: block; font-weight: 500; font-size: 14.5px; }
+  .pa small { font-size: 12px; color: rgb(255 255 255 / .5); }
+  .pa .r { font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .6); text-align: right; white-space: nowrap; }
+  .pa .r.hot { color: var(--amber-ink); }
+  .mod { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; border: 1px solid var(--green-line); background: linear-gradient(160deg, var(--green-a), var(--green-b)); }
+  .mod b { display: block; font-size: 17px; font-weight: 700; }
+  .mod span { display: block; font-size: 12.5px; color: rgb(255 255 255 / .6); }
+  .mod .eye { margin-left: auto; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: var(--green-ink); background: rgb(0 0 0 / .25); }
+  .mod .eye svg.lucide { width: 16px; height: 16px; }
+  .today-card { border-radius: 12px; padding: 8px; border: 1px solid #2b2d40; background: linear-gradient(160deg, #15172a, #0c0d16); }
+
+  .navbar { position: absolute; bottom: 0; inset-inline: 0; height: 86px; background: rgb(9 9 11 / .96); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding-top: 8px; z-index: 3; }
+  .nt { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--text-3); }
+  .nt.on { color: var(--text); } .nt.on svg.lucide { color: var(--accent-soft); }
+  .plus { justify-self: center; width: 52px; height: 52px; border-radius: 16px; background: var(--accent); display: grid; place-items: center; margin-top: -4px; }
+</style>
+</head>
+<body>
+  <div>
+    <p class="cap">Dinheiro (Mais → Dinheiro)</p>
+    <div class="phone">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <div class="head"><span class="seal green"><i data-lucide="wallet"></i></span><div><h1>Dinheiro</h1><p>2 vencem hoje</p></div><div class="tools"><span class="tb"><i data-lucide="eye"></i></span><span class="tb green"><i data-lucide="plus"></i></span></div></div>
+
+        <div class="month"><i data-lucide="chevron-left"></i>Setembro 2026<i data-lucide="chevron-right"></i></div>
+        <div class="card green sum">
+          <div class="big"><small>Sobra</small><b class="money">R$ 1.437,60</b><span>se pagar o que vence hoje</span></div>
+          <div class="pair">
+            <div><small><i data-lucide="arrow-down-left"></i>Entrou</small><b class="money">R$ 4.850,00</b></div>
+            <div><small><i data-lucide="arrow-up-right"></i>Saiu</small><b class="money">R$ 3.412,40</b></div>
+          </div>
+        </div>
+
+        <p class="lbl">Próximos vencimentos<a>Ver todos</a></p>
+        <div class="card green">
+          <div class="due today"><div class="w"><small>HOJE</small><b>30</b></div><div><b class="t">Academia</b><span class="m">Conta fixa</span></div><span class="r money">R$ 89,90<small class="hot">hoje</small></span></div>
+          <div class="due today"><div class="w"><small>HOJE</small><b>30</b></div><div><b class="t">Fatura Inter</b><span class="m">Fechada · 3 compras</span></div><span class="r money">R$ 200,00<small class="hot">hoje</small></span></div>
+          <div class="due"><div class="w"><small>SEG</small><b>5</b></div><div><b class="t">Fatura Nubank</b><span class="m">Fechada · 7 lançamentos</span></div><span class="r money">R$ 734,60<small>segunda</small></span></div>
+        </div>
+
+        <p class="lbl">Cartões</p>
+        <div class="ccs">
+          <div class="cc"><span class="n"><i data-lucide="credit-card"></i>Nubank</span><b class="money">R$ 734,60</b><span>vence 5 out</span></div>
+          <div class="cc"><span class="n"><i data-lucide="credit-card"></i>Inter</span><b class="money">R$ 200,00</b><span class="hot">vence hoje</span></div>
+        </div>
+
+        <p class="lbl">Mais</p>
+        <div class="rows">
+          <div class="rw"><span class="ic"><i data-lucide="list"></i></span><div><b>Movimentações</b><small>12 em setembro</small></div><i data-lucide="chevron-right" class="go"></i></div>
+          <div class="rw"><span class="ic"><i data-lucide="repeat"></i></span><div><b>Contas fixas</b><small>7 · 1 a pagar</small></div><i data-lucide="chevron-right" class="go"></i></div>
+          <div class="rw"><span class="ic"><i data-lucide="layers"></i></span><div><b>Parcelas</b><small>3 ativas</small></div><i data-lucide="chevron-right" class="go"></i></div>
+          <div class="rw"><span class="ic"><i data-lucide="calendar-plus"></i></span><div><b>Pagamentos futuros</b><small>próximo 18 out</small></div><i data-lucide="chevron-right" class="go"></i></div>
+        </div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+
+  <div>
+    <p class="cap">Mesma tela com os valores escondidos (olho)</p>
+    <div class="phone hidden">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <div class="head"><span class="seal green"><i data-lucide="wallet"></i></span><div><h1>Dinheiro</h1><p>2 vencem hoje</p></div><div class="tools"><span class="tb on"><i data-lucide="eye-off"></i></span><span class="tb green"><i data-lucide="plus"></i></span></div></div>
+
+        <div class="month"><i data-lucide="chevron-left"></i>Setembro 2026<i data-lucide="chevron-right"></i></div>
+        <div class="card green sum">
+          <div class="big"><small>Sobra</small><b class="money">R$ •••</b><span>se pagar o que vence hoje</span></div>
+          <div class="pair">
+            <div><small><i data-lucide="arrow-down-left"></i>Entrou</small><b class="money">R$ •••</b></div>
+            <div><small><i data-lucide="arrow-up-right"></i>Saiu</small><b class="money">R$ •••</b></div>
+          </div>
+        </div>
+
+        <p class="lbl">Próximos vencimentos<a>Ver todos</a></p>
+        <div class="card green">
+          <div class="due today"><div class="w"><small>HOJE</small><b>30</b></div><div><b class="t">Academia</b><span class="m">Conta fixa</span></div><span class="r money">R$ •••<small class="hot">hoje</small></span></div>
+          <div class="due today"><div class="w"><small>HOJE</small><b>30</b></div><div><b class="t">Fatura Inter</b><span class="m">Fechada · 3 compras</span></div><span class="r money">R$ •••<small class="hot">hoje</small></span></div>
+          <div class="due"><div class="w"><small>SEG</small><b>5</b></div><div><b class="t">Fatura Nubank</b><span class="m">Fechada · 7 lançamentos</span></div><span class="r money">R$ •••<small>segunda</small></span></div>
+        </div>
+
+        <p class="lbl">Cartões</p>
+        <div class="ccs">
+          <div class="cc"><span class="n"><i data-lucide="credit-card"></i>Nubank</span><b class="money">R$ •••</b><span>vence 5 out</span></div>
+          <div class="cc"><span class="n"><i data-lucide="credit-card"></i>Inter</span><b class="money">R$ •••</b><span class="hot">vence hoje</span></div>
+        </div>
+        <p style="font-size:12.5px;color:#8a8a93;margin-top:14px;line-height:1.5">O aparelho lembra da escolha. Os nomes e as datas continuam à vista; só os valores somem. Vale para o Dinheiro inteiro e para o card da Central.</p>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+
+  <div>
+    <p class="cap">Central · Hoje, Próximas atenções e card do Dinheiro</p>
+    <div class="phone">
+      <div class="status"><span>16:40</span><span>●●●</span></div>
+      <div class="scroll">
+        <p class="lbl" style="margin-top:4px">Hoje</p>
+        <div class="today-card">
+          <div class="pa"><span class="ic amber"><i data-lucide="calendar-clock"></i></span><div><b>Aula de Marketing Digital</b><small>Bloco C, 204</small></div><span class="r">19:00</span></div>
+          <div class="pa"><span class="ic green"><i data-lucide="repeat"></i></span><div><b>Academia vence</b><small>Conta fixa · <span class="money">R$ 89,90</span></small></div><span class="r hot">Hoje</span></div>
+          <div class="pa"><span class="ic green"><i data-lucide="credit-card"></i></span><div><b>Fatura Inter vence</b><small><span class="money">R$ 200,00</span></small></div><span class="r hot">Hoje</span></div>
+          <div class="pa"><span class="ic teal"><i data-lucide="circle-dot"></i></span><div><b>Revisar resumo dos capítulos 1 a 3</b><small>Comportamento do Consumidor · AV1</small></div><span class="r">prazo</span></div>
+        </div>
+
+        <p class="lbl">Próximas atenções</p>
+        <div class="card neutral">
+          <div class="pa"><span class="ic rose"><i data-lucide="clipboard-check"></i></span><div><b>Prova · AV1</b><small>Comportamento do Consumidor</small></div><span class="r">Amanhã<br />19:00</span></div>
+          <div class="pa"><span class="ic green"><i data-lucide="credit-card"></i></span><div><b>Fatura Nubank</b><small><span class="money">R$ 734,60</span></small></div><span class="r">Seg 5</span></div>
+          <div class="pa"><span class="ic amber"><i data-lucide="calendar-clock"></i></span><div><b>Dentista</b><small>Aldeota</small></div><span class="r">Sex<br />09:00</span></div>
+        </div>
+
+        <p class="lbl">Minha vida</p>
+        <div class="mod"><span class="seal green"><i data-lucide="wallet"></i></span><div><b>Dinheiro</b><span>Sobra <span class="money" style="display:inline">R$ 1.437,60</span> · 2 vencem hoje</span></div><span class="eye"><i data-lucide="eye"></i></span></div>
+        <p style="font-size:12.5px;color:#8a8a93;margin-top:12px;line-height:1.5">Contas fixas e faturas entram em Hoje no dia do vencimento e em Próximas atenções nos 7 dias antes. Conta já paga some das duas.</p>
+      </div>
+      <nav class="navbar"><span class="nt on"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

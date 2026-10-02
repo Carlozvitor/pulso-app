@@ -18,7 +18,7 @@ export function ModuleCard({
   value: React.ReactNode;
   foot: string;
   icon: LucideIcon;
-  tone: "blue" | "amber" | "rose" | "green";
+  tone: "blue" | "amber" | "rose" | "green" | "lime";
 }) {
   return (
     <Link

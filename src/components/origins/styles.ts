@@ -6,3 +6,6 @@ export const SCHOOL_ICON_CLASS = "bg-rose-tile text-rose-ink shadow-[inset_0_0_0
 
 /** Selo verde do Dinheiro (família green). */
 export const MONEY_ICON_CLASS = "bg-green-tile text-green-ink shadow-[inset_0_0_0_1px_var(--green-line)]";
+
+/** Selo lima do Treino (família lime). */
+export const TRAINING_ICON_CLASS = "bg-lime-tile text-lime-ink shadow-[inset_0_0_0_1px_var(--lime-line)]";

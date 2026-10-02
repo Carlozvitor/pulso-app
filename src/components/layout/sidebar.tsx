@@ -5,15 +5,18 @@ import { getTodaySummary } from "@/lib/events/queries";
 import { getDinheiroNav } from "@/lib/dinheiro/pages";
 import { getFaculdadeNav } from "@/lib/faculdade/pages";
 import { getModuleNav } from "@/lib/origins/queries";
+import { getTreinoNav } from "@/lib/treino/pages";
 import { SidebarNav, type SidebarAgenda, type SidebarModule, type SidebarMoney, type SidebarProject } from "./sidebar-nav";
 
 /** Barra lateral do PC: a navegação do Hub, fixa na altura da tela. */
 export async function Sidebar() {
-  const [{ active, paused }, workNav, schoolNav, money, agenda, inboxCount, todoCount] = await Promise.all([
+  const [{ active, paused }, workNav, schoolNav, money, trainingNav, trainingWeek, agenda, inboxCount, todoCount] = await Promise.all([
     listProjects(),
     getModuleNav("TRABALHO"),
     getFaculdadeNav(),
     getDinheiroNav(),
+    getModuleNav("TREINO"),
+    getTreinoNav(),
     getTodaySummary(),
     countInbox(),
     countTodo(),
@@ -21,6 +24,10 @@ export async function Sidebar() {
   const work: SidebarModule = { areas: workNav.areas, open: Object.fromEntries(workNav.counts) };
   const school: SidebarModule | null = schoolNav
     ? { areas: schoolNav.areas, open: Object.fromEntries(schoolNav.counts), attention: schoolNav.attention }
+    : null;
+  // Sem as tabelas do Treino (migration não aplicada), ele fica fora da barra.
+  const training: SidebarModule | null = trainingWeek
+    ? { areas: trainingNav.areas, open: Object.fromEntries(trainingNav.counts), attention: trainingWeek.attention }
     : null;
 
   // Só os em andamento aparecem; pausado entra só na contagem.
@@ -38,6 +45,7 @@ export async function Sidebar() {
       work={work}
       school={school}
       money={money}
+      training={training}
       agenda={agenda}
       inboxCount={inboxCount}
       todoCount={todoCount}
@@ -51,6 +59,7 @@ export function SidebarView({
   work,
   school,
   money,
+  training,
   agenda,
   inboxCount,
   todoCount,
@@ -60,6 +69,7 @@ export function SidebarView({
   work: SidebarModule;
   school: SidebarModule | null;
   money: SidebarMoney | null;
+  training: SidebarModule | null;
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
@@ -72,6 +82,7 @@ export function SidebarView({
         work={work}
         school={school}
         money={money}
+        training={training}
         agenda={agenda}
         inboxCount={inboxCount}
         todoCount={todoCount}

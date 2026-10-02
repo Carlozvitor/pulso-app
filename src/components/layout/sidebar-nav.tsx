@@ -11,6 +11,7 @@ import {
   CircleDot,
   CornerDownRight,
   CreditCard,
+  Dumbbell,
   GraduationCap,
   Inbox,
   ListTodo,
@@ -202,6 +203,23 @@ function ModuleTree({
   );
 }
 
+/**
+ * Treino: a semana como linha de apoio ("2 de 4 na semana") e, se houver, os itens de origem
+ * dentro dele. As telas próprias (treino, exercícios, fichas) acendem o item do módulo.
+ */
+function TrainingTree({ nav, pathname }: { nav: SidebarModule; pathname: string }) {
+  const own = ["/treino/fazer", "/treino/exercicios", "/treino/fichas", "/treino/historico"].some((p) => pathname.startsWith(p));
+  return (
+    <ModuleTree
+      nav={nav}
+      base="/treino"
+      title="Treino"
+      tile={{ className: "bg-lime-tile text-lime-ink", icon: Dumbbell }}
+      pathname={own ? "/treino" : pathname}
+    />
+  );
+}
+
 /** "4 em andamento · 1 pausado" — pausado só aparece na contagem. */
 function projectsLabel(count: number, paused: number): string {
   const running = count === 0 ? "Nenhum em andamento" : count === 1 ? "1 em andamento" : `${count} em andamento`;
@@ -219,6 +237,7 @@ export function SidebarNav({
   work,
   school,
   money,
+  training,
   agenda,
   inboxCount,
   todoCount,
@@ -228,6 +247,7 @@ export function SidebarNav({
   work: SidebarModule;
   school: SidebarModule | null;
   money: SidebarMoney | null;
+  training: SidebarModule | null;
   agenda: SidebarAgenda;
   inboxCount: number;
   todoCount: number;
@@ -301,6 +321,10 @@ export function SidebarNav({
               </Kids>
             )}
           </div>
+        )}
+
+        {training && (
+          <TrainingTree nav={training} pathname={pathname} />
         )}
 
         <div className="mt-1">

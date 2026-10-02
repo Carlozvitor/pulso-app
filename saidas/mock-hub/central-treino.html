@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H7 (Central)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .section h2 { display: flex; align-items: center; gap: 8px; }
+  .section h2 svg.lucide { width: 14px; height: 14px; }
+  .same { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-radius: 12px; border: 1px dashed var(--line-2); color: var(--text-3); font-size: 13.5px; }
+  .same svg.lucide { width: 16px; height: 16px; }
+
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .rows { padding: 8px; }
+  .rw { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 8px; background: rgb(0 0 0 / .22); }
+  .rw + .rw { margin-top: 2px; }
+  .rw .t { font: 600 13px "Geist Mono"; color: var(--amber-ink); }
+  .rw b { display: block; font-weight: 500; font-size: 14px; }
+  .rw small { display: block; font-size: 12px; color: rgb(255 255 255 / .5); }
+  .rw .o { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: rgb(255 255 255 / .6); white-space: nowrap; }
+  .rw .o i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .card { min-height: 208px; }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .card-top > svg.lucide { width: 20px; height: 20px; opacity: .6; }
+  .blue .card-top > svg.lucide { color: var(--blue-ink); }
+  .rose .card-top > svg.lucide { color: var(--rose-ink); }
+  .green .card-top > svg.lucide { color: var(--green-ink); }
+  .lime .card-top > svg.lucide { color: var(--lime-ink); }
+  .amber { background: linear-gradient(160deg, var(--amber-a), var(--amber-b)); border-color: var(--amber-line); }
+  .amber .tile { background: var(--amber-tile); color: var(--amber-ink); }
+  .amber .card-top > svg.lucide { color: var(--amber-ink); }
+  .label { margin-top: 20px; color: rgb(255 255 255 / .8); font-size: 14px; }
+  .big { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .big small { font-size: 16px; font-weight: 500; color: rgb(255 255 255 / .7); letter-spacing: 0; }
+  .foot { margin-top: auto; padding-top: 12px; border-top: 1px solid rgb(255 255 255 / .1); display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: rgb(255 255 255 / .6); }
+  .foot b { font-weight: 600; color: rgb(255 255 255 / .8); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ring { width: 44px; height: 44px; position: relative; display: grid; place-items: center; }
+  .ring svg.r { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .ring svg.lucide { width: 16px; height: 16px; stroke-width: 2.25; color: var(--ok); }
+  .plum .tile { font-weight: 700; font-size: 14px; }
+  .new { position: relative; }
+  .new::after { content: "novo"; position: absolute; top: 12px; right: 48px; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #141a04; background: var(--lime-ink); border-radius: 5px; padding: 2px 6px; }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa noite, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item on"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova 8 out · 19:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--green-tile);color:var(--green-ink)"><i data-lucide="wallet"></i></span><div><b>Dinheiro</b><span class="sub">Nada vencendo</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--lime-tile);color:var(--lime-ink)"><i data-lucide="dumbbell"></i></span><div><b>Treino</b><span class="sub">2 de 4 na semana</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">1 hoje · 20:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento · 1 pausado</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="main-head" style="padding-top:20px">
+        <span class="app-ico"><i data-lucide="zap"></i></span>
+        <div><h1>Central</h1><p>O que merece sua atenção agora</p></div>
+      </div>
+
+      <div class="content">
+        <div class="same"><i data-lucide="equal"></i>Captura e Agora continuam iguais. O Treino não cria ações sozinho, então não aparece na Agora.</div>
+
+        <div class="pair" style="margin-top:28px">
+          <section>
+            <div class="section"><h2><i data-lucide="sun" style="color:var(--amber-ink)"></i>Hoje</h2><a>Qui, 1 out</a></div>
+            <article class="card amber rows" style="min-height:0">
+              <div class="rw"><span class="t">20:00</span><div><b>Academia</b><small>Compromisso que se repete · seg, qua, qui e sáb</small></div><span class="o"><i style="background:var(--lime-ink)"></i>Treino</span></div>
+            </article>
+          </section>
+          <section>
+            <div class="section"><h2><i data-lucide="eye" style="color:var(--text-2)"></i>Próximas atenções</h2><a>sem mudança</a></div>
+            <article class="card neutral rows" style="min-height:0">
+              <div class="rw"><span class="t" style="color:var(--rose-ink)">8 out</span><div><b>Prova · AV1</b><small>IA para devs · Aldeota · 19:00</small></div><span class="o"><i style="background:var(--rose-ink)"></i>Faculdade</span></div>
+            </article>
+          </section>
+        </div>
+
+        <div class="section" style="margin-top:30px"><h2><i data-lucide="layout-grid" style="color:var(--plum-ink)"></i>Minha vida</h2><a>Todos os projetos</a></div>
+        <div class="grid">
+          <article class="card blue"><div class="card-top"><span class="tile"><i data-lucide="briefcase"></i></span><i data-lucide="arrow-up-right"></i></div>
+            <div class="label">Trabalho</div><div class="big">7 ações</div>
+            <div class="foot"><span>Próxima: Post da Valentine</span></div></article>
+          <article class="card rose"><div class="card-top"><span class="tile"><i data-lucide="graduation-cap"></i></span><i data-lucide="arrow-up-right"></i></div>
+            <div class="label">Faculdade</div><div class="big">Nada aberto</div>
+            <div class="foot"><span>Prova 8 out · 19:00</span></div></article>
+          <article class="card green"><div class="card-top"><span class="tile"><i data-lucide="wallet"></i></span><i data-lucide="arrow-up-right"></i></div>
+            <div class="label">Dinheiro · sobra no mês</div><div class="big">R$ •••</div>
+            <div class="foot"><span>Nada vencendo</span></div></article>
+          <article class="card lime new"><div class="card-top"><span class="tile"><i data-lucide="dumbbell"></i></span><i data-lucide="arrow-up-right"></i></div>
+            <div class="label">Treino · esta semana</div><div class="big">2 <small>de 4</small></div>
+            <div class="foot"><span>Academia hoje · 20:00</span></div></article>
+
+          <article class="card amber"><div class="card-top"><span class="tile"><i data-lucide="calendar-clock"></i></span><i data-lucide="arrow-up-right"></i></div>
+            <div class="label">Compromissos</div><div class="big">1 hoje</div>
+            <div class="foot"><span>Próximo: 20:00 · Academia</span></div></article>
+          <article class="card plum"><div class="card-top"><span class="tile">CC</span>
+            <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="50 120"/></svg><i data-lucide="arrow-up"></i></span></div>
+            <div class="label">CRUMB CLUB</div><div class="big">42%</div>
+            <div class="foot"><span>5 de 12 ações</span><b>15 out</b></div></article>
+          <article class="card plum"><div class="card-top"><span class="tile">NE</span>
+            <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="72 120"/></svg><i data-lucide="arrow-up"></i></span></div>
+            <div class="label">NEXOS</div><div class="big">60%</div>
+            <div class="foot"><span>6 de 10 ações</span><b>31 out</b></div></article>
+          <article class="card plum"><div class="card-top"><span class="tile">HC</span>
+            <span class="ring"><svg class="r" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" fill="none" stroke="rgb(255 255 255 / .1)" stroke-width="3"/><circle cx="22" cy="22" r="19" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-dasharray="75 120"/></svg><i data-lucide="arrow-up"></i></span></div>
+            <div class="label">Hub do Carlos</div><div class="big">63%</div>
+            <div class="foot"><span>12 de 19 ações</span><b style="color:rgb(255 255 255 / .6)">sem prazo</b></div></article>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Treino entra em Minha vida depois do Dinheiro. Com 5 módulos, a seção vira 2 fileiras de 4, e 3 projetos voltam para completar a segunda.</li>
+      <li>No card: treinos da semana e a meta. Embaixo, a academia de hoje ou, se não tiver, "Último: ontem".</li>
+      <li>A academia aparece em Hoje porque é um compromisso. Já funciona assim desde a H3.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

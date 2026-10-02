@@ -40,6 +40,14 @@ const TONES = {
     add: "Adicionar material",
     example: "Nome (ex.: Plano de ensino)",
   },
+  lime: {
+    card: "tint-lime",
+    text: "text-[#ecf5d6]",
+    notes: "Objetivos, horário da academia, dicas de execução, o que o professor passou…",
+    links: "Links",
+    add: "Adicionar link",
+    example: "Nome (ex.: Vídeo do agachamento)",
+  },
   plum: {
     card: "tint-plum",
     text: "text-[#ece2fb]",

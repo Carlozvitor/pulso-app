@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H7 (Treino no celular)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#050506; --line:#232327; --line-2:#2e2e33; --text:#f4f4f5; --text-2:#a1a1aa; --text-3:#8a8a93; --accent:#4c5bff; --accent-soft:#8b95ff; --ok:#34d399;
+    --amber-ink:#fdba74;
+    --lime-a:#262f0a; --lime-b:#11150a; --lime-line:#56681b; --lime-tile:#3b4a10; --lime-ink:#bef264; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #1a1a1d; color: var(--text); font: 15px/1.45 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 24px 16px; flex-wrap: wrap; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.75; }
+  .cap { color: #a1a1aa; font-size: 13px; text-align: center; margin-bottom: 10px; }
+  .phone { width: 390px; max-width: 100%; height: 844px; border-radius: 44px; border: 10px solid #000; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 0 1px #333, 0 30px 80px rgb(0 0 0 / .6); }
+  .scroll { height: 100%; overflow: auto; padding: 54px 16px 110px; scrollbar-width: none; }
+  .status { position: absolute; top: 0; inset-inline: 0; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 6px 28px 0; font-weight: 600; font-size: 14px; background: var(--bg); z-index: 3; }
+  .head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin: 0 -16px 14px; padding-inline: 16px; }
+  .seal { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; background: var(--lime-tile); color: var(--lime-ink); box-shadow: inset 0 0 0 1px var(--lime-line); }
+  .head h1 { font-size: 20px; font-weight: 600; }
+  .head p { font-size: 13px; color: var(--text-2); }
+  .head .tools { margin-left: auto; display: flex; gap: 6px; }
+  .tb { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--text-2); border: 1px solid var(--line-2); background: #141417; }
+  .tb.lime { background: var(--lime-ink); border-color: var(--lime-ink); color: #141a04; }
+  .back { display: flex; align-items: center; gap: 4px; color: var(--text-2); font-size: 14px; margin-bottom: 10px; }
+  .back svg.lucide { width: 16px; height: 16px; }
+
+  .lbl { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin: 18px 2px 8px; display: flex; justify-content: space-between; }
+  .lbl a { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-3); font-size: 12.5px; }
+
+  .today { border-radius: 12px; border: 1px solid var(--lime-line); background: linear-gradient(160deg, var(--lime-a), var(--lime-b)); padding: 14px; display: grid; gap: 10px; }
+  .today .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .today .row b { font-size: 16px; font-weight: 600; }
+  .appt { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 8px; background: rgb(0 0 0 / .28); font-size: 12.5px; }
+  .appt svg.lucide { width: 13px; height: 13px; color: var(--amber-ink); }
+  .appt b { font: 600 12px "Geist Mono" !important; color: var(--amber-ink); }
+  .bigbtn { height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px; }
+  .bigbtn svg.lucide { width: 17px; height: 17px; }
+  .bigbtn.main { background: var(--lime-ink); color: #141a04; }
+  .bigbtn.alt { background: rgb(0 0 0 / .28); box-shadow: inset 0 0 0 1px rgb(190 242 100 / .25); font-weight: 500; }
+  .bigbtn.alt svg.lucide { color: var(--lime-ink); }
+  .today small { font-size: 12px; color: rgb(255 255 255 / .55); text-align: center; }
+
+  .wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 12px 10px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(160deg, #141417, #0d0d0f); }
+  .wk div { display: grid; justify-items: center; gap: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
+  .wk i { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #3a3a40; display: grid; place-items: center; }
+  .wk i svg.lucide { width: 14px; height: 14px; }
+  .wk .done i { background: var(--lime-ink); border-color: var(--lime-ink); color: #141a04; }
+  .wk .now i { border-color: var(--lime-ink); border-style: dashed; }
+  .wk .now { color: var(--lime-ink); }
+  .wk .later i { border-color: #26262b; }
+
+  .rows { border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(160deg, #141417, #0d0d0f); }
+  .rows.lime { border-color: var(--lime-line); background: linear-gradient(160deg, var(--lime-a), var(--lime-b)); }
+  .rw { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid rgb(255 255 255 / .07); }
+  .rw:last-child { border-bottom: 0; }
+  .rw b { display: block; font-weight: 500; font-size: 14.5px; }
+  .rw small { display: block; font-size: 12px; color: rgb(255 255 255 / .5); font-variant-numeric: tabular-nums; }
+  .rw .r { margin-left: auto; text-align: right; }
+  .up { font: 600 12px "Geist Mono"; color: var(--lime-ink); white-space: nowrap; }
+  .when { width: 36px; text-align: center; line-height: 1.1; flex: none; }
+  .when small { font-size: 10px; font-weight: 600; letter-spacing: .08em; }
+  .when b { font-size: 17px; font-weight: 600; }
+
+  /* treino em andamento */
+  .ex { border-radius: 12px; border: 1px solid var(--lime-line); background: linear-gradient(160deg, var(--lime-a), var(--lime-b)); padding: 12px 14px; margin-bottom: 8px; display: grid; gap: 10px; }
+  .ex.now { box-shadow: 0 0 0 1.5px var(--lime-ink); }
+  .ex-top { display: flex; align-items: center; gap: 10px; }
+  .ck { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #55555c; display: grid; place-items: center; flex: none; }
+  .ck svg.lucide { width: 14px; height: 14px; stroke-width: 2.5; }
+  .ex.done .ck { background: var(--lime-ink); border-color: var(--lime-ink); color: #141a04; }
+  .ex-top b { display: block; font-weight: 500; font-size: 15px; }
+  .ex-top small { display: block; font-size: 12px; color: rgb(255 255 255 / .5); }
+  .ex-top .r { margin-left: auto; }
+  .fields { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgb(255 255 255 / .5); padding-left: 36px; }
+  .fld { width: 52px; height: 40px; border-radius: 8px; background: #0b0d06; border: 1px solid #3a4419; display: grid; place-items: center; font: 600 15px "Geist Mono"; color: var(--text); }
+  .fld.wide { width: 62px; }
+  .fld.ghost { color: rgb(255 255 255 / .42); border-style: dashed; }
+  .fld.focus { border-color: var(--lime-ink); box-shadow: 0 0 0 3px rgb(190 242 100 / .18); }
+  .same { font: 600 12px "Geist Mono"; color: rgb(255 255 255 / .4); }
+  .ex.mini { padding: 10px 14px; }
+  .adder { display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 14px; border-radius: 10px; border: 1px dashed var(--lime-line); color: var(--text-2); font-size: 14px; margin-bottom: 14px; }
+  .adder svg.lucide { width: 16px; height: 16px; color: var(--lime-ink); }
+
+  .navbar { position: absolute; bottom: 0; inset-inline: 0; height: 86px; background: rgb(9 9 11 / .96); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; padding-top: 8px; z-index: 3; }
+  .nt { display: grid; justify-items: center; gap: 3px; font-size: 11px; color: var(--text-3); }
+  .nt.on { color: var(--text); } .nt.on svg.lucide { color: var(--accent-soft); }
+  .plus { justify-self: center; width: 52px; height: 52px; border-radius: 16px; background: var(--accent); display: grid; place-items: center; margin-top: -4px; }
+</style>
+</head>
+<body>
+  <div>
+    <p class="cap">Treino</p>
+    <div class="phone">
+      <div class="status"><span>19:52</span><span>●●●</span></div>
+      <div class="scroll">
+        <div class="head">
+          <span class="seal"><i data-lucide="dumbbell"></i></span>
+          <div><h1>Treino</h1><p>2 de 4 esta semana</p></div>
+          <div class="tools"><span class="tb"><i data-lucide="list"></i></span></div>
+        </div>
+
+        <div class="today">
+          <div class="row"><b>Treino de hoje</b><span class="appt"><i data-lucide="calendar-clock"></i>Academia <b>20:00</b></span></div>
+          <div class="bigbtn main"><i data-lucide="plus"></i>Registrar treino</div>
+          <div class="bigbtn alt"><i data-lucide="repeat"></i>Repetir um treino</div>
+          <small>Último: ontem · 5 exercícios</small>
+        </div>
+
+        <p class="lbl">Esta semana <a>meta 4</a></p>
+        <div class="wk">
+          <div class="done"><i><i data-lucide="check"></i></i>Seg</div>
+          <div><i></i>Ter</div>
+          <div class="done"><i><i data-lucide="check"></i></i>Qua</div>
+          <div class="now"><i></i>Hoje</div>
+          <div class="later"><i></i>Sex</div>
+          <div class="later"><i></i>Sáb</div>
+          <div class="later"><i></i>Dom</div>
+        </div>
+
+        <p class="lbl">Evolução <a>12 exercícios</a></p>
+        <div class="rows lime">
+          <div class="rw"><div><b>Supino reto</b><small>4×10 · 40 kg · qua</small></div><div class="r"><span class="up">+10 kg</span><small>meta 60</small></div></div>
+          <div class="rw"><div><b>Agachamento livre</b><small>4×8 · 50 kg · seg</small></div><div class="r"><span class="up">+10 kg</span><small>meta 70</small></div></div>
+          <div class="rw"><div><b>Flexão</b><small>3×15 · qua</small></div><div class="r"><span class="up">+7 rep.</span><small>meta 20</small></div></div>
+          <div class="rw"><div><b>Esteira</b><small>25 min · seg</small></div><div class="r"><span class="up">+15 min</span><small>sem meta</small></div></div>
+        </div>
+
+        <p class="lbl">Últimos treinos <a>Histórico</a></p>
+        <div class="rows">
+          <div class="rw"><div class="when"><small>QUA</small><b>30</b></div><div><b>Supino reto, Crucifixo +3</b><small>5 exercícios</small></div></div>
+          <div class="rw"><div class="when"><small>SEG</small><b>28</b></div><div><b>Agachamento livre, Leg press +2</b><small>4 exercícios</small></div></div>
+        </div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+
+  <div>
+    <p class="cap">Treino de hoje, em andamento</p>
+    <div class="phone">
+      <div class="status"><span>20:31</span><span>●●●</span></div>
+      <div class="scroll">
+        <span class="back"><i data-lucide="chevron-left"></i>Treino</span>
+        <div class="head">
+          <span class="seal"><i data-lucide="dumbbell"></i></span>
+          <div><h1>Treino de hoje</h1><p>começou 20:06 · 2 de 5 feitos</p></div>
+          <div class="tools"><span class="tb"><i data-lucide="ellipsis"></i></span></div>
+        </div>
+
+        <div class="ex done mini">
+          <div class="ex-top"><span class="ck"><i data-lucide="check"></i></span><div><b>Agachamento livre</b><small>4×8 · 55 kg</small></div><span class="r up">+5 kg</span></div>
+        </div>
+        <div class="ex done mini">
+          <div class="ex-top"><span class="ck"><i data-lucide="check"></i></span><div><b>Leg press</b><small>4×12 · 120 kg</small></div><span class="r same">igual</span></div>
+        </div>
+        <div class="ex now">
+          <div class="ex-top"><span class="ck"></span><div><b>Cadeira extensora</b><small>Última: 3×12 · 35 kg · seg</small></div></div>
+          <div class="fields"><span class="fld ghost">3</span>×<span class="fld ghost">12</span>·<span class="fld wide focus">40</span>kg</div>
+        </div>
+        <div class="ex">
+          <div class="ex-top"><span class="ck"></span><div><b>Abdominal infra</b><small>Última: 3×20 · peso do corpo</small></div></div>
+          <div class="fields"><span class="fld ghost">3</span>×<span class="fld ghost">20</span>rep.</div>
+        </div>
+        <div class="ex">
+          <div class="ex-top"><span class="ck"></span><div><b>Esteira</b><small>Última: 25 min</small></div></div>
+          <div class="fields"><span class="fld wide ghost">25</span>min</div>
+        </div>
+        <div class="adder"><i data-lucide="plus"></i>Adicionar exercício</div>
+        <div class="bigbtn main"><i data-lucide="check"></i>Concluir treino</div>
+      </div>
+      <nav class="navbar"><span class="nt"><i data-lucide="zap"></i>Central</span><span class="nt"><i data-lucide="circle-dot"></i>Agora</span><span class="plus"><i data-lucide="plus"></i></span><span class="nt"><i data-lucide="list-todo"></i>A fazer</span><span class="nt on"><i data-lucide="ellipsis"></i>Mais</span></nav>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

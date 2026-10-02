@@ -9,6 +9,7 @@ import { MODULES, isArchived, originHref, originLabel } from "@/lib/origins/tree
 import { contextLabel } from "@/lib/projects/organize";
 import { getContextLookup, listAreas, listProjects } from "@/lib/projects/queries";
 import { listOpenTasks } from "@/lib/tasks/queries";
+import { getTreinoCentral } from "@/lib/treino/pages";
 import { MODULE_KEYS, type ModuleKey, type ProjectSummary } from "@/types/project";
 import type { Task, TaskSummary } from "@/types/task";
 import { buildCentral, type CentralView } from "./central";
@@ -27,6 +28,8 @@ export type ModuleCardData = {
   attention: string | null;
   /** Dinheiro: quanto sobra no mês (o número do card). */
   leftCents?: number;
+  /** Treino: a semana ("2 de 4", "3 treinos") — o número do card. */
+  week?: string;
 };
 
 /** Card de Compromissos em "Minha vida": quantos hoje e o próximo que ainda não passou. */
@@ -40,7 +43,7 @@ export type CentralPage = {
 };
 
 export async function getCentralPage(): Promise<CentralPage> {
-  const [tasks, { active }, areas, lookup, events, assessments, money] = await Promise.all([
+  const [tasks, { active }, areas, lookup, events, assessments, money, training] = await Promise.all([
     listOpenTasks(),
     listProjects(),
     listAreas(),
@@ -48,6 +51,7 @@ export async function getCentralPage(): Promise<CentralPage> {
     listEvents(),
     listAssessments(),
     getDinheiroCentral(),
+    getTreinoCentral(),
   ]);
   const now = nowIn();
   const today = now.date;
@@ -75,6 +79,8 @@ export async function getCentralPage(): Promise<CentralPage> {
     };
     // Dinheiro: o número é a sobra do mês e a linha de baixo, o que vence.
     if (key === "DINHEIRO" && money) return [{ ...card, attention: money.attention, leftCents: money.leftCents }];
+    // Treino: a semana; embaixo, em andamento, a academia de hoje ou o último treino. Sem as tabelas, fica de fora.
+    if (key === "TREINO") return training ? [{ ...card, attention: training.foot, week: training.value }] : [];
     return [card];
   });
   const projectSlots = (ROW - ((modules.length + 1) % ROW)) % ROW;

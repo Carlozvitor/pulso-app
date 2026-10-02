@@ -141,3 +141,14 @@ kbd { font: 600 11px "Geist Mono"; color: var(--text-2); background: rgb(255 255
 .state svg.lucide { width: 12px; height: 12px; }
 .state.run { background: rgb(201 167 255 / .12); color: var(--plum-ink); }
 .state.pause { background: rgb(253 186 116 / .12); color: var(--amber-ink); }
+
+/* H7: Treino (família lima) */
+:root { --lime-a: #262f0a; --lime-b: #11150a; --lime-line: #56681b; --lime-tile: #3b4a10; --lime-ink: #bef264; }
+.lime { background: linear-gradient(160deg, var(--lime-a), var(--lime-b)); border-color: var(--lime-line); }
+.lime .tile { background: var(--lime-tile); color: var(--lime-ink); }
+.app-ico.lime { background: var(--lime-tile); color: var(--lime-ink); box-shadow: inset 0 0 0 1px var(--lime-line); }
+.btn-lime { height: 38px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; border-radius: 8px; font-weight: 600; background: var(--lime-ink); color: #141a04; }
+.btn-lime svg.lucide { width: 16px; height: 16px; }
+.xtype { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 5px; font-size: 11px; font-weight: 600; background: rgb(255 255 255 / .07); color: var(--text-2); white-space: nowrap; }
+.up { font: 600 12px "Geist Mono"; color: var(--lime-ink); white-space: nowrap; }
+.num { font-variant-numeric: tabular-nums; }

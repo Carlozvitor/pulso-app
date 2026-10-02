@@ -25,9 +25,11 @@
 | **amber** | Compromissos (módulo) e prazos | `#4D260C` / `#1F1007` | `#8A4818` | `#6D3510` | `#FDBA74` |
 | **blue** | Trabalho (módulo) | `#0D2742` / `#08131F` | `#1F4B78` | `#143A63` | `#93C5FD` |
 | **rose** | Faculdade (módulo), provas e entregas na agenda | `#3D1030` / `#1A0814` | `#6E2757` | `#5B1C47` | `#F9A8D4` |
+| **green** | Dinheiro (módulo) | `#0F3320` / `#07160E` | `#1F6B3F` | `#14532D` | `#86EFAC` |
+| **lime** | Treino (módulo) | `#262F0A` / `#11150A` | `#56681B` | `#3B4A10` | `#BEF264` |
 | **neutral** | "Mais tarde", estados vazios | `#141417` / `#0D0D0F` | `#232327` | `#222227` | `#A1A1AA` |
 
-Classes em `globals.css`: `.tint .tint-teal|plum|amber|blue|rose|neutral`, `.tint-tile`, utilitário `panel`.
+Classes em `globals.css`: `.tint .tint-teal|plum|amber|blue|rose|green|lime|neutral`, `.tint-tile`, utilitário `panel`.
 
 **Nunca:** vermelho de "atraso" (prazo vencido é "Era pra …", neutro), neon, glassmorphism.
 

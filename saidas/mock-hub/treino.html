@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H7 (Treino)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .top-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: stretch; }
+  .top-grid > section { display: flex; flex-direction: column; }
+  .top-grid > section > .card { flex: 1; }
+
+  /* hoje */
+  .today-head { display: flex; align-items: center; gap: 14px; }
+  .today-head h3 { font-size: 21px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+  .today-head p { font-size: 13px; color: rgb(255 255 255 / .62); }
+  .appt { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 11px; border-radius: 8px; background: rgb(0 0 0 / .25); font-size: 13px; color: rgb(255 255 255 / .85); white-space: nowrap; }
+  .appt svg.lucide { width: 14px; height: 14px; color: var(--amber-ink); }
+  .appt b { font: 600 12.5px "Geist Mono"; color: var(--amber-ink); }
+  .starts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+  .start { display: grid; gap: 4px; align-content: start; padding: 14px 16px; border-radius: 10px; min-width: 0; }
+  .start b { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+  .start b svg.lucide { width: 17px; height: 17px; }
+  .start span { font-size: 12.5px; line-height: 1.4; }
+  .start.main { background: var(--lime-ink); color: #141a04; }
+  .start.main span { color: rgb(20 26 4 / .72); }
+  .start.alt { background: rgb(0 0 0 / .28); box-shadow: inset 0 0 0 1px rgb(190 242 100 / .22); }
+  .start.alt b svg.lucide { color: var(--lime-ink); }
+  .start.alt span { color: rgb(255 255 255 / .6); }
+  .today-foot { margin-top: auto; padding-top: 14px; display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; color: rgb(255 255 255 / .55); }
+  .today-foot b { color: rgb(255 255 255 / .88); font-weight: 500; }
+
+  /* frequência */
+  .freq { padding: 18px 20px 16px; }
+  .freq-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .freq-top .big { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+  .freq-top .big small { font-size: 15px; font-weight: 500; color: var(--text-2); letter-spacing: 0; }
+  .freq-top .meta { font-size: 12.5px; color: var(--text-3); }
+  .wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 14px; }
+  .wk div { display: grid; justify-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+  .wk i { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #3a3a40; display: grid; place-items: center; }
+  .wk i svg.lucide { width: 15px; height: 15px; }
+  .wk .done i { background: var(--lime-ink); border-color: var(--lime-ink); color: #141a04; }
+  .wk .done { color: var(--text-2); }
+  .wk .now i { border-color: var(--lime-ink); border-style: dashed; }
+  .wk .now { color: var(--lime-ink); }
+  .wk .later i { border-color: #26262b; }
+  .hist { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .hist-head { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text-3); }
+  .weeks { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 10px; }
+  .wcol { display: grid; justify-items: center; gap: 3px; }
+  .wcol span { width: 12px; height: 12px; border-radius: 3px; background: #1f1f24; }
+  .wcol span.y { background: var(--lime-ink); }
+  .wcol span.f { background: transparent; box-shadow: inset 0 0 0 1px #26262b; }
+  .wcol span.t { background: transparent; box-shadow: inset 0 0 0 1.5px var(--lime-ink); }
+  .wcol b { margin-top: 4px; font: 600 11.5px "Geist Mono"; color: var(--text-2); }
+  .wcol b.hit { color: var(--lime-ink); }
+  .wcol small { font-size: 10.5px; color: var(--text-3); }
+
+  /* evolução */
+  .evo { padding: 8px; }
+  .evo-row { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.1fr) 18px; gap: 16px; align-items: center; padding: 11px 14px; border-radius: 8px; }
+  .evo-row + .evo-row { margin-top: 2px; }
+  .evo-row:not(.head) { background: rgb(0 0 0 / .22); }
+  .evo-row.head { padding-block: 4px 8px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgb(255 255 255 / .45); }
+  .evo-row .nm { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .evo-row .nm b { font-weight: 500; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .evo-row .last { font: 500 13.5px "Geist"; font-variant-numeric: tabular-nums; }
+  .evo-row .last small { display: block; font-size: 12px; color: rgb(255 255 255 / .5); }
+  .evo-row .since small { display: block; font-size: 12px; color: rgb(255 255 255 / .5); margin-top: 1px; }
+  .goal { display: grid; gap: 5px; font-size: 12.5px; color: rgb(255 255 255 / .7); }
+  .goal .bar { height: 4px; border-radius: 99px; background: rgb(255 255 255 / .1); overflow: hidden; }
+  .goal .bar i { display: block; height: 100%; border-radius: 99px; background: var(--lime-ink); }
+  .goal.none { color: rgb(255 255 255 / .38); }
+  .evo-row .go { color: var(--lime-ink); opacity: .6; width: 16px; height: 16px; }
+  .evo-more { display: flex; justify-content: space-between; padding: 10px 14px 4px; font-size: 12.5px; color: rgb(255 255 255 / .5); }
+
+  /* histórico + fichas */
+  .two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+  .sessions { padding: 8px; }
+  .ses { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 10px 12px 10px 6px; border-radius: 8px; }
+  .ses + .ses { border-top: 1px solid var(--line); border-radius: 0; }
+  .when { text-align: center; line-height: 1.1; }
+  .when small { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .08em; color: var(--text-3); }
+  .when b { display: block; font: 600 19px "Geist"; letter-spacing: -0.02em; }
+  .ses .what b { display: block; font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ses .what span { display: block; font-size: 12.5px; color: var(--text-3); }
+  .ses .right { font: 600 12px "Geist Mono"; color: var(--text-2); white-space: nowrap; }
+  .empty { border: 1px dashed var(--line-2); border-radius: 12px; padding: 18px 18px 16px; display: grid; gap: 8px; }
+  .empty b { display: flex; align-items: center; gap: 9px; font-weight: 500; }
+  .empty b svg.lucide { width: 17px; height: 17px; color: var(--lime-ink); }
+  .empty p { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+  /* contexto */
+  .ctx { padding: 18px 20px; display: grid; gap: 12px; }
+  .ctx .note { font-size: 13.5px; line-height: 1.55; color: rgb(255 255 255 / .82); white-space: pre-line; }
+  .ctx .stamp { font-size: 12px; color: var(--text-3); }
+  .lk { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; background: rgb(0 0 0 / .22); font-size: 13.5px; }
+  .lk svg.lucide { width: 15px; height: 15px; color: var(--lime-ink); }
+  .lk small { margin-left: auto; color: var(--text-3); font-size: 12px; }
+  .task .ctxo { color: var(--lime-ink); }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa noite, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova 8 out · 19:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--green-tile);color:var(--green-ink)"><i data-lucide="wallet"></i></span><div><b>Dinheiro</b><span class="sub">Nada vencendo</span></div></a>
+        <a class="item on"><span class="ico" style="background:var(--lime-tile);color:var(--lime-ink)"><i data-lucide="dumbbell"></i></span><div><b>Treino</b><span class="sub">2 de 4 na semana</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">1 hoje · 20:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento · 1 pausado</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="main-head" style="padding-top:20px">
+        <span class="app-ico lime"><i data-lucide="dumbbell"></i></span>
+        <div><h1>Treino</h1><p>O que você fez e se está evoluindo. As ações ficam no PULSO.</p></div>
+        <div class="head-right">
+          <span class="chipbtn"><i data-lucide="list"></i>Exercícios</span>
+          <span class="btn-lime"><i data-lucide="plus"></i>Registrar treino</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="top-grid">
+          <section>
+            <div class="section"><h2>Hoje</h2><a>Qui, 1 out</a></div>
+            <article class="card lime">
+              <div class="today-head">
+                <span class="tile"><i data-lucide="dumbbell"></i></span>
+                <div><h3>Treino de hoje</h3><p>Último: ontem · 5 exercícios</p></div>
+                <span class="appt"><i data-lucide="calendar-clock"></i>Academia <b>20:00</b></span>
+              </div>
+              <div class="starts">
+                <div class="start main"><b><i data-lucide="plus"></i>Registrar treino</b><span>Escolha os exercícios. Cada um já vem com o que você fez da última vez.</span></div>
+                <div class="start alt"><b><i data-lucide="repeat"></i>Repetir um treino</b><span>Escolha entre os últimos (ontem, segunda, sábado…) e ele vem preenchido.</span></div>
+              </div>
+              <div class="today-foot"><span>Sem ficha: o treino é o que você registrar.</span><b>Rodízio liga quando houver fichas</b></div>
+            </article>
+          </section>
+
+          <section>
+            <div class="section"><h2>Frequência</h2><a>Meta: 4 por semana</a></div>
+            <article class="card neutral freq">
+              <div class="freq-top">
+                <span class="big num">2 <small>de 4 esta semana</small></span>
+                <span class="meta">faltam 2 até domingo</span>
+              </div>
+              <div class="wk">
+                <div class="done"><i><i data-lucide="check"></i></i>Seg</div>
+                <div><i></i>Ter</div>
+                <div class="done"><i><i data-lucide="check"></i></i>Qua</div>
+                <div class="now"><i></i>Hoje</div>
+                <div class="later"><i></i>Sex</div>
+                <div class="later"><i></i>Sáb</div>
+                <div class="later"><i></i>Dom</div>
+              </div>
+              <div class="hist">
+                <div class="hist-head"><span>Últimas 8 semanas</span><span>média de 3 por semana</span></div>
+                <div class="weeks" aria-label="Dias treinados nas últimas 8 semanas">
+                  <div class="wcol"><span></span><span></span><span class="y"></span><span></span><span class="y"></span><span class="y"></span><span></span><b>3</b><small>10 ago</small></div>
+                  <div class="wcol"><span class="y"></span><span></span><span class="y"></span><span></span><span></span><span class="y"></span><span></span><b>3</b><small>17</small></div>
+                  <div class="wcol"><span class="y"></span><span></span><span class="y"></span><span></span><span class="y"></span><span class="y"></span><span></span><b class="hit">4</b><small>24</small></div>
+                  <div class="wcol"><span></span><span></span><span class="y"></span><span></span><span></span><span class="y"></span><span></span><b>2</b><small>31</small></div>
+                  <div class="wcol"><span class="y"></span><span></span><span class="y"></span><span></span><span class="y"></span><span class="y"></span><span></span><b class="hit">4</b><small>7 set</small></div>
+                  <div class="wcol"><span></span><span></span><span></span><span class="y"></span><span></span><span></span><span></span><b>1</b><small>14</small></div>
+                  <div class="wcol"><span class="y"></span><span></span><span></span><span class="y"></span><span></span><span class="y"></span><span></span><b>3</b><small>21</small></div>
+                  <div class="wcol"><span class="y"></span><span></span><span class="y"></span><span class="t"></span><span class="f"></span><span class="f"></span><span class="f"></span><b>2</b><small>28</small></div>
+                </div>
+              </div>
+            </article>
+          </section>
+        </div>
+
+        <div class="section"><h2>Evolução por exercício</h2><a>Ver os 12 exercícios</a></div>
+        <article class="card lime evo">
+          <div class="evo-row head"><span>Exercício</span><span>Última vez</span><span>Desde o começo</span><span>Meta</span><span></span></div>
+          <div class="evo-row">
+            <div class="nm"><b>Supino reto</b><span class="xtype">Carga</span></div>
+            <div class="last">4×10 · 40 kg<small>qua, 30 set</small></div>
+            <div class="since"><span class="up">+10 kg</span><small>era 30 kg em 12 ago</small></div>
+            <div class="goal"><span class="num">40 de 60 kg</span><span class="bar"><i style="width:67%"></i></span></div>
+            <i data-lucide="chevron-right" class="go"></i>
+          </div>
+          <div class="evo-row">
+            <div class="nm"><b>Agachamento livre</b><span class="xtype">Carga</span></div>
+            <div class="last">4×8 · 50 kg<small>seg, 28 set</small></div>
+            <div class="since"><span class="up">+10 kg</span><small>era 40 kg em 14 ago</small></div>
+            <div class="goal"><span class="num">50 de 70 kg</span><span class="bar"><i style="width:71%"></i></span></div>
+            <i data-lucide="chevron-right" class="go"></i>
+          </div>
+          <div class="evo-row">
+            <div class="nm"><b>Puxada frontal</b><span class="xtype">Carga</span></div>
+            <div class="last">3×12 · 45 kg<small>sáb, 26 set</small></div>
+            <div class="since"><span class="up">+10 kg</span><small>era 35 kg em 15 ago</small></div>
+            <div class="goal none">Sem meta</div>
+            <i data-lucide="chevron-right" class="go"></i>
+          </div>
+          <div class="evo-row">
+            <div class="nm"><b>Flexão</b><span class="xtype">Peso do corpo</span></div>
+            <div class="last">3×15<small>qua, 30 set</small></div>
+            <div class="since"><span class="up">+7 rep.</span><small>era 3×8 em 12 ago</small></div>
+            <div class="goal"><span class="num">15 de 20 rep.</span><span class="bar"><i style="width:75%"></i></span></div>
+            <i data-lucide="chevron-right" class="go"></i>
+          </div>
+          <div class="evo-row">
+            <div class="nm"><b>Esteira</b><span class="xtype">Tempo</span></div>
+            <div class="last">25 min<small>seg, 28 set</small></div>
+            <div class="since"><span class="up">+15 min</span><small>era 10 min em 14 ago</small></div>
+            <div class="goal none">Sem meta</div>
+            <i data-lucide="chevron-right" class="go"></i>
+          </div>
+          <div class="evo-more"><span>Ordem: os que você fez mais recentemente.</span><span>+ 7 exercícios</span></div>
+        </article>
+
+        <div class="two">
+          <section>
+            <div class="section"><h2>Últimos treinos</h2><a>Histórico completo</a></div>
+            <article class="card neutral sessions">
+              <div class="ses"><div class="when"><small>QUA</small><b>30</b></div><div class="what"><b>Supino reto, Crucifixo, Tríceps corda +2</b><span>5 exercícios · 2 subiram de carga</span></div><span class="right">ontem</span></div>
+              <div class="ses"><div class="when"><small>SEG</small><b>28</b></div><div class="what"><b>Agachamento livre, Leg press, Cadeira extensora +1</b><span>4 exercícios · inclui 25 min de esteira</span></div><span class="right">seg</span></div>
+              <div class="ses"><div class="when"><small>SÁB</small><b>26</b></div><div class="what"><b>Supino reto, Puxada frontal, Rosca direta +2</b><span>5 exercícios</span></div><span class="right">26 set</span></div>
+              <div class="ses"><div class="when"><small>QUI</small><b>24</b></div><div class="what"><b>Supino reto, Crucifixo, Flexão +1</b><span>4 exercícios · melhor marca no supino</span></div><span class="right">24 set</span></div>
+            </article>
+          </section>
+
+          <section>
+            <div class="section"><h2>Fichas</h2><a>Opcional</a></div>
+            <div class="empty">
+              <b><i data-lucide="clipboard-list"></i>Nenhuma ficha ainda</b>
+              <p>Abra um treino que você fez e toque em <b style="display:inline;font-weight:600">Salvar como ficha</b>. Com duas ou mais fichas, o Treino mostra qual é a da vez, na ordem A → B → C.</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="two">
+          <section>
+            <div class="section"><h2>Ações em Treino</h2><a>Ver na Agora</a></div>
+            <article class="card neutral" style="padding:10px">
+              <ul class="tasks">
+                <li class="task"><span class="check"></span><div><b>Renovar o plano da academia</b><span class="meta"><span class="ctxo">Treino</span> · 10 min</span></div><span class="right">10 out</span></li>
+                <li class="task"><span class="check"></span><div><b>Comprar whey</b><span class="meta"><span class="ctxo">Treino</span></span></div><span class="right">–</span></li>
+                <li class="task"><span class="check"></span><div><b>Marcar avaliação física</b><span class="meta"><span class="ctxo">Treino</span> · 5 min</span></div><span class="right">–</span></li>
+              </ul>
+            </article>
+          </section>
+
+          <section>
+            <div class="section"><h2>Anotação e links</h2><a>Editar</a></div>
+            <article class="card neutral ctx">
+              <p class="note">Objetivo até dezembro: ganhar massa e não ficar mais de 2 dias sem treinar.
+Academia fecha 22:00 em dia de semana.</p>
+              <span class="stamp">Atualizado em 18 set</span>
+              <div class="lk"><i data-lucide="play"></i>Execução do agachamento<small>youtube.com</small></div>
+            </article>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Lima é a cor do Treino. Exercícios e números são de exemplo.</li>
+      <li>"Academia 20:00" é um compromisso que se repete, com origem Treino. Ele não está duplicado aqui: só aparece.</li>
+      <li>Frequência conta dias com treino registrado. Não tem sequência nem cobrança.</li>
+      <li>Objetivos livres ficam na anotação. As metas de carga ficam em cada exercício.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

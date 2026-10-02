@@ -8,7 +8,7 @@ export const MODULES: Record<ModuleKey, { label: string; href: string | null }> 
   TRABALHO: { label: "Trabalho", href: "/trabalho" },
   FACULDADE: { label: "Faculdade", href: "/faculdade" },
   DINHEIRO: { label: "Dinheiro", href: "/dinheiro" },
-  TREINO: { label: "Treino", href: null },
+  TREINO: { label: "Treino", href: "/treino" },
   VIDA_PESSOAL: { label: "Vida pessoal", href: null },
 };
 

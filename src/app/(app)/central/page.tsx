@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Briefcase, CalendarClock, CalendarDays, Eye, GraduationCap, Leaf, Sun, Wallet, Zap } from "lucide-react";
+import { Briefcase, CalendarClock, CalendarDays, Dumbbell, Eye, GraduationCap, Leaf, Sun, Wallet, Zap } from "lucide-react";
 import { NowCard } from "@/components/agora/now-card";
 import { TaskCard } from "@/components/agora/task-card";
 import { CardTile, SectionHeading } from "@/components/cards/card-parts";
@@ -32,6 +32,17 @@ function eventsLabel(count: number): string | null {
 function openActions(n: number): string {
   if (n === 0) return "Nada aberto";
   return n === 1 ? "1 ação" : `${n} ações`;
+}
+
+/** "2 de 4": o "de 4" menor, como no card da maquete. */
+function WeekValue({ text }: { text: string }) {
+  const [count, goal] = text.split(" de ");
+  if (!goal) return text;
+  return (
+    <>
+      {count} <span className="text-base font-medium text-white/70 lg:text-lg">de {goal}</span>
+    </>
+  );
 }
 
 /** Central: a porta de entrada do Hub — o que fazer agora, o que vence hoje e o que vem aí. */
@@ -126,7 +137,18 @@ export default async function CentralPage() {
         />
         <div className="grid grid-cols-2 gap-3 lg:gap-5 xl:grid-cols-4">
           {modules.map((module) =>
-            module.leftCents !== undefined ? (
+            module.week !== undefined ? (
+              // Treino: a semana (com a meta, "2 de 4") e a próxima coisa dele.
+              <ModuleCard
+                key={module.key}
+                href={module.href}
+                label="Treino · esta semana"
+                value={<WeekValue text={module.week} />}
+                foot={module.attention ?? ""}
+                icon={Dumbbell}
+                tone="lime"
+              />
+            ) : module.leftCents !== undefined ? (
               // Dinheiro: a sobra do mês e o que vence.
               <ModuleCard
                 key={module.key}

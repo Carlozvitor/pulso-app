@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub do Carlos — maquete H7 (exercício)</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="base.css" />
+<style>
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .stat { padding: 16px 18px 14px; display: grid; gap: 4px; align-content: start; }
+  .stat .k { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); }
+  .stat .v { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .stat .d { font-size: 12.5px; color: var(--text-2); }
+  .stat.lime .k { color: rgb(255 255 255 / .55); }
+  .stat.lime .d { color: rgb(255 255 255 / .62); }
+  .stat .bar { height: 4px; border-radius: 99px; background: rgb(255 255 255 / .1); overflow: hidden; margin-top: 6px; }
+  .stat .bar i { display: block; height: 100%; width: 67%; border-radius: 99px; background: var(--lime-ink); }
+
+  .chart { padding: 16px 18px 12px; }
+  .chart-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .chart-head b { font-weight: 500; }
+  .chart-head span { font-size: 12.5px; color: var(--text-3); }
+  .chart svg { display: block; width: 100%; height: auto; margin-top: 8px; }
+  .chart .grid line { stroke: #24242a; stroke-width: 1; }
+  .chart .yl { fill: var(--text-3); font: 500 11px "Geist Mono"; }
+  .chart .xl { fill: var(--text-3); font: 500 11px "Geist"; }
+  .chart .ln { fill: none; stroke: var(--lime-ink); stroke-width: 2; stroke-linejoin: round; }
+  .chart .ar { fill: rgb(190 242 100 / .08); stroke: none; }
+  .chart .pt { fill: #11150a; stroke: var(--lime-ink); stroke-width: 1.5; }
+  .chart .end { fill: var(--lime-ink); stroke: none; }
+  .chart .best { fill: var(--text); font: 600 11.5px "Geist Mono"; }
+
+  .two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+  .recs { padding: 6px 8px; }
+  .rec { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 11px 12px; }
+  .rec + .rec { border-top: 1px solid var(--line); }
+  .rec .dt { font-size: 13px; color: var(--text-2); }
+  .rec .val { font: 500 14px "Geist"; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 8px; }
+  .rec .tag { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 7px; border-radius: 5px; font-size: 11px; font-weight: 600; background: rgb(190 242 100 / .12); color: var(--lime-ink); }
+  .rec .tag svg.lucide { width: 11px; height: 11px; }
+  .rec .go { font-size: 12.5px; color: var(--text-3); display: inline-flex; align-items: center; gap: 4px; }
+  .rec .go svg.lucide { width: 13px; height: 13px; }
+  .recs-foot { padding: 10px 12px 6px; font-size: 12.5px; color: var(--text-3); }
+
+  .side-box { padding: 18px 20px; display: grid; gap: 12px; }
+  .side-box p { font-size: 13px; color: var(--text-2); line-height: 1.55; }
+  .goal-edit { display: flex; align-items: center; gap: 8px; }
+  .goal-edit .fld { width: 70px; height: 38px; border-radius: 8px; background: #0b0d06; border: 1px solid var(--lime-line); display: grid; place-items: center; font: 600 15px "Geist Mono"; }
+  .goal-edit span { font-size: 13px; color: var(--text-2); }
+  .menu { list-style: none; padding: 0; display: grid; gap: 2px; }
+  .menu li { display: flex; align-items: center; gap: 10px; padding: 8px 2px; font-size: 13.5px; color: var(--text-2); }
+  .menu li svg.lucide { width: 15px; height: 15px; color: var(--text-3); }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="logo">C</span><div><small>CARLOS</small><b>Hub do Carlos</b></div></div>
+    <div class="top-center"><b>Boa noite, Carlos</b><span>· 11 pendências</span></div>
+    <div class="top-actions">
+      <span class="btn"><i data-lucide="timer"></i>Tenho alguns minutos</span>
+      <span class="btn primary"><i data-lucide="plus"></i>Capturar <kbd>N</kbd></span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="panel side">
+      <div class="nav">
+        <a class="item"><span class="ico" style="background:#262a5c;color:#a5acff"><i data-lucide="zap"></i></span><div><b>Central</b><span class="sub">O que merece atenção</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--teal-tile);color:var(--teal-ink)"><i data-lucide="activity"></i></span><div><b>PULSO</b><span class="sub">O que fazer</span></div></a>
+        <ul class="kids">
+          <li class="kid"><i data-lucide="circle-dot"></i>Agora</li>
+          <li class="kid"><i data-lucide="list-todo"></i>A fazer<span class="count">11</span></li>
+          <li class="kid"><i data-lucide="circle-check"></i>Feitas</li>
+        </ul>
+        <div class="sep">Minha vida</div>
+        <a class="item"><span class="ico" style="background:var(--blue-tile);color:var(--blue-ink)"><i data-lucide="briefcase"></i></span><div><b>Trabalho</b><span class="sub">7 ações abertas</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--rose-tile);color:var(--rose-ink)"><i data-lucide="graduation-cap"></i></span><div><b>Faculdade</b><span class="sub">Prova 8 out · 19:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--green-tile);color:var(--green-ink)"><i data-lucide="wallet"></i></span><div><b>Dinheiro</b><span class="sub">Nada vencendo</span></div></a>
+        <a class="item on"><span class="ico" style="background:var(--lime-tile);color:var(--lime-ink)"><i data-lucide="dumbbell"></i></span><div><b>Treino</b><span class="sub">2 de 4 na semana</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--amber-tile);color:var(--amber-ink)"><i data-lucide="calendar-clock"></i></span><div><b>Compromissos</b><span class="sub">1 hoje · 20:00</span></div></a>
+        <a class="item"><span class="ico" style="background:var(--plum-tile);color:var(--plum-ink)"><i data-lucide="rocket"></i></span><div><b>Projetos</b><span class="sub">4 em andamento · 1 pausado</span></div></a>
+      </div>
+      <div class="side-foot">
+        <a class="item"><span class="ico" style="background:#1d1d21;color:var(--text-2)"><i data-lucide="settings"></i></span><div><b>Configurações</b><span class="sub">Origens, conta, sair</span></div></a>
+      </div>
+    </nav>
+
+    <main class="panel main">
+      <div class="crumbs"><span>Treino</span><i data-lucide="chevron-right"></i><span>Exercícios</span><i data-lucide="chevron-right"></i><b>Supino reto</b></div>
+      <div class="main-head">
+        <span class="app-ico lime"><i data-lucide="dumbbell"></i></span>
+        <div><h1>Supino reto</h1><p>Carga · 14 registros desde 12 ago</p></div>
+        <div class="head-right">
+          <span class="chipbtn"><i data-lucide="target"></i>Meta: 60 kg</span>
+          <span class="chipbtn" aria-label="Mais opções"><i data-lucide="ellipsis"></i></span>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="stats">
+          <article class="card lime stat"><span class="k">Última vez</span><span class="v">4×10 · 40 kg</span><span class="d">qua, 30 set</span></article>
+          <article class="card neutral stat"><span class="k">No começo</span><span class="v">4×10 · 30 kg</span><span class="d">12 ago · <span class="up">+10 kg</span> desde então</span></article>
+          <article class="card neutral stat"><span class="k">Melhor marca</span><span class="v">45 kg × 6</span><span class="d">qui, 24 set</span></article>
+          <article class="card neutral stat"><span class="k">Meta</span><span class="v">60 kg</span><span class="d">40 de 60 · faltam 20 kg</span><span class="bar"><i></i></span></article>
+        </div>
+
+        <div class="section"><h2>Carga ao longo do tempo</h2><a>Últimos 2 meses</a></div>
+        <article class="card neutral chart">
+          <div class="chart-head"><b>Cada ponto é um treino</b><span>As repetições estão na lista abaixo</span></div>
+          <svg viewBox="0 0 720 214" role="img" aria-label="Carga do supino reto: 30 kg em 12 de agosto, subindo até 40 kg em 30 de setembro, com melhor marca de 45 kg em 24 de setembro.">
+            <g class="grid">
+              <line x1="48" y1="147.2" x2="700" y2="147.2" />
+              <line x1="48" y1="114.4" x2="700" y2="114.4" />
+              <line x1="48" y1="81.6" x2="700" y2="81.6" />
+              <line x1="48" y1="48.8" x2="700" y2="48.8" />
+            </g>
+            <text class="yl" x="40" y="151" text-anchor="end">30</text>
+            <text class="yl" x="40" y="118" text-anchor="end">35</text>
+            <text class="yl" x="40" y="85" text-anchor="end">40</text>
+            <text class="yl" x="40" y="52" text-anchor="end">45 kg</text>
+            <polygon class="ar" points="48,147.2 87.92,147.2 141.14,134.08 181.06,134.08 234.29,114.4 274.2,114.4 327.43,114.4 367.35,101.28 420.57,101.28 460.49,81.6 527.02,81.6 620.16,48.8 646.78,81.6 700,81.6 700,180 48,180" />
+            <polyline class="ln" points="48,147.2 87.92,147.2 141.14,134.08 181.06,134.08 234.29,114.4 274.2,114.4 327.43,114.4 367.35,101.28 420.57,101.28 460.49,81.6 527.02,81.6 620.16,48.8 646.78,81.6 700,81.6" />
+            <g>
+              <circle class="pt" cx="48" cy="147.2" r="3.5" /><circle class="pt" cx="87.92" cy="147.2" r="3.5" />
+              <circle class="pt" cx="141.14" cy="134.08" r="3.5" /><circle class="pt" cx="181.06" cy="134.08" r="3.5" />
+              <circle class="pt" cx="234.29" cy="114.4" r="3.5" /><circle class="pt" cx="274.2" cy="114.4" r="3.5" />
+              <circle class="pt" cx="327.43" cy="114.4" r="3.5" /><circle class="pt" cx="367.35" cy="101.28" r="3.5" />
+              <circle class="pt" cx="420.57" cy="101.28" r="3.5" /><circle class="pt" cx="460.49" cy="81.6" r="3.5" />
+              <circle class="pt" cx="527.02" cy="81.6" r="3.5" /><circle class="pt" cx="620.16" cy="48.8" r="3.5" />
+              <circle class="pt" cx="646.78" cy="81.6" r="3.5" />
+              <circle class="end" cx="700" cy="81.6" r="5" />
+            </g>
+            <text class="best" x="620.16" y="34" text-anchor="middle">45 × 6</text>
+            <text class="xl" x="48" y="204" text-anchor="start">12 ago</text>
+            <text class="xl" x="314.12" y="204" text-anchor="middle">1 set</text>
+            <text class="xl" x="700" y="204" text-anchor="end">30 set</text>
+          </svg>
+        </article>
+
+        <div class="two">
+          <section>
+            <div class="section"><h2>Registros</h2><a>Ver os 14</a></div>
+            <article class="card neutral recs">
+              <div class="rec"><span class="dt">qua, 30 set</span><span class="val">4×10 · 40 kg</span><span class="go">ver treino<i data-lucide="chevron-right"></i></span></div>
+              <div class="rec"><span class="dt">sáb, 26 set</span><span class="val">4×10 · 40 kg</span><span class="go">ver treino<i data-lucide="chevron-right"></i></span></div>
+              <div class="rec"><span class="dt">qui, 24 set</span><span class="val">3×6 · 45 kg <span class="tag"><i data-lucide="trophy"></i>melhor marca</span></span><span class="go">ver treino<i data-lucide="chevron-right"></i></span></div>
+              <div class="rec"><span class="dt">qui, 17 set</span><span class="val">4×10 · 40 kg</span><span class="go">ver treino<i data-lucide="chevron-right"></i></span></div>
+              <div class="rec"><span class="dt">sáb, 12 set</span><span class="val">4×8 · 40 kg <span class="tag"><i data-lucide="arrow-up"></i>subiu</span></span><span class="go">ver treino<i data-lucide="chevron-right"></i></span></div>
+              <div class="rec"><span class="dt">qua, 9 set</span><span class="val">4×10 · 37 kg</span><span class="go">ver treino<i data-lucide="chevron-right"></i></span></div>
+              <div class="recs-foot">Corrigir um número: abra o treino daquele dia.</div>
+            </article>
+          </section>
+
+          <aside>
+            <div class="section"><h2>Meta e opções</h2></div>
+            <article class="card neutral side-box">
+              <div class="goal-edit"><span class="fld">60</span><span>kg é a meta. Deixe em branco para não ter meta.</span></div>
+              <p>A barra da meta compara com a carga da última vez, não com a melhor marca.</p>
+              <ul class="menu">
+                <li><i data-lucide="pencil"></i>Renomear exercício</li>
+                <li><i data-lucide="archive"></i>Guardar (some da lista ao registrar, o histórico fica)</li>
+              </ul>
+            </article>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="notes">
+    <b>Notas da maquete</b>
+    <ol>
+      <li>Um gráfico pequeno, só aqui, para ver a carga subindo. Na tela do Treino a evolução é em número ("+10 kg").</li>
+      <li>"Melhor marca" é a maior carga já registrada.</li>
+      <li>O exercício não é apagado: guardar só tira da lista de escolha.</li>
+    </ol>
+  </aside>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

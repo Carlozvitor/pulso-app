@@ -1,0 +1,86 @@
+<title>Maquete do Treino</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap">
+<style>
+  /* Layout: uma coluna estreita, cabeçalho do módulo + cartões que abrem as telas + as escolhas a aprovar.
+     Tema único escuro, igual ao Hub (escolha deliberada). */
+  :root {
+    color-scheme: dark;
+    --bg: #050506;
+    --panel: #0d0d0f;
+    --line: #232327;
+    --text: #f4f4f5;
+    --text-2: #a1a1aa;
+    --text-3: #8a8a93;
+    --lime-a: #262f0a;
+    --lime-b: #11150a;
+    --lime-line: #56681b;
+    --lime-tile: #3b4a10;
+    --lime-ink: #bef264;
+    --font: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "Geist Mono", ui-monospace, "Cascadia Mono", monospace;
+  }
+  body { background: var(--bg); color: var(--text); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 48px; display: grid; gap: 28px; }
+  header { display: flex; align-items: center; gap: 14px; }
+  .seal { width: 48px; height: 48px; border-radius: 11px; background: var(--lime-tile); color: var(--lime-ink); display: grid; place-items: center; flex: none; box-shadow: inset 0 0 0 1px var(--lime-line); }
+  .seal svg { width: 24px; height: 24px; }
+  .eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); }
+  h1 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
+  .lead { margin: 0; color: var(--text-2); max-width: 60ch; }
+  h2 { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+  .screens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 640px) { .screens { grid-template-columns: minmax(0, 1fr); } }
+  .screen { display: grid; gap: 6px; align-content: start; padding: 16px 18px; border-radius: 12px; border: 1px solid var(--lime-line); background: linear-gradient(160deg, var(--lime-a), var(--lime-b)); color: var(--text); text-decoration: none; transition: border-color .15s ease; min-width: 0; }
+  .screen.wide { grid-column: 1 / -1; }
+  .screen:hover { border-color: var(--lime-ink); }
+  .screen:focus-visible { outline: 2px solid var(--lime-ink); outline-offset: 3px; }
+  .screen b { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 16px; font-weight: 600; }
+  .screen b span { font: 600 11px var(--mono); color: var(--lime-ink); letter-spacing: .04em; }
+  .screen p { margin: 0; font-size: 13.5px; color: var(--text-2); }
+  .choices { margin: 0; padding: 6px; list-style: none; display: grid; gap: 2px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+  .choices li { padding: 12px 14px; display: grid; gap: 2px; }
+  .choices li + li { border-top: 1px solid var(--line); }
+  .choices b { font-weight: 500; }
+  .choices small { font-size: 13px; color: var(--text-3); }
+  .note { margin: 0; font-size: 13px; color: var(--text-3); }
+  @media (prefers-reduced-motion: reduce) { .screen { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="seal" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></svg>
+    </span>
+    <div>
+      <div class="eyebrow">Hub do Carlos · H7</div>
+      <h1>Maquete do Treino</h1>
+    </div>
+  </header>
+
+  <p class="lead">Cinco telas para aprovar antes do código. Os exercícios e números são de exemplo, como se você já treinasse há 7 semanas. Toque numa tela para abrir e use o voltar do navegador para retornar.</p>
+
+  <section>
+    <h2>Telas</h2>
+    <div class="screens">
+      <a class="screen" href="treino.html"><b>Treino <span>PC</span></b><p>Treino de hoje, frequência da semana, evolução por exercício, últimos treinos e fichas.</p></a>
+      <a class="screen" href="treino-fazer.html"><b>Treino de hoje <span>PC</span></b><p>Os exercícios já preenchidos com a última vez. Você ajusta e marca.</p></a>
+      <a class="screen" href="treino-exercicio.html"><b>Um exercício <span>PC</span></b><p>Supino reto: do começo até hoje, melhor marca, meta e registros.</p></a>
+      <a class="screen" href="central-treino.html"><b>Central <span>PC</span></b><p>O card novo em Minha vida e a academia no Hoje.</p></a>
+      <a class="screen wide" href="treino-celular.html"><b>No celular <span>2 telas</span></b><p>O Treino e um treino em andamento.</p></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Escolhas para aprovar</h2>
+    <ul class="choices">
+      <li><b>Sem ficha, o treino é o que você registrar</b><small>Registrar treino ou Repetir um treino. Ficha é opcional: nasce de um treino feito, e com duas ou mais o app mostra a da vez (A → B → C).</small></li>
+      <li><b>Uma linha por exercício, já preenchida</b><small>Séries × repetições · carga. Peso do corpo sem kg. Cardio em minutos. Vem com o que você fez da última vez.</small></li>
+      <li><b>Frequência sem cobrança</b><small>Esta semana N de 4 e as últimas 8 semanas em quadradinhos. Sem sequência, sem medalha, sem aviso.</small></li>
+      <li><b>Meta de carga por exercício</b><small>A barra anda sozinha com a última vez. Objetivos livres ("ganhar massa até dezembro") ficam na anotação do Treino.</small></li>
+      <li><b>Um gráfico pequeno, só na página do exercício</b><small>Na tela do Treino a evolução é em número ("+10 kg desde 12 ago").</small></li>
+      <li><b>Academia é compromisso, não tarefa</b><small>O horário se repete em Compromissos com origem Treino e aparece no Hoje. Tarefas como "Comprar whey" ficam no PULSO com origem Treino.</small></li>
+    </ul>
+  </section>
+
+  <p class="note">As telas do PC foram feitas para tela larga. No celular, abra "No celular".</p>
+</div>

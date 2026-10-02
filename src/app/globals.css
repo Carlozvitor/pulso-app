@@ -33,7 +33,7 @@
 
   /*
    * Famílias de cor por seção (cards com leve degradê e borda da mesma cor):
-   * teal = Agora · plum = Projetos · amber = Prazos/Agenda · blue = Trabalho · rose = Faculdade · green = Dinheiro
+   * teal = Agora · plum = Projetos · amber = Prazos/Agenda · blue = Trabalho · rose = Faculdade · green = Dinheiro · lime = Treino
    */
   --teal-a: #0c3a42;
   --teal-b: #081b20;
@@ -65,6 +65,11 @@
   --green-line: #1f6b3f;
   --green-tile: #14532d;
   --green-ink: #86efac;
+  --lime-a: #262f0a;
+  --lime-b: #11150a;
+  --lime-line: #56681b;
+  --lime-tile: #3b4a10;
+  --lime-ink: #bef264;
 
   /* Mapeamento para os nomes que o shadcn espera */
   --card: var(--surface);
@@ -158,6 +163,9 @@
   --color-green-tile: var(--green-tile);
   --color-green-ink: var(--green-ink);
   --color-green-line: var(--green-line);
+  --color-lime-tile: var(--lime-tile);
+  --color-lime-ink: var(--lime-ink);
+  --color-lime-line: var(--lime-line);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -317,6 +325,13 @@
     --tint-line: var(--green-line);
     --tint-tile: var(--green-tile);
     --tint-ink: var(--green-ink);
+  }
+  .tint-lime {
+    --tint-a: var(--lime-a);
+    --tint-b: var(--lime-b);
+    --tint-line: var(--lime-line);
+    --tint-tile: var(--lime-tile);
+    --tint-ink: var(--lime-ink);
   }
   /* Sem família: mesma forma, sem cor (itens "mais tarde", estados vazios) */
   .tint-neutral {
